@@ -5,7 +5,7 @@ export default function ResumeFeed(props: ResumeFeedProps) {
     return (
         <div>
             <h1>Resume Feed</h1>
-            {props.resumes.map((resume: Resume, index) => {
+            {props.resumes.map((resume: Resume, index: number) => {
                 return (
                     <ResumeItem key={index} resume={resume} />
                 )
