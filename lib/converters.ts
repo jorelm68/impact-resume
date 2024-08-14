@@ -63,8 +63,7 @@ export const experienceConverter: FirestoreDataConverter<Experience> = {
             function: experience.function,
             startDate: experience.startDate,
             endDate: experience.endDate,
-            address: experience.address,
-            displayAddress: experience.displayAddress,
+            location: experience.location,
             workPhone: experience.workPhone,
             bullets: experience.bullets,
         };
@@ -72,17 +71,16 @@ export const experienceConverter: FirestoreDataConverter<Experience> = {
     fromFirestore(snapshot: QueryDocumentSnapshot<Experience>) {
         const data = snapshot.data();
         return {
-            title: data?.title || '',
-            organization: data?.organization || { name: '', industry: '' },
-            displayOrganizationAs: data?.displayOrganizationAs || '',
-            industry: data?.industry || '',
-            function: data?.function || '',
-            startDate: data?.startDate || '',
-            endDate: data?.endDate || '',
-            address: data?.address || '',
-            displayAddress: data?.displayAddress || false,
-            workPhone: data?.workPhone || '',
-            bullets: data?.bullets || [],
+            title: data?.title || null,
+            organization: data?.organization || null,
+            displayOrganizationAs: data?.displayOrganizationAs || null,
+            industry: data?.industry || null,
+            function: data?.function || null,
+            startDate: data?.startDate || null,
+            endDate: data?.endDate || null,
+            location: data?.location || null,
+            workPhone: data?.workPhone || null,
+            bullets: data?.bullets || null,
         } as Experience;
     }
 }
@@ -92,6 +90,7 @@ export const educationConverter: FirestoreDataConverter<Education> = {
     toFirestore(education: Education) {
         return {
             school: education.school,
+            location: education.location,
             college: education.college,
             degree: education.degree,
             majors: education.majors,
@@ -104,14 +103,15 @@ export const educationConverter: FirestoreDataConverter<Education> = {
     fromFirestore(snapshot: QueryDocumentSnapshot<Education>) {
         const data = snapshot.data();
         return {
-            school: data?.school || { name: '', address: '' },
-            college: data?.college || '',
-            degree: data?.degree || '',
-            majors: data?.majors || [],
-            startDate: data?.startDate || '',
-            endDate: data?.endDate || '',
-            classOf: data?.classOf || 0,
-            bullets: data?.bullets || [],
+            school: data?.school || null,
+            location: data?.location || null,
+            college: data?.college || null,
+            degree: data?.degree || null,
+            majors: data?.majors || null,
+            startDate: data?.startDate || null,
+            endDate: data?.endDate || null,
+            classOf: data?.classOf || null,
+            bullets: data?.bullets || null,
         } as Education;
     }
 }

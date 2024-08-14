@@ -6,17 +6,13 @@ export interface User {
     photoURL: string;
 }
 
-export interface School {
-    name: string;
-    address: string;
-}
-
 export interface Bullet {
     text: string;
 }
 
 export interface Education {
-    school: School;
+    school: string | null;
+    location: string | null;
     college: string | null;
     degree: string;
     majors: string[] | null;
@@ -27,21 +23,15 @@ export interface Education {
 }
 
 
-export interface Organization {
-    name: string;
-    industry: string | null;
-}
-
 export interface Experience {
-    title: string;
-    organization: Organization;
+    title: string | null;
+    organization: string | null;
     displayOrganizationAs: string | null;
     industry: string | null;
     function: string | null;
     startDate: Timestamp | FieldValue | null;
     endDate: Timestamp | FieldValue | null;
-    address: string | null;
-    displayAddress: boolean;
+    location: string | null;
     workPhone: string | null;
     bullets: string[] | null;
 }
