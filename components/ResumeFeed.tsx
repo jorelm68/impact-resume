@@ -1,5 +1,6 @@
 import { ResumeFeedProps } from "@/lib/props";
 import { Resume } from "@/lib/types";
+import Link from "next/link";
 
 export default function ResumeFeed(props: ResumeFeedProps) {
     return (
@@ -17,6 +18,8 @@ export default function ResumeFeed(props: ResumeFeedProps) {
 function ResumeItem({ resume }: { resume: Resume }) {
 
     return (
-        <p>{resume.slug}</p>
+        <Link href={`/resumes/${resume.slug}`}>
+            <button>{resume.slug}</button>
+        </Link>
     )
 }
