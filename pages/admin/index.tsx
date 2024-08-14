@@ -46,10 +46,6 @@ export default function CreateResumePage() {
             displayPhone: false,
             education: [],
             experience: [],
-            additional: null,
-            hiddenBullets: [],
-            hiddenEducation: [],
-            hiddenExperience: [],
         }
 
         await setDoc(ref, data);

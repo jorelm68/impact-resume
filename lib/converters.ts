@@ -34,10 +34,6 @@ export const resumeConverter: FirestoreDataConverter<Resume> = {
             displayPhone: resume.displayPhone,
             education: resume.education,
             experience: resume.experience,
-            additional: resume.additional,
-            hiddenBullets: resume.hiddenBullets,
-            hiddenExperience: resume.hiddenExperience,
-            hiddenEducation: resume.hiddenEducation,
         };
     },
     fromFirestore(snapshot: DocumentSnapshot) {
@@ -52,10 +48,6 @@ export const resumeConverter: FirestoreDataConverter<Resume> = {
             displayPhone: data?.displayPhone || false,
             education: data?.education || [],
             experience: data?.experience || [],
-            additional: data?.additional || '',
-            hiddenBullets: data?.hiddenBullets || [],
-            hiddenExperience: data?.hiddenExperience || [],
-            hiddenEducation: data?.hiddenEducation || [],
         } as Resume;
     },
 }

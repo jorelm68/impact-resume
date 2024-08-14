@@ -15,6 +15,10 @@ export interface School {
     address: string;
 }
 
+export interface Bullet {
+    text: string;
+}
+
 export interface Education {
     school: School;
     college: string | null;
@@ -24,7 +28,6 @@ export interface Education {
     graduationDate: ResumeDate | null;
     classOf: number | null;
     bullets: string[] | null;
-    hiddenBullets: string[] | null;
 }
 
 
@@ -45,12 +48,10 @@ export interface Experience {
     displayAddress: boolean;
     workPhone: string | null;
     bullets: string[] | null;
-    hiddenBullets: string[] | null;
 }
 
 export interface Additional {
     bullets: string[] | null;
-    hiddenBullets: string[] | null;
 }
 
 export interface Resume {
@@ -64,8 +65,4 @@ export interface Resume {
 
     education: string[] | null;
     experience: string[] | null;
-    additional: string | null;
-    hiddenEducation: string[] | null;
-    hiddenExperience: string[] | null;
-    hiddenBullets: string[] | null;
 }
