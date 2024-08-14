@@ -1,14 +1,10 @@
+import { FieldValue, Timestamp } from "firebase/firestore";
+
 export interface User { 
     email: string;
     displayName: string;
     photoURL: string;
 }
-
-export interface ResumeDate {
-    month: number | null;
-    year: number | null;
-}
-
 
 export interface School {
     name: string;
@@ -24,8 +20,8 @@ export interface Education {
     college: string | null;
     degree: string;
     majors: string[] | null;
-    startDate: ResumeDate;
-    graduationDate: ResumeDate | null;
+    startDate: Timestamp | FieldValue | null;
+    endDate: Timestamp | FieldValue | null;
     classOf: number | null;
     bullets: string[] | null;
 }
@@ -42,8 +38,8 @@ export interface Experience {
     displayOrganizationAs: string | null;
     industry: string | null;
     function: string | null;
-    startDate: ResumeDate;
-    endDate: ResumeDate | 'Present';
+    startDate: Timestamp | FieldValue | null;
+    endDate: Timestamp | FieldValue | null;
     address: string | null;
     displayAddress: boolean;
     workPhone: string | null;
