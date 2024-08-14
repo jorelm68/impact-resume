@@ -24,7 +24,9 @@ export default function Navbar() {
                         </li>
 
                         <li>
-                            <img alt="" src={user.photoURL ? user.photoURL : require('@/public/hacker.png')} />
+                            <Link href="/enter">
+                                <img alt="" src={user.photoURL ? user.photoURL : require('@/public/hacker.png')} />
+                            </Link>
                         </li>
                     </>
                 ) : (
