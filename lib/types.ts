@@ -41,6 +41,7 @@ export interface Additional {
 }
 
 export interface Resume {
+    slug: string;
     fullName: string | null;
     email: string | null;
     linkedInURL: string | null;
@@ -51,4 +52,7 @@ export interface Resume {
 
     education: string[] | null;
     experience: string[] | null;
+
+    createdAt: number | FieldValue | null;
+    updatedAt: number | FieldValue | null;
 }

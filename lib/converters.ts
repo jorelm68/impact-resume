@@ -1,4 +1,4 @@
-import { DocumentSnapshot, FirestoreDataConverter, QueryDocumentSnapshot } from "firebase/firestore";
+import { DocumentSnapshot, FirestoreDataConverter, QueryDocumentSnapshot, Timestamp } from "firebase/firestore";
 import { Additional, Bullet, Education, Experience, Resume, User } from "./types";
 
 // Firestore data converter for User
@@ -25,6 +25,7 @@ export const userConverter: FirestoreDataConverter<User> = {
 export const resumeConverter: FirestoreDataConverter<Resume> = {
     toFirestore(resume: Resume) {
         return {
+            slug: resume.slug,
             fullName: resume.fullName,
             email: resume.email,
             linkedInURL: resume.linkedInURL,
@@ -34,11 +35,14 @@ export const resumeConverter: FirestoreDataConverter<Resume> = {
             displayPhone: resume.displayPhone,
             education: resume.education,
             experience: resume.experience,
+            createdAt: typeof resume.createdAt === 'number' ? Timestamp.fromMillis(resume.createdAt) : resume.createdAt,
+            updatedAt: typeof resume.updatedAt === 'number' ? Timestamp.fromMillis(resume.updatedAt) : resume.updatedAt,
         };
     },
     fromFirestore(snapshot: QueryDocumentSnapshot<Resume>) {
         const data = snapshot.data();
         return {
+            slug: data?.slug || '',
             fullName: data?.fullName || '',
             email: data?.email || '',
             linkedInURL: data?.linkedInURL || '',
@@ -48,6 +52,8 @@ export const resumeConverter: FirestoreDataConverter<Resume> = {
             displayPhone: data?.displayPhone || false,
             education: data?.education || [],
             experience: data?.experience || [],
+            createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toMillis() : 0,
+            updatedAt: data.updatedAt instanceof Timestamp ? data.updatedAt.toMillis() : 0,
         } as Resume;
     },
 }
