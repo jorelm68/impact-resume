@@ -1,13 +1,13 @@
 import styles from "@/styles/Admin.module.css";
-import { UserContext } from "@/lib/context";
 import { useRouter } from "next/router";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import kebabCase from "lodash.kebabcase";
 import { auth, firestore } from "@/lib/firebase";
 import { collection, CollectionReference, doc, DocumentReference, DocumentSnapshot, getDoc, setDoc } from "firebase/firestore";
 import { resumeConverter, userConverter } from "@/lib/converters";
 import { Resume, User } from "@/lib/types";
 import toast from "react-hot-toast";
+import AuthCheck from "@/components/AuthCheck";
 
 export default function CreateResumePage() {
     const router = useRouter();
@@ -57,21 +57,25 @@ export default function CreateResumePage() {
     }
 
     return (
-        <form onSubmit={createPost}>
-            <input
-                value={resumeName}
-                onChange={(e: any) => setResumeName(e.target.value)}
-                placeholder="My New Resume!"
-                className={styles.input}
-            />
+        <main>
+            <AuthCheck>
+                <form onSubmit={createPost}>
+                    <input
+                        value={resumeName}
+                        onChange={(e: any) => setResumeName(e.target.value)}
+                        placeholder="My New Resume!"
+                        className={styles.input}
+                    />
 
-            <p>
-                <strong>Slug:</strong> {slug}
-            </p>
+                    <p>
+                        <strong>Slug:</strong> {slug}
+                    </p>
 
-            <button type='submit' disabled={!isValid} className='btn-green'>
-                Create New Resume
-            </button>
-        </form>
+                    <button type='submit' disabled={!isValid} className='btn-green'>
+                        Create New Resume
+                    </button>
+                </form>
+            </AuthCheck>
+        </main>
     )
 }
