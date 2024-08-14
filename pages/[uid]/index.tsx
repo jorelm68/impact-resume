@@ -26,7 +26,7 @@ function ResumeList() {
     const userCollectionRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
     const userDocRef: DocumentReference<User> = doc(userCollectionRef, auth.currentUser?.uid);
     const resumeCollectionRef: CollectionReference<Resume> = collection(userDocRef, 'resumes').withConverter(resumeConverter);
-    const queryInstance: Query<Resume> = query(resumeCollectionRef, orderBy('createdAt'));
+    const queryInstance: Query<Resume> = query(resumeCollectionRef, orderBy('updatedAt'));
 
     const [querySnapshot] = useCollection(queryInstance);
 
@@ -82,7 +82,7 @@ function CreateResume() {
         toast.success('Resume created!');
 
         // Imperative navigation after doc is set
-        router.push(`/admin/${slug}`);
+        router.push(`/${auth.currentUser?.uid}/${slug}`);
     }
 
     return (
