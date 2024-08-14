@@ -1,9 +1,11 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth, GoogleAuthProvider, signInWithPopup, User, UserCredential } from "firebase/auth";
-import { getFirestore, serverTimestamp } from "firebase/firestore";
+import { getAuth, GoogleAuthProvider, signInWithPopup, User as FirebaseUser, UserCredential } from "firebase/auth";
+import { doc, DocumentReference, DocumentSnapshot, getDoc, getFirestore, serverTimestamp, setDoc } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import { userConverter } from "./converters";
+import { User } from "./types";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -31,7 +33,7 @@ export const serverTimestampValue = serverTimestamp()
 
 export const signInWithUmich = async () => {
     const result: UserCredential = await signInWithPopup(auth, googleAuthProvider);
-    const user: User = result.user;
+    const user: FirebaseUser = result.user;
 
     if (!user.email || !user.uid) {
         throw new Error('Google sign-in failed. Missing email or uid.');
@@ -39,5 +41,17 @@ export const signInWithUmich = async () => {
 
     if (!user.email.endsWith('@umich.edu')) {
         throw new Error('Google sign-in failed. Only umich.edu emails are allowed.');
+    }
+
+    // Set user details in the database
+    const userRef: DocumentReference<User> = doc(firestore, 'users', user.uid).withConverter(userConverter);
+    const userDoc: DocumentSnapshot<User> = await getDoc(userRef);
+
+    if (!userDoc.exists()) {
+        await setDoc(userRef, {
+            email: user.email,
+            displayName: user.displayName ? user.displayName : user.email.split('@')[0],
+            photoURL: user.photoURL ? user.photoURL : 'https://github.com/fireship-io/next-firebase-course/blob/main/public/hacker.png?raw=true',
+        });
     }
 }

@@ -1,33 +1,12 @@
-export interface Address {
-    street: string | undefined;
-    city: string;
-    state: string | undefined;
-    zip: string | undefined;
-    country: string;
-}
-
-export type PhoneType = 'home' | 'work' | 'cell';
-export interface Phone {
-    areaCode: number | undefined;
-    number: number | undefined;
-    type: PhoneType | undefined;
-    extension: number | undefined;
-    country: string | undefined;
-}
-
-export interface Contact {
-    fullName: string | undefined;
-    email: string | undefined;
-    linkedInURL: string | undefined;
-    address: Address | undefined;
-    displayAddress: boolean;
-    phone: Phone | undefined;
-    displayPhone: boolean;
+export interface User { 
+    email: string;
+    displayName: string;
+    photoURL: string;
 }
 
 export interface ResumeDate {
-    month: number | undefined;
-    year: number | undefined;
+    month: number | null;
+    year: number | null;
 }
 
 
@@ -36,52 +15,57 @@ export interface School {
     address: string;
 }
 
-export interface Bullet {
-    text: string;
-}
-
 export interface Education {
     school: School;
-    college: string | undefined;
+    college: string | null;
     degree: string;
-    majors: string[] | undefined;
+    majors: string[] | null;
     startDate: ResumeDate;
-    graduationDate: ResumeDate | undefined;
-    classOf: number | undefined;
-    bullets: Bullet[] | undefined;
+    graduationDate: ResumeDate | null;
+    classOf: number | null;
+    bullets: string[] | null;
+    hiddenBullets: string[] | null;
 }
 
 
 export interface Organization {
     name: string;
-    industry: string | undefined;
+    industry: string | null;
 }
 
 export interface Experience {
     title: string;
     organization: Organization;
-    displayOrganizationAs: string | undefined;
-    industry: string | undefined;
-    function: string | undefined;
+    displayOrganizationAs: string | null;
+    industry: string | null;
+    function: string | null;
     startDate: ResumeDate;
     endDate: ResumeDate | 'Present';
-    address: Address | undefined;
+    address: string | null;
     displayAddress: boolean;
-    workPhone: Phone | undefined;
-    bullets: Bullet[] | undefined;
+    workPhone: string | null;
+    bullets: string[] | null;
+    hiddenBullets: string[] | null;
 }
 
 export interface Additional {
-    bullets: Bullet[] | undefined;
+    bullets: string[] | null;
+    hiddenBullets: string[] | null;
 }
 
 export interface Resume {
-    contact: Contact;
-    education: Education[];
-    experience: Experience[];
-    additional: Additional | undefined;
+    fullName: string | null;
+    email: string | null;
+    linkedInURL: string | null;
+    address: string | null;
+    phone: string | null;
+    displayAddress: boolean;
+    displayPhone: boolean;
 
-    hiddenBullets: string[];
-    hiddenExperience: string[];
-    hiddenEducation: string[];
+    education: string[] | null;
+    experience: string[] | null;
+    additional: string | null;
+    hiddenEducation: string[] | null;
+    hiddenExperience: string[] | null;
+    hiddenBullets: string[] | null;
 }
