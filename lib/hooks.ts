@@ -65,7 +65,7 @@ export function useExperience(slug: string) {
     return experience;
 }
 
-const useExperiences = () => {
+export function useExperiences() {
     const [experiences, setExperiences] = useState<Experience[] | null>(null);
 
     useEffect(() => {

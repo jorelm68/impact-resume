@@ -11,6 +11,7 @@ export interface Bullet {
 }
 
 export interface Education {
+    slug: string;
     school: string | null;
     location: string | null;
     college: string | null;
@@ -24,6 +25,7 @@ export interface Education {
 
 
 export interface Experience {
+    slug: string;
     title: string | null;
     organization: string | null;
     displayOrganizationAs: string | null;
@@ -37,6 +39,7 @@ export interface Experience {
 }
 
 export interface Additional {
+    slug: string;
     bullets: string[] | null;
 }
 

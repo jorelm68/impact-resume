@@ -5,17 +5,13 @@ import { Additional, Bullet, Education, Experience, Resume, User } from "./types
 export const userConverter: FirestoreDataConverter<User> = {
     toFirestore(user: User) {
         return {
-            email: user.email,
-            photoURL: user.photoURL,
-            displayName: user.displayName,
+            ...user,
         };
     },
     fromFirestore(snapshot: DocumentSnapshot) {
         const data = snapshot.data();
         return {
-            email: data?.email || '',
-            photoURL: data?.photoURL || '',
-            displayName: data?.displayName || '',
+            ...data,
         } as User;
     },
 };
@@ -25,16 +21,7 @@ export const userConverter: FirestoreDataConverter<User> = {
 export const resumeConverter: FirestoreDataConverter<Resume> = {
     toFirestore(resume: Resume) {
         return {
-            slug: resume.slug,
-            fullName: resume.fullName,
-            email: resume.email,
-            linkedInURL: resume.linkedInURL,
-            address: resume.address,
-            phone: resume.phone,
-            displayAddress: resume.displayAddress,
-            displayPhone: resume.displayPhone,
-            education: resume.education,
-            experience: resume.experience,
+            ...resume,
             createdAt: typeof resume.createdAt === 'number' ? Timestamp.fromMillis(resume.createdAt) : resume.createdAt,
             updatedAt: typeof resume.updatedAt === 'number' ? Timestamp.fromMillis(resume.updatedAt) : resume.updatedAt,
         };
@@ -42,16 +29,7 @@ export const resumeConverter: FirestoreDataConverter<Resume> = {
     fromFirestore(snapshot: QueryDocumentSnapshot<Resume>) {
         const data = snapshot.data();
         return {
-            slug: data?.slug || '',
-            fullName: data?.fullName || '',
-            email: data?.email || '',
-            linkedInURL: data?.linkedInURL || '',
-            address: data?.address || '',
-            phone: data?.phone || '',
-            displayAddress: data?.displayAddress || false,
-            displayPhone: data?.displayPhone || false,
-            education: data?.education || [],
-            experience: data?.experience || [],
+            ...data,
             createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toMillis() : 0,
             updatedAt: data.updatedAt instanceof Timestamp ? data.updatedAt.toMillis() : 0,
         } as Resume;
@@ -62,31 +40,13 @@ export const resumeConverter: FirestoreDataConverter<Resume> = {
 export const experienceConverter: FirestoreDataConverter<Experience> = {
     toFirestore(experience: Experience) {
         return {
-            title: experience.title,
-            organization: experience.organization,
-            displayOrganizationAs: experience.displayOrganizationAs,
-            industry: experience.industry,
-            function: experience.function,
-            startDate: experience.startDate,
-            endDate: experience.endDate,
-            location: experience.location,
-            workPhone: experience.workPhone,
-            bullets: experience.bullets,
+            ...experience,
         };
     },
     fromFirestore(snapshot: QueryDocumentSnapshot<Experience>) {
         const data = snapshot.data();
         return {
-            title: data?.title || null,
-            organization: data?.organization || null,
-            displayOrganizationAs: data?.displayOrganizationAs || null,
-            industry: data?.industry || null,
-            function: data?.function || null,
-            startDate: data?.startDate || null,
-            endDate: data?.endDate || null,
-            location: data?.location || null,
-            workPhone: data?.workPhone || null,
-            bullets: data?.bullets || null,
+            ...data,
         } as Experience;
     }
 }
