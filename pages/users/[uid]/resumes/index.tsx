@@ -1,7 +1,7 @@
 export default function ResumesPage() {
     return (
-        <div>
+        <main>
             <h1>Resumes</h1>
-        </div>
+        </main>
     )
 }

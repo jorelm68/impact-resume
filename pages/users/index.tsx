@@ -1,15 +1,18 @@
+import { UserContext } from "@/lib/context";
+import { auth } from "@/lib/firebase";
 import Link from "next/link";
+import { useContext } from "react";
 
 
 export default function UsersPage() {
+    const { user } = useContext(UserContext);
+
     return (
-        <div>
+        <main>
             <h1>Users</h1>
             <ul>
-                <li><Link href="/users/1">User 1</Link></li>
-                <li><Link href="/users/2">User 2</Link></li>
-                <li><Link href="/users/3">User 3</Link></li>
+                <li><Link href={`/users/${auth.currentUser?.uid}`}>{user?.email}</Link></li>
             </ul>
-        </div>
+        </main>
     )
 }

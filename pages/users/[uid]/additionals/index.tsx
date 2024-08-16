@@ -2,8 +2,8 @@
 
 export default function AdditionalsPage() {
     return (
-        <div>
+        <main>
             <h1>Additionals</h1>
-        </div>
+        </main>
     )
 }

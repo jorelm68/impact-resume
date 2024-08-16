@@ -1,7 +1,7 @@
 export default function AdditionalPage() {
     return (
-        <div>
+        <main>
             <h1>Additional</h1>
-        </div>
+        </main>
     )
 }

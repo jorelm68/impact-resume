@@ -1,7 +1,7 @@
 export default function ExperiencesPage() {
     return (
-        <div>
+        <main>
             <h1>Experiences</h1>
-        </div>
+        </main>
     )
 }

@@ -1,7 +1,7 @@
 export default function EducationPage() {
     return (
-        <div>
+        <main>
             <h1>Education</h1>
-        </div>
+        </main>
     )
 }
