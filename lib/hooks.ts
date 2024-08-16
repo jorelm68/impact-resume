@@ -25,6 +25,25 @@ export function useResume(slug: string) {
     return resume;
 }
 
+export function useResumes() {
+    const [resumes, setResumes] = useState<Resume[] | null>(null);
+
+    useEffect(() => {
+        const userCollectionRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
+        const userDocRef: DocumentReference<User> = doc(userCollectionRef, auth.currentUser?.uid);
+
+        const resumesCollectionRef: CollectionReference<Resume> = collection(userDocRef, 'resumes').withConverter(resumeConverter);
+        const unsubscribe = onSnapshot(resumesCollectionRef, (snapshot: QuerySnapshot<Resume>) => {
+            const resumes: Resume[] = snapshot.docs.map((doc) => doc.data());
+            setResumes(resumes);
+        })
+
+        return () => unsubscribe();
+    }, []);
+
+    return resumes;
+}
+
 export function useExperience(slug: string) { 
     const [experience, setExperience] = useState<Experience | null>(null);
     
@@ -44,6 +63,25 @@ export function useExperience(slug: string) {
     }, [slug]);
 
     return experience;
+}
+
+const useExperiences = () => {
+    const [experiences, setExperiences] = useState<Experience[] | null>(null);
+
+    useEffect(() => {
+        const userCollectionRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
+        const userDocRef: DocumentReference<User> = doc(userCollectionRef, auth.currentUser?.uid);
+
+        const experiencesCollectionRef: CollectionReference<Experience> = collection(userDocRef, 'experiences').withConverter(experienceConverter);
+        const unsubscribe = onSnapshot(experiencesCollectionRef, (snapshot: QuerySnapshot<Experience>) => {
+            const experiences: Experience[] = snapshot.docs.map((doc) => doc.data());
+            setExperiences(experiences);
+        })
+
+        return () => unsubscribe();
+    }, []);
+
+    return experiences;
 }
 
 export function useEducation(slug: string) {
@@ -67,6 +105,25 @@ export function useEducation(slug: string) {
     return education;
 }
 
+export function useEducations() {
+    const [educations, setEducations] = useState<Education[] | null>(null);
+
+    useEffect(() => {
+        const userCollectionRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
+        const userDocRef: DocumentReference<User> = doc(userCollectionRef, auth.currentUser?.uid);
+
+        const educationsCollectionRef: CollectionReference<Education> = collection(userDocRef, 'educations').withConverter(educationConverter);
+        const unsubscribe = onSnapshot(educationsCollectionRef, (snapshot: QuerySnapshot<Education>) => {
+            const educations: Education[] = snapshot.docs.map((doc) => doc.data());
+            setEducations(educations);
+        })
+
+        return () => unsubscribe();
+    }, []);
+
+    return educations;
+}
+
 export function useAdditional(slug: string) {
     const [additional, setAdditional] = useState<Additional | null>(null);
 
@@ -86,6 +143,25 @@ export function useAdditional(slug: string) {
     }, [slug]);
 
     return additional;
+}
+
+export function useAdditionals() {
+    const [additionals, setAdditionals] = useState<Additional[] | null>(null);
+
+    useEffect(() => {
+        const userCollectionRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
+        const userDocRef: DocumentReference<User> = doc(userCollectionRef, auth.currentUser?.uid);
+
+        const additionalsCollectionRef: CollectionReference<Additional> = collection(userDocRef, 'additionals').withConverter(additionalConverter);
+        const unsubscribe = onSnapshot(additionalsCollectionRef, (snapshot: QuerySnapshot<Additional>) => {
+            const additionals: Additional[] = snapshot.docs.map((doc) => doc.data());
+            setAdditionals(additionals);
+        })
+
+        return () => unsubscribe();
+    }, []);
+
+    return additionals;
 }
 
 export function useBullets(type: 'experience' | 'education' | 'additional', slug: string) {
