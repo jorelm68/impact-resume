@@ -44,14 +44,16 @@ export function useResumes() {
     return resumes;
 }
 
-export function useExperience(slug: string) { 
+export function useExperience(resume: string, slug: string) {
     const [experience, setExperience] = useState<Experience | null>(null);
-    
+
     useEffect(() => {
         const userCollecitonRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
         const userDocRef: DocumentReference<User> = doc(userCollecitonRef, auth.currentUser?.uid);
+        const resumeCollectionRef: CollectionReference<Resume> = collection(userDocRef, 'resumes').withConverter(resumeConverter);
+        const resumeDocRef: DocumentReference<Resume> = doc(resumeCollectionRef, resume);
 
-        const experienceCollectionRef: CollectionReference<Experience> = collection(userDocRef, 'experiences').withConverter(experienceConverter);
+        const experienceCollectionRef: CollectionReference<Experience> = collection(resumeDocRef, 'experiences').withConverter(experienceConverter);
         const experienceDocRef: DocumentReference<Experience> = doc(experienceCollectionRef, slug);
         const unsubscribe = onSnapshot(experienceDocRef, (snapshot: DocumentSnapshot<Experience>) => {
             const experience: Experience | undefined = snapshot.data();
@@ -65,14 +67,16 @@ export function useExperience(slug: string) {
     return experience;
 }
 
-export function useExperiences() {
+export function useExperiences(resume: string) {
     const [experiences, setExperiences] = useState<Experience[] | null>(null);
 
     useEffect(() => {
-        const userCollectionRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
-        const userDocRef: DocumentReference<User> = doc(userCollectionRef, auth.currentUser?.uid);
+        const userCollecitonRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
+        const userDocRef: DocumentReference<User> = doc(userCollecitonRef, auth.currentUser?.uid);
+        const resumeCollectionRef: CollectionReference<Resume> = collection(userDocRef, 'resumes').withConverter(resumeConverter);
+        const resumeDocRef: DocumentReference<Resume> = doc(resumeCollectionRef, resume);
 
-        const experiencesCollectionRef: CollectionReference<Experience> = collection(userDocRef, 'experiences').withConverter(experienceConverter);
+        const experiencesCollectionRef: CollectionReference<Experience> = collection(resumeDocRef, 'experiences').withConverter(experienceConverter);
         const unsubscribe = onSnapshot(experiencesCollectionRef, (snapshot: QuerySnapshot<Experience>) => {
             const experiences: Experience[] = snapshot.docs.map((doc) => doc.data());
             setExperiences(experiences);
@@ -84,14 +88,16 @@ export function useExperiences() {
     return experiences;
 }
 
-export function useEducation(slug: string) {
+export function useEducation(resume: string, slug: string) {
     const [education, setEducation] = useState<Education | null>(null);
 
     useEffect(() => {
-        const userCollectionRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
-        const userDocRef: DocumentReference<User> = doc(userCollectionRef, auth.currentUser?.uid);
+        const userCollecitonRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
+        const userDocRef: DocumentReference<User> = doc(userCollecitonRef, auth.currentUser?.uid);
+        const resumeCollectionRef: CollectionReference<Resume> = collection(userDocRef, 'resumes').withConverter(resumeConverter);
+        const resumeDocRef: DocumentReference<Resume> = doc(resumeCollectionRef, resume);
 
-        const educationCollectionRef: CollectionReference<Education> = collection(userDocRef, 'educations').withConverter(educationConverter);
+        const educationCollectionRef: CollectionReference<Education> = collection(resumeDocRef, 'educations').withConverter(educationConverter);
         const educationDocRef: DocumentReference<Education> = doc(educationCollectionRef, slug);
         const unsubscribe = onSnapshot(educationDocRef, (snapshot: DocumentSnapshot<Education>) => {
             const education: Education | undefined = snapshot.data();
@@ -105,14 +111,16 @@ export function useEducation(slug: string) {
     return education;
 }
 
-export function useEducations() {
+export function useEducations(resume: string) {
     const [educations, setEducations] = useState<Education[] | null>(null);
 
     useEffect(() => {
-        const userCollectionRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
-        const userDocRef: DocumentReference<User> = doc(userCollectionRef, auth.currentUser?.uid);
+        const userCollecitonRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
+        const userDocRef: DocumentReference<User> = doc(userCollecitonRef, auth.currentUser?.uid);
+        const resumeCollectionRef: CollectionReference<Resume> = collection(userDocRef, 'resumes').withConverter(resumeConverter);
+        const resumeDocRef: DocumentReference<Resume> = doc(resumeCollectionRef, resume);
 
-        const educationsCollectionRef: CollectionReference<Education> = collection(userDocRef, 'educations').withConverter(educationConverter);
+        const educationsCollectionRef: CollectionReference<Education> = collection(resumeDocRef, 'educations').withConverter(educationConverter);
         const unsubscribe = onSnapshot(educationsCollectionRef, (snapshot: QuerySnapshot<Education>) => {
             const educations: Education[] = snapshot.docs.map((doc) => doc.data());
             setEducations(educations);
@@ -124,14 +132,16 @@ export function useEducations() {
     return educations;
 }
 
-export function useAdditional(slug: string) {
+export function useAdditional(resume: string, slug: string) {
     const [additional, setAdditional] = useState<Additional | null>(null);
 
     useEffect(() => {
-        const userCollectionRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
-        const userDocRef: DocumentReference<User> = doc(userCollectionRef, auth.currentUser?.uid);
+        const userCollecitonRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
+        const userDocRef: DocumentReference<User> = doc(userCollecitonRef, auth.currentUser?.uid);
+        const resumeCollectionRef: CollectionReference<Resume> = collection(userDocRef, 'resumes').withConverter(resumeConverter);
+        const resumeDocRef: DocumentReference<Resume> = doc(resumeCollectionRef, resume);
 
-        const additionalCollectionRef: CollectionReference<Additional> = collection(userDocRef, 'additionals').withConverter(additionalConverter);
+        const additionalCollectionRef: CollectionReference<Additional> = collection(resumeDocRef, 'additionals').withConverter(additionalConverter);
         const additionalDocRef: DocumentReference<Additional> = doc(additionalCollectionRef, slug);
         const unsubscribe = onSnapshot(additionalDocRef, (snapshot: DocumentSnapshot<Additional>) => {
             const additional: Additional | undefined = snapshot.data();
@@ -145,14 +155,16 @@ export function useAdditional(slug: string) {
     return additional;
 }
 
-export function useAdditionals() {
+export function useAdditionals(resume: string) {
     const [additionals, setAdditionals] = useState<Additional[] | null>(null);
 
     useEffect(() => {
-        const userCollectionRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
-        const userDocRef: DocumentReference<User> = doc(userCollectionRef, auth.currentUser?.uid);
+        const userCollecitonRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
+        const userDocRef: DocumentReference<User> = doc(userCollecitonRef, auth.currentUser?.uid);
+        const resumeCollectionRef: CollectionReference<Resume> = collection(userDocRef, 'resumes').withConverter(resumeConverter);
+        const resumeDocRef: DocumentReference<Resume> = doc(resumeCollectionRef, resume);
 
-        const additionalsCollectionRef: CollectionReference<Additional> = collection(userDocRef, 'additionals').withConverter(additionalConverter);
+        const additionalsCollectionRef: CollectionReference<Additional> = collection(resumeDocRef, 'additionals').withConverter(additionalConverter);
         const unsubscribe = onSnapshot(additionalsCollectionRef, (snapshot: QuerySnapshot<Additional>) => {
             const additionals: Additional[] = snapshot.docs.map((doc) => doc.data());
             setAdditionals(additionals);
@@ -164,14 +176,18 @@ export function useAdditionals() {
     return additionals;
 }
 
-export function useBullets(type: 'experience' | 'education' | 'additional', slug: string) {
+export function useBullets<T>(resume: string, type: 'additional' | 'experience' | 'education', payload: string, slug: string) {
     const [bullets, setBullets] = useState<Bullet[] | null>(null);
 
     useEffect(() => {
-        const userCollectionRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
-        const userDocRef: DocumentReference<User> = doc(userCollectionRef, auth.currentUser?.uid);
+        const userCollecitonRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
+        const userDocRef: DocumentReference<User> = doc(userCollecitonRef, auth.currentUser?.uid);
+        const resumeCollectionRef: CollectionReference<Resume> = collection(userDocRef, 'resumes').withConverter(resumeConverter);
+        const resumeDocRef: DocumentReference<Resume> = doc(resumeCollectionRef, resume);
 
-        const bulletsCollectionRef: CollectionReference<Bullet> = collection(userDocRef, `${type}s/${slug}/bullets`).withConverter(bulletConverter);
+        const collectionRef: CollectionReference<Additional | Education | Experience> = collection(resumeDocRef, `${type}s`).withConverter(type === 'additional' ? additionalConverter : type === 'experience' ? experienceConverter : educationConverter);
+
+        const bulletsCollectionRef: CollectionReference<Bullet> = collection(collectionRef, 'bullets').withConverter(bulletConverter);
         const unsubscribe = onSnapshot(bulletsCollectionRef, (snapshot: QuerySnapshot<Bullet>) => {
             const bullets: Bullet[] = snapshot.docs.map((doc) => doc.data());
             setBullets(bullets);
