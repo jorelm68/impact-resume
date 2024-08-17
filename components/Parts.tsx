@@ -19,7 +19,11 @@ export function EducationPart({ resume, slug }: { resume: string, slug: string |
     }
 
     return (
-        <View>
+        <View style={{
+            border: '1px solid #ccc',
+            borderRadius: '0.5rem',
+            padding: '1rem',
+        }}>
             <Part>
                 <View style={{
                     display: 'flex',
