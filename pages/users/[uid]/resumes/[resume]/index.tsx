@@ -1,4 +1,6 @@
 import { AdditionalPart, EducationPart, ExperiencePart } from "@/components/Parts";
+import PlusButton from "@/components/PlusButton";
+import View from "@/components/View";
 import { useResume } from "@/lib/hooks";
 import { ResumePageProps } from "@/lib/props";
 import { Resume } from "@/lib/types";
@@ -23,9 +25,21 @@ export default function ResumePage({ resume }: ResumePageProps) {
 
     return (
         <main>
+
             <h1>Resume</h1>
 
-            <h2>Education</h2>
+
+            <View style={{
+                display: 'flex',
+                gap: '16px',
+                flexDirection: 'row',
+                alignItems: 'center',
+            }}>
+                <h2>Education</h2>
+
+                <PlusButton />
+            </View>
+
             {resumeDoc.educations.map((slug) => <EducationPart key={slug} resume={resume} slug={slug} />)}
 
             <h2>Experience</h2>
@@ -33,6 +47,6 @@ export default function ResumePage({ resume }: ResumePageProps) {
 
             <h2>Additional</h2>
             {resumeDoc.additionals.map((slug) => <AdditionalPart key={slug} resume={resume} slug={slug} />)}
-        </main>
+        </main >
     )
 }
