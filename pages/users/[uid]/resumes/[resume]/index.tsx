@@ -36,16 +36,30 @@ export default function ResumePage({ resume }: ResumePageProps) {
                 alignItems: 'center',
             }}>
                 <h2>Education</h2>
-
                 <PlusButton />
             </View>
-
             {resumeDoc.educations.map((slug) => <EducationPart key={slug} resume={resume} slug={slug} />)}
 
-            <h2>Experience</h2>
+            <View style={{
+                display: 'flex',
+                gap: '16px',
+                flexDirection: 'row',
+                alignItems: 'center',
+            }}>
+                <h2>Experience</h2>
+                <PlusButton />
+            </View>
             {resumeDoc.experiences.map((slug) => <ExperiencePart key={slug} resume={resume} slug={slug} />)}
 
-            <h2>Additional</h2>
+            <View style={{
+                display: 'flex',
+                gap: '16px',
+                flexDirection: 'row',
+                alignItems: 'center',
+            }}>
+                <h2>Additional</h2>
+                <PlusButton />
+            </View>
             {resumeDoc.additionals.map((slug) => <AdditionalPart key={slug} resume={resume} slug={slug} />)}
         </main >
     )
