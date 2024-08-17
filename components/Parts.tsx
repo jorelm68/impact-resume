@@ -2,6 +2,8 @@ import { useAdditional, useEducation, useExperience } from "@/lib/hooks"
 import { Additional, Education, Experience } from '@/lib/types'
 import Text from "./Text";
 import View from "./View";
+import { formatDate, formatTimestamp } from "@/lib/helper";
+import { Timestamp } from "firebase/firestore";
 
 export function EducationPart({ resume, slug }: { resume: string, slug: string | null }) {
     if (!slug) {
@@ -20,10 +22,26 @@ export function EducationPart({ resume, slug }: { resume: string, slug: string |
                 display: 'flex',
                 justifyContent: 'space-between',
                 flexDirection: 'column',
+                border: '1px solid #ccc',
+                padding: '1rem',
+                borderRadius: '0.5rem',
             }}>
-                <Text>{education.school}</Text>
-                <Text>{education.college}</Text>
-                <Text>{education.degree}</Text>
+                <View style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    flexDirection: 'row',
+                }}>
+                    <Text style={{
+                        fontWeight: 'bold',
+                    }}>{education.school}</Text>
+                    <Text style={{
+                        fontWeight: 'bold',
+                    }}>{education.location}</Text>
+                </View>
+                <Text style={{
+                    fontWeight: 'bold',
+                }}>{education.college}</Text>
+                <Text>{education.degree}, {education.endDate instanceof Timestamp ? formatTimestamp(education.endDate) : ''}</Text>
             </View>
         </section>
     )
