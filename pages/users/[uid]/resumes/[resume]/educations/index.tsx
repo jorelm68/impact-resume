@@ -1,19 +1,22 @@
 import { auth } from "@/lib/firebase";
 import { useEducations } from "@/lib/hooks";
+import { EducationPageProps } from "@/lib/props";
 import { Education } from "@/lib/types";
 
-export default function EducationsPage() {
+export default function EducationsPage(props: EducationPageProps) {
+    const { resume } = props.params as { resume: string };
+
     return (
         <main>
             <h1>Educations</h1>
 
-            <EducationList />
+            <EducationList resume={resume} />
         </main>
     )
 }
 
-function EducationList() {
-    const educations: Education[] | null = useEducations();
+function EducationList({ resume }: { resume: string }) {
+    const educations: Education[] | null = useEducations(resume);
 
     if (!educations) return <p>Loading...</p>;
 

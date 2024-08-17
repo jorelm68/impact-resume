@@ -1,19 +1,24 @@
 import { auth } from "@/lib/firebase";
 import { useExperiences } from "@/lib/hooks";
+import { ExperiencesPageProps } from "@/lib/props";
 import { Experience } from "@/lib/types";
 
-export default function ExperiencesPage() {
+export default function ExperiencesPage(props: ExperiencesPageProps) {
+    console.log(props);
+    const { resume } = props.params as { resume: string };
+    console.log(resume);
+
     return (
         <main>
             <h1>Experiences</h1>
 
-            <ExperienceList />
+            <ExperienceList resume={resume} />
         </main>
     )
 }
 
-function ExperienceList() {
-    const experiences: Experience[] | null = useExperiences();
+function ExperienceList({ resume }: { resume: string }) {
+    const experiences: Experience[] | null = useExperiences(resume);
 
     if (!experiences) return <p>Loading...</p>;
 

@@ -1,19 +1,22 @@
 import { auth } from "@/lib/firebase";
 import { useAdditionals } from "@/lib/hooks";
+import { AdditionalPageProps } from "@/lib/props";
 import { Additional } from "@/lib/types";
 
-export default function AdditionalsPage() {
+export default function AdditionalsPage(props: AdditionalPageProps) {
+    const { resume } = props.params as { resume: string };
+
     return (
         <main>
             <h1>Additionals</h1>
 
-            <AdditionalList />
+            <AdditionalList resume={resume} />
         </main>
     )
 }
 
-function AdditionalList() {
-    const additionals: Additional[] | null = useAdditionals();
+function AdditionalList({ resume }: { resume: string }) {
+    const additionals: Additional[] | null = useAdditionals(resume);
 
     if (!additionals) return <p>Loading...</p>;
 

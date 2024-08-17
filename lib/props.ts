@@ -8,3 +8,24 @@ export interface AuthCheckProps {
 export interface ResumeFeedProps {
     resumes: Resume[];
 }
+
+export interface ExperiencesPageProps {
+    params: {
+        uid: string;
+        resume: string;
+    }
+}
+
+export interface EducationPageProps {
+    params: {
+        uid: string;
+        resume: string;
+    }
+}
+
+export interface AdditionalPageProps {
+    params: {
+        uid: string;
+        resume: string;
+    }
+}
