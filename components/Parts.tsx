@@ -20,40 +20,17 @@ export function EducationPart({ resume, slug }: { resume: string, slug: string |
 
     return (
         <Wrapper>
-            <Part>
-                <View style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    flexGrow: 1,
-                }}>
-                    <View style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        flexDirection: 'row',
-                    }}>
-                        <Text style={{
-                            fontWeight: 'bold',
-                        }}>{education.school}</Text>
-                        <Text style={{
-                            fontWeight: 'bold',
-                        }}>{education.location}</Text>
-                    </View>
-                    <Text style={{
-                        fontWeight: 'bold',
-                    }}>{education.college}</Text>
-                    <Text>{education.degree}, {education.endDate instanceof Timestamp ? formatTimestamp(education.endDate) : ''}</Text>
-                </View>
-            </Part>
+            <Section>
+                <EducationHeader education={education} />
+            </Section>
 
-            <View style={{
-                paddingLeft: '1rem',
-            }}>
+            <Indent>
                 {education.bullets && education.bullets.length > 0 && education.bullets.map((bullet, index) => {
                     return (
                         <Bullet key={index} resume={resume} type='education' payload={slug} slug={bullet} />
                     )
                 })}
-            </View>
+            </Indent>
         </Wrapper>
     )
 }
@@ -65,9 +42,23 @@ export function ExperiencePart({ resume, slug }: { resume: string, slug: string 
 
     const experience: Experience | null = useExperience(resume, slug);
 
+    if (!experience) {
+        return null;
+    }
+
     return (
         <Wrapper>
-            <h2>Experience</h2>
+            <Section>
+                <ExperienceHeader experience={experience} />
+            </Section>
+
+            <Indent>
+                {experience.bullets && experience.bullets.length > 0 && experience.bullets.map((bullet, index) => {
+                    return (
+                        <Bullet key={index} resume={resume} type='experience' payload={slug} slug={bullet} />
+                    )
+                })}
+            </Indent>
         </Wrapper>
     )
 }
@@ -79,9 +70,17 @@ export function AdditionalPart({ resume, slug }: { resume: string, slug: string 
 
     const additional: Additional | null = useAdditional(resume, slug);
 
+    if (!additional) {
+        return null;
+    }
+
     return (
         <Wrapper>
-            <h2>Additional</h2>
+            {additional.bullets && additional.bullets.length > 0 && additional.bullets.map((bullet, index) => {
+                return (
+                    <Bullet key={index} resume={resume} type='additional' payload={slug} slug={bullet} />
+                )
+            })}
         </Wrapper>
     )
 }
@@ -95,9 +94,55 @@ function Bullet({ resume, type, payload, slug }: { resume: string, type: 'educat
 
 
     return (
-        <Part>
+        <Section>
             <Text>{bullet.text}</Text>
-        </Part>
+        </Section>
+    )
+}
+
+function EducationHeader({ education }: { education: Education }) {
+    return (
+        <>
+            <View style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                flexDirection: 'row',
+            }}>
+                <Text style={{
+                    fontWeight: 'bold',
+                }}>{education.school}</Text>
+                <Text style={{
+                    fontWeight: 'bold',
+                }}>{education.location}</Text>
+            </View>
+            <Text style={{
+                fontWeight: 'bold',
+            }}>{education.college}</Text>
+            <Text>{education.degree}, {education.endDate instanceof Timestamp ? formatTimestamp(education.endDate) : ''}</Text>
+        </>
+    )
+}
+
+function ExperienceHeader({ experience }: { experience: Experience }) {
+    return (
+        <>
+            <View style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                flexDirection: 'row',
+            }}>
+                <Text style={{
+                    fontWeight: 'bold',
+                }}>{experience.organization}</Text>
+                <Text style={{
+                    fontWeight: 'bold',
+                }}>{experience.location}</Text>
+            </View>
+            <Text style={{
+                fontWeight: 'bold',
+            }}>{experience.title}</Text>
+            <Text>{experience.startDate instanceof Timestamp ? formatTimestamp(experience.startDate) : ''} - {experience.endDate instanceof Timestamp ? formatTimestamp(experience.endDate) : ''}</Text>
+        </>
     )
 }
 
@@ -113,16 +158,34 @@ function Wrapper({ children }: { children: React.ReactNode }) {
     )
 }
 
-function Part({ children }: { children: React.ReactNode }) {
+function Section({ children }: { children: React.ReactNode }) {
     return (
         <View style={{
             display: 'flex',
             flexDirection: 'row',
-            padding: '0.25rem 0',
-            gap: '1rem',
+            padding: '4px 0px',
+            gap: '24px',
+            width: '100%',
         }}>
             <Checkbox />
             <Dots />
+            <View style={{
+                display: 'flex',
+                flexDirection: 'column',
+                flexGrow: 1,
+                justifyContent: 'space-between',
+            }}>
+                {children}
+            </View>
+        </View>
+    )
+}
+
+function Indent({ children }: { children: React.ReactNode }) {
+    return (
+        <View style={{
+            paddingLeft: '1rem',
+        }}>
             {children}
         </View>
     )

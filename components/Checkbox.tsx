@@ -6,7 +6,6 @@ export default function () {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            width: '1rem',
         }}>
             <input type="checkbox" />
         </View>

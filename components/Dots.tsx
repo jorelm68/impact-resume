@@ -6,7 +6,8 @@ export default function Dots() {
         <View style={{
             width: '24px',
             minHeight: '24px',
-            backgroundColor: 'blue',
+            backgroundColor: '#ccc',
+            borderRadius: '8px',
         }} />
     );
 }
