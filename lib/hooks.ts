@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Additional, Bullet, Education, Experience, Resume, User } from "./types";
 import { collection, CollectionReference, doc, DocumentReference, DocumentSnapshot, onSnapshot, QuerySnapshot } from "firebase/firestore";
 import { auth, firestore } from "./firebase";
+import { User as FirebaseUser } from 'firebase/auth';
 import { additionalConverter, bulletConverter, educationConverter, experienceConverter, resumeConverter, userConverter } from "./converters";
 
 export function useResume(slug: string) {
@@ -29,8 +30,11 @@ export function useResumes() {
     const [resumes, setResumes] = useState<Resume[] | null>(null);
 
     useEffect(() => {
+        const firebaseUser: FirebaseUser | null = auth.currentUser;
+        if (!firebaseUser) return;
+
         const userCollectionRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
-        const userDocRef: DocumentReference<User> = doc(userCollectionRef, auth.currentUser?.uid);
+        const userDocRef: DocumentReference<User> = doc(userCollectionRef, auth.currentUser?.uid || '');
 
         const resumesCollectionRef: CollectionReference<Resume> = collection(userDocRef, 'resumes').withConverter(resumeConverter);
         const unsubscribe = onSnapshot(resumesCollectionRef, (snapshot: QuerySnapshot<Resume>) => {
@@ -39,7 +43,7 @@ export function useResumes() {
         })
 
         return () => unsubscribe();
-    }, []);
+    }, [auth.currentUser]);
 
     return resumes;
 }
