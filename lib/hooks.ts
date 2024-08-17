@@ -201,7 +201,7 @@ export function useAdditionals(resume: string) {
     return additionals;
 }
 
-export function useBullets<T>(resume: string, type: 'additional' | 'experience' | 'education', payload: string, slug: string) {
+export function useBullets<T>(resume: string, type: 'additional' | 'experience' | 'education', slug: string) {
     const [bullets, setBullets] = useState<Bullet[] | null>(null);
 
     useEffect(() => {
@@ -226,3 +226,31 @@ export function useBullets<T>(resume: string, type: 'additional' | 'experience' 
 
     return bullets;
 } 
+
+export function useBullet<T>(resume: string, type: 'additional' | 'experience' | 'education', slug: string) {
+    const [bullet, setBullet] = useState<Bullet | null>(null);
+
+    useEffect(() => {
+        const firebaseUser: FirebaseUser | null = auth.currentUser;
+        if (!firebaseUser) return;
+
+        const userCollecitonRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
+        const userDocRef: DocumentReference<User> = doc(userCollecitonRef, auth.currentUser?.uid);
+        const resumeCollectionRef: CollectionReference<Resume> = collection(userDocRef, 'resumes').withConverter(resumeConverter);
+        const resumeDocRef: DocumentReference<Resume> = doc(resumeCollectionRef, resume);
+
+        const collectionRef: CollectionReference<Additional | Education | Experience> = collection(resumeDocRef, `${type}s`).withConverter(type === 'additional' ? additionalConverter : type === 'experience' ? experienceConverter : educationConverter);
+        const bulletCollectionRef: CollectionReference<Bullet> = collection(collectionRef, 'bullets').withConverter(bulletConverter);
+        const bulletDocRef: DocumentReference<Bullet> = doc(bulletCollectionRef, slug);
+
+        const unsubscribe = onSnapshot(bulletDocRef, (snapshot: DocumentSnapshot<Bullet>) => {
+            const bullet: Bullet | undefined = snapshot.data();
+            if (!bullet) return;
+            setBullet(bullet);
+        })
+
+        return () => unsubscribe();
+    }, [type, slug, auth.currentUser]);
+
+    return bullet;
+}
