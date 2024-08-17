@@ -26,15 +26,15 @@ export function EducationPart({ resume, slug }: { resume: string, slug: string |
             padding: '1rem',
             borderRadius: '0.5rem',
             gap: '1rem',
+            height: 'auto',
         }}>
             <Checkbox />
-
             <Dots />
 
             <View style={{
                 display: 'flex',
-                justifyContent: 'space-between',
                 flexDirection: 'column',
+                backgroundColor: 'green',
                 flexGrow: 1,
             }}>
                 <View style={{
