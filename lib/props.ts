@@ -29,3 +29,7 @@ export interface AdditionalPageProps {
         resume: string;
     }
 }
+
+export interface ResumePageProps {
+    resume: string;
+}

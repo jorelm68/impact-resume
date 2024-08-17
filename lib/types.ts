@@ -53,8 +53,9 @@ export interface Resume {
     displayAddress: boolean;
     displayPhone: boolean;
 
-    education: string[] | null;
-    experience: string[] | null;
+    educations: string[] | null;
+    experiences: string[] | null;
+    additionals: string[] | null;
 
     createdAt: number | FieldValue | null;
     updatedAt: number | FieldValue | null;

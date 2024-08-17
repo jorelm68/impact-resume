@@ -9,6 +9,9 @@ export function useResume(slug: string) {
     const [resume, setResume] = useState<Resume | null>(null);
 
     useEffect(() => {
+        const firebaseUser: FirebaseUser | null = auth.currentUser;
+        if (!firebaseUser) return;
+
         const userCollectionRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
         const userDocRef: DocumentReference<User> = doc(userCollectionRef, auth.currentUser?.uid);
 
@@ -21,7 +24,7 @@ export function useResume(slug: string) {
         })
 
         return () => unsubscribe();
-    }, [slug]);
+    }, [slug, auth.currentUser]);
 
     return resume;
 }
@@ -52,6 +55,9 @@ export function useExperience(resume: string, slug: string) {
     const [experience, setExperience] = useState<Experience | null>(null);
 
     useEffect(() => {
+        const firebaseUser: FirebaseUser | null = auth.currentUser;
+        if (!firebaseUser) return;
+
         const userCollecitonRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
         const userDocRef: DocumentReference<User> = doc(userCollecitonRef, auth.currentUser?.uid);
         const resumeCollectionRef: CollectionReference<Resume> = collection(userDocRef, 'resumes').withConverter(resumeConverter);
@@ -66,7 +72,7 @@ export function useExperience(resume: string, slug: string) {
         })
 
         return () => unsubscribe();
-    }, [slug]);
+    }, [slug, auth.currentUser]);
 
     return experience;
 }
@@ -75,6 +81,9 @@ export function useExperiences(resume: string) {
     const [experiences, setExperiences] = useState<Experience[] | null>(null);
 
     useEffect(() => {
+        const firebaseUser: FirebaseUser | null = auth.currentUser;
+        if (!firebaseUser) return;
+
         const userCollecitonRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
         const userDocRef: DocumentReference<User> = doc(userCollecitonRef, auth.currentUser?.uid);
         const resumeCollectionRef: CollectionReference<Resume> = collection(userDocRef, 'resumes').withConverter(resumeConverter);
@@ -87,7 +96,7 @@ export function useExperiences(resume: string) {
         })
 
         return () => unsubscribe();
-    }, []);
+    }, [auth.currentUser]);
 
     return experiences;
 }
@@ -96,6 +105,9 @@ export function useEducation(resume: string, slug: string) {
     const [education, setEducation] = useState<Education | null>(null);
 
     useEffect(() => {
+        const firebaseUser: FirebaseUser | null = auth.currentUser;
+        if (!firebaseUser) return;
+
         const userCollecitonRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
         const userDocRef: DocumentReference<User> = doc(userCollecitonRef, auth.currentUser?.uid);
         const resumeCollectionRef: CollectionReference<Resume> = collection(userDocRef, 'resumes').withConverter(resumeConverter);
@@ -110,7 +122,7 @@ export function useEducation(resume: string, slug: string) {
         })
 
         return () => unsubscribe();
-    }, [slug]);
+    }, [slug, auth.currentUser]);
 
     return education;
 }
@@ -119,6 +131,9 @@ export function useEducations(resume: string) {
     const [educations, setEducations] = useState<Education[] | null>(null);
 
     useEffect(() => {
+        const firebaseUser: FirebaseUser | null = auth.currentUser;
+        if (!firebaseUser) return;
+
         const userCollecitonRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
         const userDocRef: DocumentReference<User> = doc(userCollecitonRef, auth.currentUser?.uid);
         const resumeCollectionRef: CollectionReference<Resume> = collection(userDocRef, 'resumes').withConverter(resumeConverter);
@@ -131,7 +146,7 @@ export function useEducations(resume: string) {
         })
 
         return () => unsubscribe();
-    }, []);
+    }, [auth.currentUser]);
 
     return educations;
 }
@@ -140,6 +155,9 @@ export function useAdditional(resume: string, slug: string) {
     const [additional, setAdditional] = useState<Additional | null>(null);
 
     useEffect(() => {
+        const firebaseUser: FirebaseUser | null = auth.currentUser;
+        if (!firebaseUser) return;
+
         const userCollecitonRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
         const userDocRef: DocumentReference<User> = doc(userCollecitonRef, auth.currentUser?.uid);
         const resumeCollectionRef: CollectionReference<Resume> = collection(userDocRef, 'resumes').withConverter(resumeConverter);
@@ -154,7 +172,7 @@ export function useAdditional(resume: string, slug: string) {
         })
 
         return () => unsubscribe();
-    }, [slug]);
+    }, [slug, auth.currentUser]);
 
     return additional;
 }
@@ -163,6 +181,9 @@ export function useAdditionals(resume: string) {
     const [additionals, setAdditionals] = useState<Additional[] | null>(null);
 
     useEffect(() => {
+        const firebaseUser: FirebaseUser | null = auth.currentUser;
+        if (!firebaseUser) return;
+
         const userCollecitonRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
         const userDocRef: DocumentReference<User> = doc(userCollecitonRef, auth.currentUser?.uid);
         const resumeCollectionRef: CollectionReference<Resume> = collection(userDocRef, 'resumes').withConverter(resumeConverter);
@@ -175,7 +196,7 @@ export function useAdditionals(resume: string) {
         })
 
         return () => unsubscribe();
-    }, []);
+    }, [auth.currentUser]);
 
     return additionals;
 }
@@ -184,6 +205,9 @@ export function useBullets<T>(resume: string, type: 'additional' | 'experience' 
     const [bullets, setBullets] = useState<Bullet[] | null>(null);
 
     useEffect(() => {
+        const firebaseUser: FirebaseUser | null = auth.currentUser;
+        if (!firebaseUser) return;
+
         const userCollecitonRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
         const userDocRef: DocumentReference<User> = doc(userCollecitonRef, auth.currentUser?.uid);
         const resumeCollectionRef: CollectionReference<Resume> = collection(userDocRef, 'resumes').withConverter(resumeConverter);
@@ -198,7 +222,7 @@ export function useBullets<T>(resume: string, type: 'additional' | 'experience' 
         })
 
         return () => unsubscribe();
-    }, [type, slug]);
+    }, [type, slug, auth.currentUser]);
 
     return bullets;
 } 
