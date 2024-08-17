@@ -19,11 +19,7 @@ export function EducationPart({ resume, slug }: { resume: string, slug: string |
     }
 
     return (
-        <View style={{
-            border: '1px solid #ccc',
-            borderRadius: '0.5rem',
-            padding: '1rem',
-        }}>
+        <Wrapper>
             <Part>
                 <View style={{
                     display: 'flex',
@@ -58,7 +54,7 @@ export function EducationPart({ resume, slug }: { resume: string, slug: string |
                     )
                 })}
             </View>
-        </View>
+        </Wrapper>
     )
 }
 
@@ -70,9 +66,9 @@ export function ExperiencePart({ resume, slug }: { resume: string, slug: string 
     const experience: Experience | null = useExperience(resume, slug);
 
     return (
-        <section>
+        <Wrapper>
             <h2>Experience</h2>
-        </section>
+        </Wrapper>
     )
 }
 
@@ -84,9 +80,9 @@ export function AdditionalPart({ resume, slug }: { resume: string, slug: string 
     const additional: Additional | null = useAdditional(resume, slug);
 
     return (
-        <section>
+        <Wrapper>
             <h2>Additional</h2>
-        </section>
+        </Wrapper>
     )
 }
 
@@ -102,6 +98,18 @@ function Bullet({ resume, type, payload, slug }: { resume: string, type: 'educat
         <Part>
             <Text>{bullet.text}</Text>
         </Part>
+    )
+}
+
+function Wrapper({ children }: { children: React.ReactNode }) {
+    return (
+        <View style={{
+            border: '1px solid #ccc',
+            borderRadius: '0.5rem',
+            padding: '1rem',
+        }}>
+            {children}
+        </View>
     )
 }
 
