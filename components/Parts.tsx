@@ -2,8 +2,10 @@ import { useAdditional, useEducation, useExperience } from "@/lib/hooks"
 import { Additional, Education, Experience } from '@/lib/types'
 import Text from "./Text";
 import View from "./View";
-import { formatDate, formatTimestamp } from "@/lib/helper";
+import { formatTimestamp } from "@/lib/helper";
 import { Timestamp } from "firebase/firestore";
+import Dots from "./Dots";
+import Checkbox from "./Checkbox";
 
 export function EducationPart({ resume, slug }: { resume: string, slug: string | null }) {
     if (!slug) {
@@ -17,14 +19,23 @@ export function EducationPart({ resume, slug }: { resume: string, slug: string |
     }
 
     return (
-        <section>
+        <View style={{
+            display: 'flex',
+            flexDirection: 'row',
+            border: '1px solid #ccc',
+            padding: '1rem',
+            borderRadius: '0.5rem',
+            gap: '1rem',
+        }}>
+            <Checkbox />
+
+            <Dots />
+
             <View style={{
                 display: 'flex',
                 justifyContent: 'space-between',
                 flexDirection: 'column',
-                border: '1px solid #ccc',
-                padding: '1rem',
-                borderRadius: '0.5rem',
+                flexGrow: 1,
             }}>
                 <View style={{
                     display: 'flex',
@@ -43,7 +54,7 @@ export function EducationPart({ resume, slug }: { resume: string, slug: string |
                 }}>{education.college}</Text>
                 <Text>{education.degree}, {education.endDate instanceof Timestamp ? formatTimestamp(education.endDate) : ''}</Text>
             </View>
-        </section>
+        </View>
     )
 }
 
