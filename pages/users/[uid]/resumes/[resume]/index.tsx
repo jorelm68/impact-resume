@@ -25,9 +25,14 @@ export default function ResumePage({ resume }: ResumePageProps) {
         <main>
             <h1>Resume</h1>
 
-            <EducationPart resume={resume} slug={resumeDoc.educations[0]} />
-            <ExperiencePart resume={resume} slug={resumeDoc.experiences[0]} />
-            <AdditionalPart resume={resume} slug={resumeDoc.additionals[0]} />
+            <h2>Education</h2>
+            {resumeDoc.educations.map((slug) => <EducationPart key={slug} resume={resume} slug={slug} />)}
+
+            <h2>Experience</h2>
+            {resumeDoc.experiences.map((slug) => <ExperiencePart key={slug} resume={resume} slug={slug} />)}
+
+            <h2>Additional</h2>
+            {resumeDoc.additionals.map((slug) => <AdditionalPart key={slug} resume={resume} slug={slug} />)}
         </main>
     )
 }

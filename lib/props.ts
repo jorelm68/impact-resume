@@ -33,3 +33,7 @@ export interface AdditionalPageProps {
 export interface ResumePageProps {
     resume: string;
 }
+
+export interface TextProps extends React.HTMLProps<HTMLParagraphElement> {
+    children: React.ReactNode;
+}
