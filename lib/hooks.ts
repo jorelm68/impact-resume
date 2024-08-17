@@ -227,7 +227,7 @@ export function useBullets<T>(resume: string, type: 'additional' | 'experience' 
     return bullets;
 } 
 
-export function useBullet<T>(resume: string, type: 'additional' | 'experience' | 'education', slug: string) {
+export function useBullet<T>(resume: string, type: 'additional' | 'experience' | 'education', payload: string, slug: string) {
     const [bullet, setBullet] = useState<Bullet | null>(null);
 
     useEffect(() => {
@@ -239,8 +239,9 @@ export function useBullet<T>(resume: string, type: 'additional' | 'experience' |
         const resumeCollectionRef: CollectionReference<Resume> = collection(userDocRef, 'resumes').withConverter(resumeConverter);
         const resumeDocRef: DocumentReference<Resume> = doc(resumeCollectionRef, resume);
 
-        const collectionRef: CollectionReference<Additional | Education | Experience> = collection(resumeDocRef, `${type}s`).withConverter(type === 'additional' ? additionalConverter : type === 'experience' ? experienceConverter : educationConverter);
-        const bulletCollectionRef: CollectionReference<Bullet> = collection(collectionRef, 'bullets').withConverter(bulletConverter);
+        const typeCollectionRef: CollectionReference<Additional | Education | Experience> = collection(resumeDocRef, `${type}s`).withConverter(type === 'additional' ? additionalConverter : type === 'experience' ? experienceConverter : educationConverter);
+        const typeDocRef: DocumentReference<Additional | Education | Experience> = doc(typeCollectionRef, payload);
+        const bulletCollectionRef: CollectionReference<Bullet> = collection(typeDocRef, 'bullets').withConverter(bulletConverter);
         const bulletDocRef: DocumentReference<Bullet> = doc(bulletCollectionRef, slug);
 
         const unsubscribe = onSnapshot(bulletDocRef, (snapshot: DocumentSnapshot<Bullet>) => {
