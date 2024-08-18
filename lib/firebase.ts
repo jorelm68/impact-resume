@@ -56,7 +56,7 @@ export const signInWithUmich = async () => {
     }
 }
 
-export const getResumeDocRef = async (uid: string | undefined, resume: string): Promise<DocumentReference<Resume> | null> => {
+export const getResumeDocRef = (uid: string | undefined, resume: string): DocumentReference<Resume> | null => {
     if (!uid) {
         return null;
     }

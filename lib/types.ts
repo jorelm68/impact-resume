@@ -25,18 +25,22 @@ export interface Education {
 
 export interface EducationHook {
     education: Education | null;
+    educationDocRef: DocumentReference<Education> | null;
 }
 
 export interface ExperienceHook {
     experience: Experience | null;
+    experienceDocRef: DocumentReference<Experience> | null;
 }
 
 export interface AdditionalHook {
     additional: Additional | null;
+    additionalDocRef: DocumentReference<Additional> | null;
 }
 
 export interface BulletHook {
     bullet: Bullet | null;
+    bulletDocRef: DocumentReference<Bullet> | null;
 }
 
 export interface ResumeHook {
