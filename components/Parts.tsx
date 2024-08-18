@@ -54,9 +54,7 @@ export function EducationPart({ resumeSlug, educationSlug }: { resumeSlug: strin
     };
 
     const createNewBullet = async () => {
-        console.log('running')
         const newBulletRef: DocumentReference<Bullet> = await createBullet(educationDocRef);
-        console.log(newBulletRef);
         await updateDoc(educationDocRef, {
             bullets: [...(education.bullets || []), newBulletRef.id],
         });
@@ -186,6 +184,7 @@ function BulletPart({ resumeSlug, part, partSlug, bulletSlug }: { resumeSlug: st
     return (
         <Section>
             <Editable
+                label='New Bullet'
                 value={bullet.text}
                 onSubmit={handleSubmit}
             />

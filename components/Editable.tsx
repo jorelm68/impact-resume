@@ -50,6 +50,29 @@ export default function Editable({ value, label, bold = false, onSubmit, separat
         setNewValue(value);
     }
 
+    let text = '';
+    if (!separateLabel) {
+        if (value) {
+            text = value;
+        }
+        else {
+            if (label) {
+                text = label;
+            }
+            else {
+                text = 'Not shown';
+            }
+        }
+    }
+    else {
+        if (value) {
+            text = value;
+        }
+        else {
+            text = 'Not shown';
+        }
+    }
+
     return (
         <View style={{
             display: 'flex',
@@ -89,7 +112,7 @@ export default function Editable({ value, label, bold = false, onSubmit, separat
                         fontWeight: bold ? 'bold' : 'normal',
                     }}
                 >
-                    {value === '' ? separateLabel ? 'Not shown' : label : value}
+                    {text}
                 </Text>
             )}
         </View>

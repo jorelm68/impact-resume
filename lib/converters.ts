@@ -70,13 +70,13 @@ export const educationConverter: FirestoreDataConverter<Education> = {
 export const bulletConverter: FirestoreDataConverter<Bullet> = {
     toFirestore(bullet: Bullet) {
         return {
-            text: bullet.text,
+            ...bullet,
         };
     },
     fromFirestore(snapshot: QueryDocumentSnapshot<Bullet>) {
         const data = snapshot.data();
         return {
-            text: data?.text || '',
+            ...data,
         } as Bullet;
     }
 }
