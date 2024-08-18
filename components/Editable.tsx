@@ -87,7 +87,7 @@ export default function Editable({ value, label, bold = false, onSubmit, separat
                         fontWeight: bold ? 'bold' : 'normal',
                     }}
                 >
-                    {value === '' ? 'Not shown' : value}
+                    {value === '' ? separateLabel ? 'Not shown' : label : value}
                 </Text>
             )}
         </View>
