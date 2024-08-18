@@ -28,8 +28,7 @@ export default function Editable({ value, label, onSubmit }: EditableProps) {
             handleSubmit();
         }
         if (e.key === 'Escape') {
-            setIsEditing(false);
-            setNewValue(value);
+            handleCancel();
         }
     };
 
@@ -40,6 +39,11 @@ export default function Editable({ value, label, onSubmit }: EditableProps) {
 
     const handleChange = async (e: ChangeEvent<HTMLTextAreaElement>) => {
         setNewValue(e.target.value);
+    }
+    
+    const handleCancel = () => {
+        setIsEditing(false);
+        setNewValue(value);
     }
 
     return (
@@ -61,6 +65,7 @@ export default function Editable({ value, label, onSubmit }: EditableProps) {
                     value={newValue}
                     onChange={handleChange}
                     onKeyDown={handleKeyDown}
+                    onBlur={handleCancel}
                     style={{
                         padding: '0.5rem',
                         fontSize: '1rem',
