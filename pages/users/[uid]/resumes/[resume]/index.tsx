@@ -1,6 +1,6 @@
+import { PlusButton } from "@/components/Buttons";
 import Loader from "@/components/Loader";
 import { AdditionalPart, EducationPart, ExperiencePart, ResumePart } from "@/components/Parts";
-import PlusButton from "@/components/PlusButton";
 import Text from "@/components/Text";
 import View from "@/components/View";
 import { formatTime } from "@/lib/helper";

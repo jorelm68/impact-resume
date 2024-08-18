@@ -1,17 +1,18 @@
 import { useAdditional, useBullet, useEducation, useExperience, useResume } from "@/lib/hooks"
-import { AdditionalHook, Bullet, BulletHook, Education, EducationHook, Experience, ExperienceHook, ResumeHook, SubmitEducation, SubmitExperience, SubmitResume } from '@/lib/types'
+import { Additional, AdditionalHook, Bullet, BulletHook, Education, EducationHook, Experience, ExperienceHook, ResumeHook, SubmitEducation, SubmitExperience, SubmitResume } from '@/lib/types'
 import Text from "./Text";
 import View from "./View";
 import { formatTime } from "@/lib/helper";
-import { collection, CollectionReference, doc, DocumentReference, Timestamp, updateDoc } from "firebase/firestore";
+import { collection, CollectionReference, deleteDoc, doc, DocumentData, DocumentReference, Timestamp, updateDoc } from "firebase/firestore";
 import React from "react";
 import Editable, { EditableTimestamp } from "./Editable";
 import Wrapper from "./Layout/Wrapper";
 import Section from "./Layout/Section";
-import PlusButton from "./PlusButton";
 import Indent from "./Layout/Indent";
 import { bulletConverter } from "@/lib/converters";
 import { generateSlug, createBullet } from "@/lib/firebase";
+import { BulletPartProps } from "@/lib/props";
+import { PlusButton } from "./Buttons";
 
 export function ResumePart({ resumeSlug, onSubmit }: { resumeSlug: string, onSubmit: SubmitResume }) {
     const { resume }: ResumeHook = useResume(resumeSlug);
@@ -88,11 +89,11 @@ export function EducationPart({ resumeSlug, educationSlug }: { resumeSlug: strin
             <Indent>
                 {education.bullets && education.bullets.length > 0 && education.bullets.map((bulletSlug, index) => {
                     return (
-                        <BulletPart key={index} resumeSlug={resumeSlug} part='education' partSlug={educationSlug} bulletSlug={bulletSlug} />
+                        <BulletPart key={index} resumeSlug={resumeSlug} doc={education} docRef={educationDocRef} bulletSlug={bulletSlug} />
                     )
                 })}
 
-                <PlusButton onClick={createNewBullet}/>
+                <PlusButton onClick={createNewBullet} />
             </Indent>
         </Wrapper>
     )
@@ -138,7 +139,7 @@ export function ExperiencePart({ resumeSlug, experienceSlug }: { resumeSlug: str
             <Indent>
                 {experience.bullets && experience.bullets.length > 0 && experience.bullets.map((bulletSlug, index) => {
                     return (
-                        <BulletPart key={index} resumeSlug={resumeSlug} part='experience' partSlug={experienceSlug} bulletSlug={bulletSlug} />
+                        <BulletPart key={index} resumeSlug={resumeSlug} doc={experience} docRef={experienceDocRef} bulletSlug={bulletSlug} />
                     )
                 })}
 
@@ -149,17 +150,17 @@ export function ExperiencePart({ resumeSlug, experienceSlug }: { resumeSlug: str
 }
 
 export function AdditionalPart({ resumeSlug, additionalSlug }: { resumeSlug: string, additionalSlug: string }) {
-    const { additional }: AdditionalHook = useAdditional(resumeSlug, additionalSlug);
+    const { additional, additionalDocRef }: AdditionalHook = useAdditional(resumeSlug, additionalSlug);
 
-    if (!additional) {
+    if (!additional || !additionalDocRef || !additional.bullets) {
         return null;
     }
 
     return (
         <Wrapper>
-            {additional.bullets && additional.bullets.length > 0 && additional.bullets.map((bulletSlug, index) => {
+            {additional.bullets.map((bulletSlug, index) => {
                 return (
-                    <BulletPart key={index} resumeSlug={resumeSlug} part='additional' partSlug={additionalSlug} bulletSlug={bulletSlug} />
+                    <BulletPart key={index} resumeSlug={resumeSlug} doc={additional} docRef={additionalDocRef} bulletSlug={bulletSlug} />
                 )
             })}
 
@@ -168,8 +169,8 @@ export function AdditionalPart({ resumeSlug, additionalSlug }: { resumeSlug: str
     )
 }
 
-function BulletPart({ resumeSlug, part, partSlug, bulletSlug }: { resumeSlug: string, part: 'education' | 'experience' | 'additional', partSlug: string, bulletSlug: string }) {
-    const { bullet, bulletDocRef }: BulletHook = useBullet(resumeSlug, part, partSlug, bulletSlug);
+function BulletPart({ doc, docRef, resumeSlug, bulletSlug }: BulletPartProps) {
+    const { bullet, bulletDocRef }: BulletHook = useBullet(resumeSlug, docRef, bulletSlug);
 
     if (!bullet || !bulletDocRef) {
         return null;
@@ -181,12 +182,22 @@ function BulletPart({ resumeSlug, part, partSlug, bulletSlug }: { resumeSlug: st
         })
     };
 
+    const handleDelete = async () => {
+        console.log('deleting')
+        await updateDoc(docRef, {
+            bullets: doc.bullets?.filter((slug) => slug !== bulletSlug),
+        });
+
+        await deleteDoc(bulletDocRef);
+    }
+
     return (
         <Section>
             <Editable
                 label='New Bullet'
                 value={bullet.text}
                 onSubmit={handleSubmit}
+                onDelete={handleDelete}
             />
         </Section>
     );

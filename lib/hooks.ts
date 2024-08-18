@@ -111,7 +111,7 @@ export function useAdditional(resume: string, slug: string): AdditionalHook {
     return { additional, additionalDocRef };
 }
 
-export function useBullet<T>(resume: string, type: 'additional' | 'experience' | 'education', payload: string, slug: string): BulletHook {
+export function useBullet<T>(resume: string, docRef: DocumentReference<Experience | Additional | Education>, slug: string): BulletHook {
     const [bullet, setBullet] = useState<Bullet | null>(null);
     const [bulletDocRef, setBulletDocRef] = useState<DocumentReference<Bullet> | null>(null);
 
@@ -122,9 +122,7 @@ export function useBullet<T>(resume: string, type: 'additional' | 'experience' |
         const resumeDocRef: DocumentReference<Resume> | null = getResumeDocRef(firebaseUser.uid, resume);
         if (!resumeDocRef) return;
 
-        const typeCollectionRef: CollectionReference<Additional | Education | Experience> = collection(resumeDocRef, `${type}s`).withConverter(type === 'additional' ? additionalConverter : type === 'experience' ? experienceConverter : educationConverter);
-        const typeDocRef: DocumentReference<Additional | Education | Experience> = doc(typeCollectionRef, payload);
-        const bulletCollectionRef: CollectionReference<Bullet> = collection(typeDocRef, 'bullets').withConverter(bulletConverter);
+        const bulletCollectionRef: CollectionReference<Bullet> = collection(docRef, 'bullets').withConverter(bulletConverter);
         const bulletDocRef: DocumentReference<Bullet> = doc(bulletCollectionRef, slug);
         setBulletDocRef(bulletDocRef);
 
@@ -135,7 +133,7 @@ export function useBullet<T>(resume: string, type: 'additional' | 'experience' |
         })
 
         return () => unsubscribe();
-    }, [type, slug, auth.currentUser]);
+    }, [slug, auth.currentUser]);
 
     return { bullet, bulletDocRef };
 }

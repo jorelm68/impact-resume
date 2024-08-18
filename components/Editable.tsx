@@ -3,16 +3,18 @@ import Text from "./Text";
 import View from "./View";
 import { FieldValue, Timestamp } from "firebase/firestore";
 import { formatTime, parseDateStringToTimestamp } from "@/lib/helper";
+import { MinusButton } from "./Buttons";
 
 interface EditableProps {
     value: string;
     label?: string;
     bold?: boolean;
-    onSubmit: (newValue: string) => void | Promise<void>;
+    onSubmit?: (newValue: string) => Promise<void> | void;
+    onDelete?: () => Promise<void> | void;
     separateLabel?: boolean;
 }
 
-export default function Editable({ value, label, bold = false, onSubmit, separateLabel = false }: EditableProps) {
+export default function Editable({ value, label, bold = false, onSubmit, onDelete, separateLabel = false }: EditableProps) {
     const [newValue, setNewValue] = useState(value);
     const [isEditing, setIsEditing] = useState(false);
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -37,7 +39,7 @@ export default function Editable({ value, label, bold = false, onSubmit, separat
     };
 
     const handleSubmit = async () => {
-        await onSubmit(newValue);
+        if (onSubmit) await onSubmit(newValue);
         setIsEditing(false);
     }
 
@@ -87,22 +89,28 @@ export default function Editable({ value, label, bold = false, onSubmit, separat
                 }}>{label}</Text>
             )}
             {isEditing ? (
-                <textarea
-                    ref={textareaRef}
-                    value={newValue}
-                    onChange={handleChange}
-                    onKeyDown={handleKeyDown}
-                    onBlur={handleCancel}
-                    style={{
-                        padding: '0.5rem',
-                        fontSize: '1rem',
-                        border: '1px solid #ccc',
-                        borderRadius: '0.25rem',
-                        width: '100%',
-                        height: '100%',
-                        resize: 'vertical', // Allows the user to resize the textarea vertically
-                    }}
-                />
+                <>
+                    <textarea
+                        ref={textareaRef}
+                        value={newValue}
+                        onChange={handleChange}
+                        onKeyDown={handleKeyDown}
+                        onBlur={handleCancel}
+                        style={{
+                            padding: '0.5rem',
+                            fontSize: '1rem',
+                            border: '1px solid #ccc',
+                            borderRadius: '0.25rem',
+                            width: '100%',
+                            height: '100%',
+                            resize: 'vertical', // Allows the user to resize the textarea vertically
+                        }}
+                    />
+
+                    {onDelete && (
+                        <MinusButton onClick={onDelete} />
+                    )}
+                </>
             ) : (
                 <Text
                     onClick={() => setIsEditing(true)}

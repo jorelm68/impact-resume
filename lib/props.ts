@@ -1,4 +1,5 @@
-import { Resume } from "./types";
+import { DocumentData, DocumentReference } from "firebase/firestore";
+import { Additional, Education, Experience, Resume } from "./types";
 
 export interface AuthCheckProps {
     children: React.ReactNode;
@@ -40,4 +41,11 @@ export interface TextProps extends React.HTMLProps<HTMLParagraphElement> {
 
 export interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     label: string;
+}
+
+export interface BulletPartProps {
+    doc: Additional | Education | Experience,
+    docRef: DocumentReference<Additional | Education | Experience>, 
+    resumeSlug: string,
+    bulletSlug: string
 }
