@@ -97,12 +97,14 @@ export default function Editable({ value, label, bold = false, onSubmit, separat
 }
 
 interface EditableTimestampProps {
+    label?: string;
     value: Timestamp | FieldValue | null;
     bold?: boolean;
     onSubmit: (newValue: Timestamp | null) => Promise<void> | void;
+    separateLabel?: boolean;
 }
 
-export function EditableTimestamp({ value, bold = false, onSubmit }: EditableTimestampProps) {
+export function EditableTimestamp({ label, value, bold = false, onSubmit, separateLabel = false }: EditableTimestampProps) {
     const formattedValue = value ? formatTime(value, 'YYYY-MM-DD') : '';
     const [newValue, setNewValue] = useState<string>(formattedValue);
     const [isEditing, setIsEditing] = useState(false);
@@ -144,6 +146,29 @@ export function EditableTimestamp({ value, bold = false, onSubmit }: EditableTim
         setNewValue(e.target.value);
     };
 
+    let text = '';
+    if (!separateLabel) {
+        if (formattedValue) {
+            text = `, ${formatTime(parseDateStringToTimestamp(formattedValue), 'M, Y')}`;
+        }
+        else {
+            if (label) {
+                text = `, ${label}`;
+            }
+            else {
+                text = 'Not shown';
+            }
+        }
+    }
+    else {
+        if (formattedValue) {
+            text = `, ${formatTime(parseDateStringToTimestamp(formattedValue), 'M, Y')}`;
+        }
+        else {
+            text = 'Not shown';
+        }
+    }
+
     return (
         <View style={{
             display: 'flex',
@@ -176,7 +201,7 @@ export function EditableTimestamp({ value, bold = false, onSubmit }: EditableTim
                         fontWeight: bold ? 'bold' : 'normal',
                     }}
                 >
-                    {formattedValue === '' ? ', Graduation Date' : `, ${formatTime(parseDateStringToTimestamp(formattedValue), 'M, Y')}`}
+                    {text}
                 </Text>
             )}
         </View>
