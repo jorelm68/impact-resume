@@ -3,9 +3,9 @@ import { AdditionalHook, BulletHook, Education, EducationHook, Experience, Exper
 import Text from "./Text";
 import View from "./View";
 import { formatTime } from "@/lib/helper";
-import { updateDoc } from "firebase/firestore";
+import { Timestamp, updateDoc } from "firebase/firestore";
 import React from "react";
-import Editable from "./Editable";
+import Editable, { EditableTimestamp } from "./Editable";
 import Wrapper from "./Layout/Wrapper";
 import Section from "./Layout/Section";
 import PlusButton from "./PlusButton";
@@ -53,6 +53,7 @@ export function EducationPart({ resumeSlug, educationSlug }: { resumeSlug: strin
     }
 
     const handleSubmit: SubmitEducation = async (field, newValue) => {
+        console.log(newValue);
         updateDoc(educationDocRef, {
             [field]: newValue,
         })
@@ -170,7 +171,7 @@ function EducationHeader({ education, onSubmit }: { education: Education, onSubm
                 flexDirection: 'row',
             }}>
                 <Editable label='Degree(s)' value={education.degree} onSubmit={(newValue: string) => onSubmit('degree', newValue)} />
-                <Editable label='Graduation Date' value={education.endDate ? `, ${formatTime(education.endDate, 'M, Y')}` : ''} onSubmit={(newValue: string) => onSubmit('endDate', newValue)} />
+                <EditableTimestamp label='Graduation Date' value={education.endDate} onSubmit={(newValue: Timestamp) => onSubmit('endDate', newValue)} />
             </View>
         </>
     )
