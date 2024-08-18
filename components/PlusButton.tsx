@@ -1,6 +1,6 @@
 import constants from "@/lib/constants";
 
-export default function PlusButton() {
+export default function PlusButton({ onClick }: { onClick?: () => void }) {
     return (
         <button style={{
             width: '24px',
@@ -12,7 +12,7 @@ export default function PlusButton() {
             alignItems: 'center',
             border: 'none',
             cursor: 'pointer',
-        }}>
+        }} onClick={onClick}>
             <span style={{
                 color: 'white',
                 fontSize: '24px',

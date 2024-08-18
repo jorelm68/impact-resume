@@ -7,6 +7,7 @@ export interface User {
 }
 
 export interface Bullet {
+    slug: string;
     text: string;
 }
 

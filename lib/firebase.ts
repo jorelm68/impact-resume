@@ -2,10 +2,10 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider, signInWithPopup, User as FirebaseUser, UserCredential } from "firebase/auth";
-import { collection, CollectionReference, doc, DocumentReference, DocumentSnapshot, getDoc, getFirestore, serverTimestamp, setDoc } from "firebase/firestore";
+import { collection, CollectionReference, doc, DocumentData, DocumentReference, DocumentSnapshot, getDoc, getFirestore, serverTimestamp, setDoc } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import { resumeConverter, userConverter } from "./converters";
-import { Resume, User } from "./types";
+import { bulletConverter, resumeConverter, userConverter } from "./converters";
+import { Bullet, Resume, User } from "./types";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -71,4 +71,26 @@ export const getResumeDocRef = (uid: string | undefined, resume: string): Docume
     }
 
     return resumeDocRef;
+}
+
+export function generateSlug(): string {
+    // Generate a unique document reference
+    const collectionRef: CollectionReference<DocumentData> = collection(firestore, 'dummy-collection'); // Replace 'dummy-collection' with your collection
+    const docRef: DocumentReference<DocumentData> = doc(collectionRef);
+    const slug: string = docRef.id; // Get the unique ID
+
+    // Format and return the slug
+    return slug;
+}
+
+export async function createBullet(docRef: DocumentReference<DocumentData>): Promise<DocumentReference<Bullet>> {
+    const bulletCollectionRef: CollectionReference<DocumentData> = collection(docRef, 'bullets');
+    const slug = generateSlug();
+    const newBulletRef: DocumentReference<Bullet> = doc(bulletCollectionRef, slug).withConverter(bulletConverter);
+    await setDoc(newBulletRef, {
+        slug,
+        text: '',
+    });
+
+    return newBulletRef as DocumentReference<Bullet>;
 }
