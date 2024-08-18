@@ -160,10 +160,10 @@ function EducationHeader({ education, onSubmit }: { education: Education, onSubm
                 justifyContent: 'space-between',
                 flexDirection: 'row',
             }}>
-                <Editable label='School' value={education.school || ''} onSubmit={(newValue: string) => onSubmit('school', newValue)} />
-                <Editable label='Location' value={education.location || ''} onSubmit={(newValue: string) => onSubmit('location', newValue)} />
+                <Editable bold label='School' value={education.school || ''} onSubmit={(newValue: string) => onSubmit('school', newValue)} />
+                <Editable bold label='Location' value={education.location || ''} onSubmit={(newValue: string) => onSubmit('location', newValue)} />
             </View>
-            <Editable label='College' value={education.college || ''} onSubmit={(newValue: string) => onSubmit('college', newValue)} />
+            <Editable bold label='College' value={education.college || ''} onSubmit={(newValue: string) => onSubmit('college', newValue)} />
 
             <View style={{
                 display: 'flex',
