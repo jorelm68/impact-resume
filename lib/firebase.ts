@@ -4,8 +4,8 @@ import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider, signInWithPopup, User as FirebaseUser, UserCredential } from "firebase/auth";
 import { collection, CollectionReference, doc, DocumentData, DocumentReference, DocumentSnapshot, getDoc, getFirestore, serverTimestamp, setDoc } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import { bulletConverter, resumeConverter, userConverter } from "./converters";
-import { Bullet, Resume, User } from "./types";
+import { additionalConverter, bulletConverter, educationConverter, experienceConverter, resumeConverter, userConverter } from "./converters";
+import { Additional, Bullet, Education, Experience, Resume, User } from "./types";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -93,4 +93,54 @@ export async function createBullet(docRef: DocumentReference<DocumentData>): Pro
     });
 
     return newBulletRef as DocumentReference<Bullet>;
+}
+
+export async function createNewEducation(resumeDocRef: DocumentReference<Resume>): Promise<DocumentReference<Education>> {
+    const educationDocRef: CollectionReference<Education> = collection(resumeDocRef, 'educations').withConverter(educationConverter);
+    const slug = generateSlug();
+    const newEducationRef: DocumentReference<Education> = doc(educationDocRef, slug);
+    await setDoc(newEducationRef, {
+        slug,
+        school: null,
+        location: null,
+        college: null,
+        degree: null,
+        startDate: null,
+        endDate: null,
+        bullets: [],
+    });
+
+    return newEducationRef as DocumentReference<Education>;
+}
+
+export async function createNewExperience(resumeDocRef: DocumentReference<Resume>): Promise<DocumentReference<Experience>> {
+    const educationDocRef: CollectionReference<Experience> = collection(resumeDocRef, 'experiences').withConverter(experienceConverter);
+    const slug = generateSlug();
+    const newExperienceRef: DocumentReference<Experience> = doc(educationDocRef, slug);
+    await setDoc(newExperienceRef, {
+        slug,
+        title: null,
+        organization: null,
+        industry: null,
+        function: null,
+        startDate: null,
+        endDate: null,
+        location: null,
+        workPhone: null,
+        bullets: [],
+    });
+
+    return newExperienceRef as DocumentReference<Experience>;
+}
+
+export async function createNewAdditional(resumeDocRef: DocumentReference<Resume>): Promise<DocumentReference<Additional>> {
+    const additionalDocRef: CollectionReference<Additional> = collection(resumeDocRef, 'additionals').withConverter(additionalConverter);
+    const slug = generateSlug();
+    const newAdditionalRef: DocumentReference<Additional> = doc(additionalDocRef, slug);
+    await setDoc(newAdditionalRef, {
+        slug,
+        bullets: [],
+    });
+
+    return newAdditionalRef as DocumentReference<Additional>;
 }
