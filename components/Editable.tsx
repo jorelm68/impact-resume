@@ -79,7 +79,7 @@ export default function Editable({ value, label, onSubmit }: EditableProps) {
                         fontSize: '1rem',
                     }}
                 >
-                    {value === '' ? 'Click to edit' : value}
+                    {value === '' ? 'Not shown' : value}
                 </Text>
             )}
         </View>
