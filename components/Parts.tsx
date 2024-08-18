@@ -158,9 +158,7 @@ function EducationHeader({ education }: { education: Education }) {
                 justifyContent: 'space-between',
                 flexDirection: 'row',
             }}>
-                <Text style={{
-                    fontWeight: 'bold',
-                }}>{education.school}</Text>
+                <Editable label='School' value={education.school || ''} onChange={(e) => { }} />
                 <Text style={{
                     fontWeight: 'bold',
                 }}>{education.location}</Text>

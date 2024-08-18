@@ -47,7 +47,7 @@ export default function Editable({ value, label, onChange }: EditableProps) {
                         fontSize: '1rem',
                     }}
                 >
-                    {value}
+                    {value === '' ? 'Click to add' : value}
                 </Text>
             )}
         </View>
