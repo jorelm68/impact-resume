@@ -1,40 +1,30 @@
 import { useAdditional, useBullet, useEducation, useExperience, useResume } from "@/lib/hooks"
-import { AdditionalHook, BulletHook, Education, EducationHook, Experience, ExperienceHook, ResumeHook } from '@/lib/types'
+import { AdditionalHook, BulletHook, Education, EducationHook, Experience, ExperienceHook, ResumeHook, SubmitEducation, SubmitExperience, SubmitResume } from '@/lib/types'
 import Text from "./Text";
 import View from "./View";
 import { formatTime } from "@/lib/helper";
-import { serverTimestamp, updateDoc } from "firebase/firestore";
+import { updateDoc } from "firebase/firestore";
 import React from "react";
 import Editable from "./Editable";
 import Wrapper from "./Layout/Wrapper";
 import Section from "./Layout/Section";
 import PlusButton from "./PlusButton";
 
-export function ResumePart({ resumeSlug }: { resumeSlug: string }) {
-    const { resume, resumeDocRef }: ResumeHook = useResume(resumeSlug);
+export function ResumePart({ resumeSlug, onSubmit }: { resumeSlug: string, onSubmit: SubmitResume }) {
+    const { resume }: ResumeHook = useResume(resumeSlug);
 
-    if (!resumeDocRef || !resume) {
+    if (!resume) {
         return null;
     }
-
-    const handleSubmit = async (
-        field: "fullName" | "email" | "linkedInURL" | "address" | "phone",
-        newValue: string,
-    ) => {
-        await updateDoc(resumeDocRef, {
-            [field]: newValue,
-            updatedAt: serverTimestamp(),
-        });
-    };
 
     return (
         <Wrapper>
             <HeaderPart>
-                <Editable label='Your Full Name' value={resume.fullName || ''} onSubmit={(newValue) => handleSubmit('fullName', newValue)} />
-                <Editable label='Your Email' value={resume.email || ''} onSubmit={(newValue) => handleSubmit('email', newValue)} />
-                <Editable label='Your LinkedIn URL' value={resume.linkedInURL || ''} onSubmit={(newValue) => handleSubmit('linkedInURL', newValue)} />
-                <Editable label='Your Address' value={resume.address || ''} onSubmit={(newValue) => handleSubmit('address', newValue)} />
-                <Editable label='Your Phone Number' value={resume.phone || ''} onSubmit={(newValue) => handleSubmit('phone', newValue)} />
+                <Editable label='Your Full Name' separateLabel value={resume.fullName || ''} onSubmit={(newValue) => onSubmit('fullName', newValue)} />
+                <Editable label='Your Email' separateLabel value={resume.email || ''} onSubmit={(newValue) => onSubmit('email', newValue)} />
+                <Editable label='Your LinkedIn URL' separateLabel value={resume.linkedInURL || ''} onSubmit={(newValue) => onSubmit('linkedInURL', newValue)} />
+                <Editable label='Your Address' separateLabel value={resume.address || ''} onSubmit={(newValue) => onSubmit('address', newValue)} />
+                <Editable label='Your Phone Number' separateLabel value={resume.phone || ''} onSubmit={(newValue) => onSubmit('phone', newValue)} />
             </HeaderPart>
         </Wrapper>
     )
@@ -56,16 +46,22 @@ function HeaderPart({ children }: { children: React.ReactNode }) {
 }
 
 export function EducationPart({ resumeSlug, educationSlug }: { resumeSlug: string, educationSlug: string }) {
-    const { education }: EducationHook = useEducation(resumeSlug, educationSlug);
+    const { education, educationDocRef }: EducationHook = useEducation(resumeSlug, educationSlug);
 
-    if (!education) {
+    if (!education || !educationDocRef) {
         return null;
     }
+
+    const handleSubmit: SubmitEducation = async (field, newValue) => {
+        updateDoc(educationDocRef, {
+            [field]: newValue,
+        })
+    };
 
     return (
         <Wrapper>
             <Section>
-                <EducationHeader education={education} />
+                <EducationHeader education={education} onSubmit={handleSubmit} />
             </Section>
 
             <Indent>
@@ -82,16 +78,22 @@ export function EducationPart({ resumeSlug, educationSlug }: { resumeSlug: strin
 }
 
 export function ExperiencePart({ resumeSlug, experienceSlug }: { resumeSlug: string, experienceSlug: string }) {
-    const { experience }: ExperienceHook = useExperience(resumeSlug, experienceSlug);
+    const { experience, experienceDocRef }: ExperienceHook = useExperience(resumeSlug, experienceSlug);
 
-    if (!experience) {
+    if (!experience || !experienceDocRef) {
         return null;
     }
+
+    const handleSubmit: SubmitExperience = async (field, newValue) => {
+        updateDoc(experienceDocRef, {
+            [field]: newValue,
+        })
+    };
 
     return (
         <Wrapper>
             <Section>
-                <ExperienceHeader experience={experience} />
+                <ExperienceHeader experience={experience} onSubmit={handleSubmit} />
             </Section>
 
             <Indent>
@@ -150,7 +152,7 @@ function Bullet({ resumeSlug, part, partSlug, bulletSlug }: { resumeSlug: string
     );
 }
 
-function EducationHeader({ education }: { education: Education }) {
+function EducationHeader({ education, onSubmit }: { education: Education, onSubmit: SubmitEducation }) {
     return (
         <>
             <View style={{
@@ -158,20 +160,23 @@ function EducationHeader({ education }: { education: Education }) {
                 justifyContent: 'space-between',
                 flexDirection: 'row',
             }}>
-                <Editable label='School' value={education.school || ''} onSubmit={(e) => { }} />
-                <Text style={{
-                    fontWeight: 'bold',
-                }}>{education.location}</Text>
+                <Editable label='School' value={education.school || ''} onSubmit={(newValue: string) => onSubmit('school', newValue)} />
+                <Editable label='Location' value={education.location || ''} onSubmit={(newValue: string) => onSubmit('location', newValue)} />
             </View>
-            <Text style={{
-                fontWeight: 'bold',
-            }}>{education.college}</Text>
-            <Text>{education.degree}, {formatTime(education.endDate, 'M, Y')}</Text>
+            <Editable label='College' value={education.college || ''} onSubmit={(newValue: string) => onSubmit('college', newValue)} />
+
+            <View style={{
+                display: 'flex',
+                flexDirection: 'row',
+            }}>
+                <Editable label='Degree(s)' value={education.degree} onSubmit={(newValue: string) => onSubmit('degree', newValue)} />
+                <Editable label='Graduation Date' value={education.endDate ? `, ${formatTime(education.endDate, 'M, Y')}` : ''} onSubmit={(newValue: string) => onSubmit('endDate', newValue)} />
+            </View>
         </>
     )
 }
 
-function ExperienceHeader({ experience }: { experience: Experience }) {
+function ExperienceHeader({ experience }: { experience: Experience, onSubmit: SubmitExperience }) {
     return (
         <>
             <View style={{

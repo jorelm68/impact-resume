@@ -6,9 +6,10 @@ interface EditableProps {
     value: string;
     label?: string;
     onSubmit: (newValue: string) => void | Promise<void>;
+    separateLabel?: boolean;
 }
 
-export default function Editable({ value, label, onSubmit }: EditableProps) {
+export default function Editable({ value, label, onSubmit, separateLabel = false }: EditableProps) {
     const [newValue, setNewValue] = useState(value);
     const [isEditing, setIsEditing] = useState(false);
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -53,7 +54,7 @@ export default function Editable({ value, label, onSubmit }: EditableProps) {
             alignItems: 'center',
             gap: '16px',
         }}>
-            {label && (
+            {label && separateLabel && (
                 <Text style={{
                     fontWeight: 'bold',
                     minWidth: '200px',

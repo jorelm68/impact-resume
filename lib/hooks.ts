@@ -70,6 +70,8 @@ export function useEducation(resume: string, slug: string): EducationHook {
 
         const educationCollectionRef: CollectionReference<Education> = collection(resumeDocRef, 'educations').withConverter(educationConverter);
         const educationDocRef: DocumentReference<Education> = doc(educationCollectionRef, slug);
+        setEducationDocRef(educationDocRef);
+
         const unsubscribe = onSnapshot(educationDocRef, (snapshot: DocumentSnapshot<Education>) => {
             const education: Education | undefined = snapshot.data();
             if (!education) return;

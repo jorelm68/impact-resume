@@ -16,12 +16,17 @@ export interface Education {
     location: string | null;
     college: string | null;
     degree: string;
-    majors: string[] | null;
     startDate: Timestamp | FieldValue | null;
     endDate: Timestamp | FieldValue | null;
-    classOf: number | null;
     bullets: string[] | null;
 }
+
+export type SubmitResumeFields = "fullName" | "email" | "linkedInURL" | "address" | "phone";
+export type SubmitResume = (field: SubmitResumeFields, newValue: string) => Promise<void>;
+export type SubmitEducationFields = "school" | "location" | "college" | "degree" | "startDate" | "endDate";
+export type SubmitEducation = (field: SubmitEducationFields, newValue: string) => Promise<void>;
+export type SubmitExperienceFields = "title" | "organization" | "industry" | "function" | "startDate" | "endDate" | "location" | "workPhone";
+export type SubmitExperience = (field: SubmitExperienceFields, newValue: string) => Promise<void>;
 
 export interface EducationHook {
     education: Education | null;
