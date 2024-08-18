@@ -98,13 +98,11 @@ export default function Editable({ value, label, bold = false, onSubmit, separat
 
 interface EditableTimestampProps {
     value: Timestamp | FieldValue | null;
-    label?: string;
     bold?: boolean;
-    onSubmit: (newValue: Timestamp) => Promise<void> | void;
-    separateLabel?: boolean;
+    onSubmit: (newValue: Timestamp | null) => Promise<void> | void;
 }
 
-export function EditableTimestamp({ value, label, bold = false, onSubmit, separateLabel = false }: EditableTimestampProps) {
+export function EditableTimestamp({ value, bold = false, onSubmit }: EditableTimestampProps) {
     const formattedValue = value ? formatTime(value, 'YYYY-MM-DD') : '';
     const [newValue, setNewValue] = useState<string>(formattedValue);
     const [isEditing, setIsEditing] = useState(false);
@@ -127,8 +125,13 @@ export function EditableTimestamp({ value, label, bold = false, onSubmit, separa
     };
 
     const handleSubmit = async () => {
-        const newTimestamp = parseDateStringToTimestamp(newValue);
-        await onSubmit(newTimestamp);
+        if (!newValue) {
+            await onSubmit(null);
+        }
+        else {
+            const newTimestamp = parseDateStringToTimestamp(newValue);
+            await onSubmit(newTimestamp);
+        }
         setIsEditing(false);
     };
 
@@ -148,12 +151,6 @@ export function EditableTimestamp({ value, label, bold = false, onSubmit, separa
             alignItems: 'center',
             gap: '16px',
         }}>
-            {label && separateLabel && (
-                <Text style={{
-                    fontWeight: 'bold',
-                    minWidth: '200px',
-                }}>{label}</Text>
-            )}
             {isEditing ? (
                 <input
                     type="date"
@@ -179,7 +176,7 @@ export function EditableTimestamp({ value, label, bold = false, onSubmit, separa
                         fontWeight: bold ? 'bold' : 'normal',
                     }}
                 >
-                    {formattedValue === '' ? separateLabel ? 'Not shown' : label : `, ${formatTime(parseDateStringToTimestamp(formattedValue), 'M, Y')}`}
+                    {formattedValue === '' ? ', Graduation Date' : `, ${formatTime(parseDateStringToTimestamp(formattedValue), 'M, Y')}`}
                 </Text>
             )}
         </View>
