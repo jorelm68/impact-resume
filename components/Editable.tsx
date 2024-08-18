@@ -151,23 +151,23 @@ export function EditableTimestamp({ label, value, bold = false, onSubmit, separa
     let text = '';
     if (!separateLabel) {
         if (formattedValue) {
-            text = `${prefix ? prefix : ''}${formatTime(parseDateStringToTimestamp(formattedValue), 'M, Y')}${suffix ? suffix : ''}`;
+            text = formatTime(parseDateStringToTimestamp(formattedValue), 'M, Y');
         }
         else {
             if (label) {
-                text = `${prefix ? prefix : ''}${label}${suffix ? suffix : ''}`;
+                text = label;
             }
             else {
-                text = `${prefix ? prefix : ''}Not shown${suffix ? suffix : ''}`;
+                text = 'Not shown';
             }
         }
     }
     else {
         if (formattedValue) {
-            text = `${prefix ? prefix : ''}${formatTime(parseDateStringToTimestamp(formattedValue), 'M, Y')}${suffix ? suffix : ''}`;
+            text = formatTime(parseDateStringToTimestamp(formattedValue), 'M, Y');
         }
         else {
-            text = `${prefix ? prefix : ''}Not shown${suffix ? suffix : ''}`;
+            text = 'Not shown';
         }
     }
 
