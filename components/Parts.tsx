@@ -17,12 +17,12 @@ export function ResumePart({ resumeSlug }: { resumeSlug: string }) {
         return null;
     }
 
-    const handleChange = async (
+    const handleSubmit = async (
         field: "fullName" | "email" | "linkedInURL" | "address" | "phone",
-        e: React.ChangeEvent<HTMLTextAreaElement>
+        newValue: string,
     ) => {
         await updateDoc(resumeDocRef, {
-            [field]: e.target.value,
+            [field]: newValue,
             updatedAt: serverTimestamp(),
         });
     };
@@ -30,11 +30,11 @@ export function ResumePart({ resumeSlug }: { resumeSlug: string }) {
     return (
         <Wrapper>
             <HeaderPart>
-                <Editable label='Your Full Name' value={resume.fullName || ''} onChange={(e) => handleChange('fullName', e)} />
-                <Editable label='Your Email' value={resume.email || ''} onChange={(e) => handleChange('email', e)} />
-                <Editable label='Your LinkedIn URL' value={resume.linkedInURL || ''} onChange={(e) => handleChange('linkedInURL', e)} />
-                <Editable label='Your Address' value={resume.address || ''} onChange={(e) => handleChange('address', e)} />
-                <Editable label='Your Phone Number' value={resume.phone || ''} onChange={(e) => handleChange('phone', e)} />
+                <Editable label='Your Full Name' value={resume.fullName || ''} onSubmit={(newValue) => handleSubmit('fullName', newValue)} />
+                <Editable label='Your Email' value={resume.email || ''} onSubmit={(newValue) => handleSubmit('email', newValue)} />
+                <Editable label='Your LinkedIn URL' value={resume.linkedInURL || ''} onSubmit={(newValue) => handleSubmit('linkedInURL', newValue)} />
+                <Editable label='Your Address' value={resume.address || ''} onSubmit={(newValue) => handleSubmit('address', newValue)} />
+                <Editable label='Your Phone Number' value={resume.phone || ''} onSubmit={(newValue) => handleSubmit('phone', newValue)} />
             </HeaderPart>
         </Wrapper>
     )
@@ -134,9 +134,9 @@ function Bullet({ resumeSlug, part, partSlug, bulletSlug }: { resumeSlug: string
         return null;
     }
 
-    const handleTextChange = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const handleSubmit = async (newValue: string) => {
         updateDoc(bulletDocRef, {
-            text: e.target.value,
+            text: newValue,
         })
     };
 
@@ -144,7 +144,7 @@ function Bullet({ resumeSlug, part, partSlug, bulletSlug }: { resumeSlug: string
         <Section>
             <Editable
                 value={bullet.text}
-                onChange={handleTextChange}
+                onSubmit={handleSubmit}
             />
         </Section>
     );
@@ -158,7 +158,7 @@ function EducationHeader({ education }: { education: Education }) {
                 justifyContent: 'space-between',
                 flexDirection: 'row',
             }}>
-                <Editable label='School' value={education.school || ''} onChange={(e) => { }} />
+                <Editable label='School' value={education.school || ''} onSubmit={(e) => { }} />
                 <Text style={{
                     fontWeight: 'bold',
                 }}>{education.location}</Text>
