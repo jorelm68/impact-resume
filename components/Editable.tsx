@@ -102,9 +102,10 @@ interface EditableTimestampProps {
     bold?: boolean;
     onSubmit: (newValue: Timestamp | null) => Promise<void> | void;
     separateLabel?: boolean;
+    withComma?: boolean;
 }
 
-export function EditableTimestamp({ label, value, bold = false, onSubmit, separateLabel = false }: EditableTimestampProps) {
+export function EditableTimestamp({ label, value, bold = false, onSubmit, separateLabel = false, withComma = false }: EditableTimestampProps) {
     const formattedValue = value ? formatTime(value, 'YYYY-MM-DD') : '';
     const [newValue, setNewValue] = useState<string>(formattedValue);
     const [isEditing, setIsEditing] = useState(false);
@@ -149,23 +150,23 @@ export function EditableTimestamp({ label, value, bold = false, onSubmit, separa
     let text = '';
     if (!separateLabel) {
         if (formattedValue) {
-            text = `, ${formatTime(parseDateStringToTimestamp(formattedValue), 'M, Y')}`;
+            text = `${withComma ? ', ' : ''}${formatTime(parseDateStringToTimestamp(formattedValue), 'M, Y')}`;
         }
         else {
             if (label) {
-                text = `, ${label}`;
+                text = `${withComma ? ', ' : ''}${label}`;
             }
             else {
-                text = 'Not shown';
+                text = `${withComma ? ', ' : ''}Not shown`;
             }
         }
     }
     else {
         if (formattedValue) {
-            text = `, ${formatTime(parseDateStringToTimestamp(formattedValue), 'M, Y')}`;
+            text = `${withComma ? ', ' : ''}${formatTime(parseDateStringToTimestamp(formattedValue), 'M, Y')}`;
         }
         else {
-            text = 'Not shown';
+            text = `${withComma ? ', ' : ''}Not shown`;
         }
     }
 

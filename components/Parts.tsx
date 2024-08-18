@@ -53,7 +53,6 @@ export function EducationPart({ resumeSlug, educationSlug }: { resumeSlug: strin
     }
 
     const handleSubmit: SubmitEducation = async (field, newValue) => {
-        if (!newValue) return;
         updateDoc(educationDocRef, {
             [field]: newValue,
         })
@@ -171,7 +170,7 @@ function EducationHeader({ education, onSubmit }: { education: Education, onSubm
                 flexDirection: 'row',
             }}>
                 <Editable label='Degree(s)' value={education.degree} onSubmit={(newValue: string) => onSubmit('degree', newValue)} />
-                <EditableTimestamp value={education.endDate} onSubmit={(newValue: Timestamp | null) => onSubmit('endDate', newValue)} />
+                <EditableTimestamp label='Graduation Date' withComma value={education.endDate} onSubmit={(newValue: Timestamp | null) => onSubmit('endDate', newValue)} />
             </View>
         </>
     )
