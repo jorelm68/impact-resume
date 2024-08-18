@@ -2,7 +2,7 @@ import { useAdditional, useBullet, useEducation, useExperience, useResume } from
 import { Additional, AdditionalHook, BulletHook, Education, EducationHook, Experience, ExperienceHook, Resume, ResumeHook } from '@/lib/types'
 import Text from "./Text";
 import View from "./View";
-import { formatTimestamp } from "@/lib/helper";
+import { formatTime } from "@/lib/helper";
 import { DocumentReference, serverTimestamp, Timestamp, updateDoc } from "firebase/firestore";
 import Dots from "./Dots";
 import Checkbox from "./Checkbox";
@@ -205,7 +205,7 @@ function EducationHeader({ education }: { education: Education }) {
             <Text style={{
                 fontWeight: 'bold',
             }}>{education.college}</Text>
-            <Text>{education.degree}, {education.endDate instanceof Timestamp ? formatTimestamp(education.endDate) : ''}</Text>
+            <Text>{education.degree}, {formatTime(education.endDate, 'M, Y')}</Text>
         </>
     )
 }
@@ -228,7 +228,7 @@ function ExperienceHeader({ experience }: { experience: Experience }) {
             <Text style={{
                 fontWeight: 'bold',
             }}>{experience.title}</Text>
-            <Text>{experience.startDate instanceof Timestamp ? formatTimestamp(experience.startDate) : ''} - {experience.endDate instanceof Timestamp ? formatTimestamp(experience.endDate) : ''}</Text>
+            <Text>{formatTime(experience.startDate, 'M, Y')} - {formatTime(experience.endDate, 'M, Y')}</Text>
         </>
     )
 }

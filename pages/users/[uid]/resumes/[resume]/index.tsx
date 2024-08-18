@@ -1,9 +1,12 @@
 import Loader from "@/components/Loader";
 import { AdditionalPart, EducationPart, ExperiencePart, ResumePart } from "@/components/Parts";
 import PlusButton from "@/components/PlusButton";
+import Text from "@/components/Text";
 import View from "@/components/View";
+import { formatTime } from "@/lib/helper";
 import { useResume } from "@/lib/hooks";
 import { ResumePageProps } from "@/lib/props";
+import { Timestamp } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -11,7 +14,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     return {
         props: {
-            slug: resume,
+            resumeSlug: resume,
         }
     };
 };
@@ -25,7 +28,16 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
 
     return (
         <main>
-            <h1>Resume</h1>
+            <View style={{
+                display: 'flex',
+                gap: '16px',
+                flexDirection: 'row',
+                alignItems: 'center',
+            }}>
+                <h2>{resumeSlug}</h2>
+                <Text>{formatTime(resume.updatedAt, 'H:M(am/pm) M D, Y')}</Text>
+            </View>
+
             <ResumePart resumeSlug={resumeSlug} />
 
             <Header label='Education' />

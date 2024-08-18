@@ -55,29 +55,13 @@ export const experienceConverter: FirestoreDataConverter<Experience> = {
 export const educationConverter: FirestoreDataConverter<Education> = {
     toFirestore(education: Education) {
         return {
-            school: education.school,
-            location: education.location,
-            college: education.college,
-            degree: education.degree,
-            majors: education.majors,
-            startDate: education.startDate,
-            endDate: education.endDate,
-            classOf: education.classOf,
-            bullets: education.bullets,
+            ...education,
         };
     },
     fromFirestore(snapshot: QueryDocumentSnapshot<Education>) {
         const data = snapshot.data();
         return {
-            school: data?.school || null,
-            location: data?.location || null,
-            college: data?.college || null,
-            degree: data?.degree || null,
-            majors: data?.majors || null,
-            startDate: data?.startDate || null,
-            endDate: data?.endDate || null,
-            classOf: data?.classOf || null,
-            bullets: data?.bullets || null,
+            ...data,
         } as Education;
     }
 }
