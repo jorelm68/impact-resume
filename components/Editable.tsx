@@ -184,7 +184,7 @@ export function EditableTimestamp({ label, value, bold = false, onSubmit, separa
                     value={newValue}
                     onChange={handleChange}
                     onKeyDown={handleKeyDown}
-                    onBlur={handleSubmit}
+                    onBlur={handleCancel}
                     style={{
                         padding: '0.5rem',
                         fontSize: '1rem',
