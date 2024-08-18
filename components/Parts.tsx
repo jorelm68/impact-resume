@@ -1,11 +1,63 @@
-import { useAdditional, useBullet, useBullets, useEducation, useExperience } from "@/lib/hooks"
-import { Additional, Education, Experience } from '@/lib/types'
+import { useAdditional, useBullet, useBullets, useEducation, useExperience, useResume } from "@/lib/hooks"
+import { Additional, Education, Experience, Resume } from '@/lib/types'
 import Text from "./Text";
 import View from "./View";
 import { formatTimestamp } from "@/lib/helper";
 import { Timestamp } from "firebase/firestore";
 import Dots from "./Dots";
 import Checkbox from "./Checkbox";
+
+export function ResumePart({ resume }: { resume: Resume }) {
+    return (
+        <Wrapper>
+            <HeaderPart>
+                <TextInput label='Your Full Name' placeholder='Full Name' />
+                <TextInput label='Your Email' placeholder='Email' />
+                <TextInput label='LinkedIn URL' placeholder='LinkedIn URL' />
+            </HeaderPart>
+        </Wrapper>
+    )
+}
+
+function HeaderPart({ children }: { children: React.ReactNode }) {
+    return (
+        <View style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
+            whiteSpace: 'nowrap',
+            width: '400px',
+            backgroundColor: 'green',
+        }}>
+            {children}
+        </View>
+    )
+}
+
+function TextInput({ label, placeholder }: { label: string, placeholder?: string }) {
+    return (
+        <View style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            whiteSpace: 'nowrap',
+        }}>
+            <Text>{label}</Text>
+            <input
+                type="text"
+                placeholder={placeholder}
+                style={{
+                    width: '256px',
+                    padding: '0.5rem',
+                    fontSize: '1rem',
+                    border: '1px solid #ccc',
+                    borderRadius: '0.25rem',
+                }}
+            />
+        </View>
+    )
+}
 
 export function EducationPart({ resume, slug }: { resume: string, slug: string | null }) {
     if (!slug) {
@@ -151,7 +203,8 @@ function Wrapper({ children }: { children: React.ReactNode }) {
         <View style={{
             border: '1px solid #ccc',
             borderRadius: '0.5rem',
-            padding: '1rem',
+            padding: '8px',
+            minWidth: `${400 + 16}px`,
         }}>
             {children}
         </View>

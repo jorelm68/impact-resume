@@ -1,4 +1,4 @@
-import { AdditionalPart, EducationPart, ExperiencePart } from "@/components/Parts";
+import { AdditionalPart, EducationPart, ExperiencePart, ResumePart } from "@/components/Parts";
 import PlusButton from "@/components/PlusButton";
 import View from "@/components/View";
 import { useResume } from "@/lib/hooks";
@@ -25,9 +25,8 @@ export default function ResumePage({ resume }: ResumePageProps) {
 
     return (
         <main>
-
             <h1>Resume</h1>
-
+            <ResumePart resume={resumeDoc} />
 
             <View style={{
                 display: 'flex',
