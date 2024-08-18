@@ -9,8 +9,8 @@ import Checkbox from "./Checkbox";
 import React from "react";
 import { auth, getResumeDocRef } from "@/lib/firebase";
 
-export function ResumePart({ slug }: { slug: string }) {
-    const { resume, resumeDocRef } = useResume(slug);
+export function ResumePart({ resumeSlug }: { resumeSlug: string }) {
+    const { resume, resumeDocRef } = useResume(resumeSlug);
 
     if (!resumeDocRef || !resume) {
         return null;
@@ -108,12 +108,8 @@ function TextInput({ label, ...rest }: TextInputProps) {
     )
 }
 
-export function EducationPart({ resume, slug }: { resume: string, slug: string | null }) {
-    if (!slug) {
-        return null;
-    }
-
-    const education: Education | null = useEducation(resume, slug);
+export function EducationPart({ resumeSlug, educationSlug }: { resumeSlug: string, educationSlug: string }) {
+    const education: Education | null = useEducation(resumeSlug, educationSlug);
 
     if (!education) {
         return null;
@@ -126,9 +122,9 @@ export function EducationPart({ resume, slug }: { resume: string, slug: string |
             </Section>
 
             <Indent>
-                {education.bullets && education.bullets.length > 0 && education.bullets.map((bullet, index) => {
+                {education.bullets && education.bullets.length > 0 && education.bullets.map((bulletSlug, index) => {
                     return (
-                        <Bullet key={index} resume={resume} type='education' payload={slug} slug={bullet} />
+                        <Bullet key={index} resumeSlug={resumeSlug} part='education' partSlug={educationSlug} bulletSlug={bulletSlug} />
                     )
                 })}
             </Indent>
@@ -136,12 +132,8 @@ export function EducationPart({ resume, slug }: { resume: string, slug: string |
     )
 }
 
-export function ExperiencePart({ resume, slug }: { resume: string, slug: string | null }) {
-    if (!slug) {
-        return null;
-    }
-
-    const experience: Experience | null = useExperience(resume, slug);
+export function ExperiencePart({ resumeSlug, experienceSlug }: { resumeSlug: string, experienceSlug: string }) {
+    const experience: Experience | null = useExperience(resumeSlug, experienceSlug);
 
     if (!experience) {
         return null;
@@ -154,9 +146,9 @@ export function ExperiencePart({ resume, slug }: { resume: string, slug: string 
             </Section>
 
             <Indent>
-                {experience.bullets && experience.bullets.length > 0 && experience.bullets.map((bullet, index) => {
+                {experience.bullets && experience.bullets.length > 0 && experience.bullets.map((bulletSlug, index) => {
                     return (
-                        <Bullet key={index} resume={resume} type='experience' payload={slug} slug={bullet} />
+                        <Bullet key={index} resumeSlug={resumeSlug} part='experience' partSlug={experienceSlug} bulletSlug={bulletSlug} />
                     )
                 })}
             </Indent>
@@ -164,12 +156,8 @@ export function ExperiencePart({ resume, slug }: { resume: string, slug: string 
     )
 }
 
-export function AdditionalPart({ resume, slug }: { resume: string, slug: string | null }) {
-    if (!slug) {
-        return null;
-    }
-
-    const additional: Additional | null = useAdditional(resume, slug);
+export function AdditionalPart({ resumeSlug, additionalSlug }: { resumeSlug: string, additionalSlug: string }) {
+    const additional: Additional | null = useAdditional(resumeSlug, additionalSlug);
 
     if (!additional) {
         return null;
@@ -177,22 +165,21 @@ export function AdditionalPart({ resume, slug }: { resume: string, slug: string 
 
     return (
         <Wrapper>
-            {additional.bullets && additional.bullets.length > 0 && additional.bullets.map((bullet, index) => {
+            {additional.bullets && additional.bullets.length > 0 && additional.bullets.map((bulletSlug, index) => {
                 return (
-                    <Bullet key={index} resume={resume} type='additional' payload={slug} slug={bullet} />
+                    <Bullet key={index} resumeSlug={resumeSlug} part='additional' partSlug={additionalSlug} bulletSlug={bulletSlug} />
                 )
             })}
         </Wrapper>
     )
 }
 
-function Bullet({ resume, type, payload, slug }: { resume: string, type: 'education' | 'experience' | 'additional', payload: string, slug: string }) {
-    const bullet = useBullet(resume, type, payload, slug);
+function Bullet({ resumeSlug, part, partSlug, bulletSlug }: { resumeSlug: string, part: 'education' | 'experience' | 'additional', partSlug: string, bulletSlug: string }) {
+    const bullet = useBullet(resumeSlug, part, partSlug, bulletSlug);
 
     if (!bullet) {
         return null;
     }
-
 
     return (
         <Section>

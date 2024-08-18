@@ -20,8 +20,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
 };
 
-export default function ResumePage({ slug }: ResumePageProps) {
-    const { resume } = useResume(slug);
+export default function ResumePage({ resumeSlug }: ResumePageProps) {
+    const { resume } = useResume(resumeSlug);
 
     if (!resume || !resume.educations || !resume.experiences || !resume.additionals) {
         return <Loader />;
@@ -30,7 +30,7 @@ export default function ResumePage({ slug }: ResumePageProps) {
     return (
         <main>
             <h1>Resume</h1>
-            <ResumePart slug={slug} />
+            <ResumePart resumeSlug={resumeSlug} />
 
             <View style={{
                 display: 'flex',
@@ -41,7 +41,7 @@ export default function ResumePage({ slug }: ResumePageProps) {
                 <h2>Education</h2>
                 <PlusButton />
             </View>
-            {resume.educations.map((educationSlug) => <EducationPart key={educationSlug} resume={slug} slug={educationSlug} />)}
+            {resume.educations.map((educationSlug) => <EducationPart key={educationSlug} resumeSlug={resumeSlug} educationSlug={educationSlug} />)}
 
             <View style={{
                 display: 'flex',
@@ -52,7 +52,7 @@ export default function ResumePage({ slug }: ResumePageProps) {
                 <h2>Experience</h2>
                 <PlusButton />
             </View>
-            {resume.experiences.map((experienceSlug) => <ExperiencePart key={experienceSlug} resume={slug} slug={experienceSlug} />)}
+            {resume.experiences.map((experienceSlug) => <ExperiencePart key={experienceSlug} resumeSlug={resumeSlug} experienceSlug={experienceSlug} />)}
 
             <View style={{
                 display: 'flex',
@@ -63,7 +63,7 @@ export default function ResumePage({ slug }: ResumePageProps) {
                 <h2>Additional</h2>
                 <PlusButton />
             </View>
-            {resume.additionals.map((additionalSlug) => <AdditionalPart key={additionalSlug} resume={slug} slug={additionalSlug} />)}
+            {resume.additionals.map((additionalSlug) => <AdditionalPart key={additionalSlug} resumeSlug={resumeSlug} additionalSlug={additionalSlug} />)}
         </main >
     )
 }
