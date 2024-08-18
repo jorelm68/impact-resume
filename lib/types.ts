@@ -26,7 +26,7 @@ export type SubmitResume = (field: SubmitResumeFields, newValue: string) => Prom
 export type SubmitEducationFields = "school" | "location" | "college" | "degree" | "startDate" | "endDate";
 export type SubmitEducation = (field: SubmitEducationFields, newValue: string | Timestamp | null) => Promise<void>;
 export type SubmitExperienceFields = "title" | "organization" | "industry" | "function" | "startDate" | "endDate" | "location" | "workPhone";
-export type SubmitExperience = (field: SubmitExperienceFields, newValue: string) => Promise<void>;
+export type SubmitExperience = (field: SubmitExperienceFields, newValue: string | Timestamp | null) => Promise<void>;
 
 export interface EducationHook {
     education: Education | null;

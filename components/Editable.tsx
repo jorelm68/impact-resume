@@ -102,10 +102,11 @@ interface EditableTimestampProps {
     bold?: boolean;
     onSubmit: (newValue: Timestamp | null) => Promise<void> | void;
     separateLabel?: boolean;
-    withComma?: boolean;
+    prefix?: string;
+    suffix?: string;
 }
 
-export function EditableTimestamp({ label, value, bold = false, onSubmit, separateLabel = false, withComma = false }: EditableTimestampProps) {
+export function EditableTimestamp({ label, value, bold = false, onSubmit, separateLabel = false, prefix, suffix }: EditableTimestampProps) {
     const formattedValue = value ? formatTime(value, 'YYYY-MM-DD') : '';
     const [newValue, setNewValue] = useState<string>(formattedValue);
     const [isEditing, setIsEditing] = useState(false);
@@ -150,23 +151,23 @@ export function EditableTimestamp({ label, value, bold = false, onSubmit, separa
     let text = '';
     if (!separateLabel) {
         if (formattedValue) {
-            text = `${withComma ? ', ' : ''}${formatTime(parseDateStringToTimestamp(formattedValue), 'M, Y')}`;
+            text = `${prefix ? prefix : ''}${formatTime(parseDateStringToTimestamp(formattedValue), 'M, Y')}${suffix ? suffix : ''}`;
         }
         else {
             if (label) {
-                text = `${withComma ? ', ' : ''}${label}`;
+                text = `${prefix ? prefix : ''}${label}${suffix ? suffix : ''}`;
             }
             else {
-                text = `${withComma ? ', ' : ''}Not shown`;
+                text = `${prefix ? prefix : ''}Not shown${suffix ? suffix : ''}`;
             }
         }
     }
     else {
         if (formattedValue) {
-            text = `${withComma ? ', ' : ''}${formatTime(parseDateStringToTimestamp(formattedValue), 'M, Y')}`;
+            text = `${prefix ? prefix : ''}${formatTime(parseDateStringToTimestamp(formattedValue), 'M, Y')}${suffix ? suffix : ''}`;
         }
         else {
-            text = `${withComma ? ', ' : ''}Not shown`;
+            text = `${prefix ? prefix : ''}Not shown${suffix ? suffix : ''}`;
         }
     }
 

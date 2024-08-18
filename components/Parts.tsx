@@ -61,7 +61,26 @@ export function EducationPart({ resumeSlug, educationSlug }: { resumeSlug: strin
     return (
         <Wrapper>
             <Section>
-                <EducationHeader education={education} onSubmit={handleSubmit} />
+                <View style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    flexDirection: 'row',
+                }}>
+                    <Editable bold label='School' value={education.school || ''} onSubmit={(newValue: string) => handleSubmit('school', newValue)} />
+                    <Editable bold label='Location' value={education.location || ''} onSubmit={(newValue: string) => handleSubmit('location', newValue)} />
+                </View>
+                <Editable bold label='College' value={education.college || ''} onSubmit={(newValue: string) => handleSubmit('college', newValue)} />
+
+                <View style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                }}>
+                    <Editable label='Degree(s)' value={education.degree} onSubmit={(newValue: string) => handleSubmit('degree', newValue)} />
+                        <Text style={{
+                            paddingRight: '4px',
+                        }}>,</Text>
+                    <EditableTimestamp label='Graduation Date' value={education.endDate} onSubmit={(newValue: Timestamp | null) => handleSubmit('endDate', newValue)} />
+                </View>
             </Section>
 
             <Indent>
@@ -93,7 +112,25 @@ export function ExperiencePart({ resumeSlug, experienceSlug }: { resumeSlug: str
     return (
         <Wrapper>
             <Section>
-                <ExperienceHeader experience={experience} onSubmit={handleSubmit} />
+                <View style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    flexDirection: 'row',
+                }}>
+                    <Editable bold label='Organization' value={experience.organization || ''} onSubmit={(newValue: string) => handleSubmit('organization', newValue)} />
+                    <Editable bold label='Location' value={experience.location || ''} onSubmit={(newValue: string) => handleSubmit('location', newValue)} />
+                </View>
+                <Editable bold label='Title' value={experience.title || ''} onSubmit={(newValue: string) => handleSubmit('title', newValue)} />
+
+                <View style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    gap: '4px',
+                }}>
+                    <EditableTimestamp label='Start Date' value={experience.startDate} onSubmit={(newValue: Timestamp | null) => handleSubmit('startDate', newValue)} />
+                    <Text>-</Text>
+                    <EditableTimestamp label='End Date' value={experience.endDate} onSubmit={(newValue: Timestamp | null) => handleSubmit('endDate', newValue)} />
+                </View>
             </Section>
 
             <Indent>
@@ -150,53 +187,6 @@ function Bullet({ resumeSlug, part, partSlug, bulletSlug }: { resumeSlug: string
             />
         </Section>
     );
-}
-
-function EducationHeader({ education, onSubmit }: { education: Education, onSubmit: SubmitEducation }) {
-    return (
-        <>
-            <View style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                flexDirection: 'row',
-            }}>
-                <Editable bold label='School' value={education.school || ''} onSubmit={(newValue: string) => onSubmit('school', newValue)} />
-                <Editable bold label='Location' value={education.location || ''} onSubmit={(newValue: string) => onSubmit('location', newValue)} />
-            </View>
-            <Editable bold label='College' value={education.college || ''} onSubmit={(newValue: string) => onSubmit('college', newValue)} />
-
-            <View style={{
-                display: 'flex',
-                flexDirection: 'row',
-            }}>
-                <Editable label='Degree(s)' value={education.degree} onSubmit={(newValue: string) => onSubmit('degree', newValue)} />
-                <EditableTimestamp label='Graduation Date' withComma value={education.endDate} onSubmit={(newValue: Timestamp | null) => onSubmit('endDate', newValue)} />
-            </View>
-        </>
-    )
-}
-
-function ExperienceHeader({ experience }: { experience: Experience, onSubmit: SubmitExperience }) {
-    return (
-        <>
-            <View style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                flexDirection: 'row',
-            }}>
-                <Text style={{
-                    fontWeight: 'bold',
-                }}>{experience.organization}</Text>
-                <Text style={{
-                    fontWeight: 'bold',
-                }}>{experience.location}</Text>
-            </View>
-            <Text style={{
-                fontWeight: 'bold',
-            }}>{experience.title}</Text>
-            <Text>{formatTime(experience.startDate, 'M, Y')} - {formatTime(experience.endDate, 'M, Y')}</Text>
-        </>
-    )
 }
 
 
