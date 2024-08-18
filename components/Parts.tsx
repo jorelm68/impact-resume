@@ -8,6 +8,7 @@ import React from "react";
 import Editable from "./Editable";
 import Wrapper from "./Layout/Wrapper";
 import Section from "./Layout/Section";
+import PlusButton from "./PlusButton";
 
 export function ResumePart({ resumeSlug }: { resumeSlug: string }) {
     const { resume, resumeDocRef }: ResumeHook = useResume(resumeSlug);
@@ -73,6 +74,8 @@ export function EducationPart({ resumeSlug, educationSlug }: { resumeSlug: strin
                         <Bullet key={index} resumeSlug={resumeSlug} part='education' partSlug={educationSlug} bulletSlug={bulletSlug} />
                     )
                 })}
+
+                <PlusButton />
             </Indent>
         </Wrapper>
     )
@@ -97,6 +100,8 @@ export function ExperiencePart({ resumeSlug, experienceSlug }: { resumeSlug: str
                         <Bullet key={index} resumeSlug={resumeSlug} part='experience' partSlug={experienceSlug} bulletSlug={bulletSlug} />
                     )
                 })}
+
+                <PlusButton />
             </Indent>
         </Wrapper>
     )
@@ -116,6 +121,8 @@ export function AdditionalPart({ resumeSlug, additionalSlug }: { resumeSlug: str
                     <Bullet key={index} resumeSlug={resumeSlug} part='additional' partSlug={additionalSlug} bulletSlug={bulletSlug} />
                 )
             })}
+
+            <PlusButton />
         </Wrapper>
     )
 }
@@ -135,7 +142,7 @@ function Bullet({ resumeSlug, part, partSlug, bulletSlug }: { resumeSlug: string
 
     return (
         <Section>
-            <Editable 
+            <Editable
                 value={bullet.text}
                 onChange={handleTextChange}
             />
