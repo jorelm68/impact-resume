@@ -1,8 +1,15 @@
 import { useState } from "react";
 import Loader from "./Loader";
 import constants from "@/lib/constants";
+import { ButtonProps } from "@/lib/props";
 
-function Button({ onClick, backgroundColor, children }: { onClick?: () => Promise<void> | void, backgroundColor?: string, children: React.ReactNode }) {
+interface GenericButtonProps {
+    onClick?: () => Promise<void> | void;
+    backgroundColor?: string;
+    children: React.ReactNode;
+}
+
+function Button({ onClick, backgroundColor, children }: GenericButtonProps) {
     const [loading, setLoading] = useState(false);
 
     const handleClick = async () => {
@@ -30,7 +37,7 @@ function Button({ onClick, backgroundColor, children }: { onClick?: () => Promis
     )
 }
 
-export function MinusButton({ onClick }: { onClick?: () => Promise<void> | void }) {
+export function MinusButton({ onClick }: ButtonProps) {
     return (
         <Button onClick={onClick} backgroundColor='red'>
             <span style={{
@@ -42,7 +49,7 @@ export function MinusButton({ onClick }: { onClick?: () => Promise<void> | void 
     )
 }
 
-export function PlusButton({ onClick }: { onClick?: () => Promise<void> | void }) {
+export function PlusButton({ onClick }: ButtonProps) {
     return (
         <Button onClick={onClick} backgroundColor={constants.colors.lightBlue}>
             <span style={{
@@ -50,6 +57,18 @@ export function PlusButton({ onClick }: { onClick?: () => Promise<void> | void }
                 fontSize: '24px',
                 fontWeight: 'bold',
             }}>+</span>
+        </Button>
+    )
+}
+
+export function CheckButton({ onClick }: ButtonProps) {
+    return (
+        <Button onClick={onClick} backgroundColor='green'>
+            <span style={{
+                color: 'white',
+                fontSize: '24px',
+                fontWeight: 'bold',
+            }}>✓</span>
         </Button>
     )
 }

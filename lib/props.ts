@@ -49,3 +49,7 @@ export interface BulletPartProps {
     resumeSlug: string,
     bulletSlug: string
 }
+
+export interface ButtonProps {
+    onClick?: () => Promise<void> | void;
+}

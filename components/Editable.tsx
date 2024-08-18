@@ -3,7 +3,7 @@ import Text from "./Text";
 import View from "./View";
 import { FieldValue, Timestamp } from "firebase/firestore";
 import { formatTime, parseDateStringToTimestamp } from "@/lib/helper";
-import { MinusButton } from "./Buttons";
+import { CheckButton, MinusButton } from "./Buttons";
 
 interface EditableProps {
     value: string;
@@ -95,7 +95,6 @@ export default function Editable({ value, label, bold = false, onSubmit, onDelet
                         value={newValue}
                         onChange={handleChange}
                         onKeyDown={handleKeyDown}
-                        onBlur={handleCancel}
                         style={{
                             padding: '0.5rem',
                             fontSize: '1rem',
@@ -109,6 +108,9 @@ export default function Editable({ value, label, bold = false, onSubmit, onDelet
 
                     {onDelete && (
                         <MinusButton onClick={onDelete} />
+                    )}
+                    {onSubmit && (
+                        <CheckButton onClick={handleSubmit} />
                     )}
                 </>
             ) : (
