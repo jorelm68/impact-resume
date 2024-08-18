@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Additional, Bullet, Education, Experience, Resume, User } from "./types";
+import { Additional, AdditionalHook, Bullet, BulletHook, Education, EducationHook, Experience, ExperienceHook, Resume, User } from "./types";
 import { collection, CollectionReference, doc, DocumentReference, DocumentSnapshot, onSnapshot, QuerySnapshot } from "firebase/firestore";
 import { auth, firestore } from "./firebase";
 import { User as FirebaseUser } from 'firebase/auth';
@@ -54,7 +54,7 @@ export function useResumes() {
     return resumes;
 }
 
-export function useExperience(resume: string, slug: string) {
+export function useExperience(resume: string, slug: string): ExperienceHook {
     const [experience, setExperience] = useState<Experience | null>(null);
 
     useEffect(() => {
@@ -77,7 +77,7 @@ export function useExperience(resume: string, slug: string) {
         return () => unsubscribe();
     }, [slug, auth.currentUser]);
 
-    return experience;
+    return { experience };
 }
 
 export function useExperiences(resume: string) {
@@ -104,7 +104,7 @@ export function useExperiences(resume: string) {
     return experiences;
 }
 
-export function useEducation(resume: string, slug: string) {
+export function useEducation(resume: string, slug: string): EducationHook {
     const [education, setEducation] = useState<Education | null>(null);
 
     useEffect(() => {
@@ -127,7 +127,7 @@ export function useEducation(resume: string, slug: string) {
         return () => unsubscribe();
     }, [slug, auth.currentUser]);
 
-    return education;
+    return { education };
 }
 
 export function useEducations(resume: string) {
@@ -154,7 +154,7 @@ export function useEducations(resume: string) {
     return educations;
 }
 
-export function useAdditional(resume: string, slug: string) {
+export function useAdditional(resume: string, slug: string): AdditionalHook {
     const [additional, setAdditional] = useState<Additional | null>(null);
 
     useEffect(() => {
@@ -177,7 +177,7 @@ export function useAdditional(resume: string, slug: string) {
         return () => unsubscribe();
     }, [slug, auth.currentUser]);
 
-    return additional;
+    return { additional };
 }
 
 export function useAdditionals(resume: string) {
@@ -228,9 +228,9 @@ export function useBullets<T>(resume: string, type: 'additional' | 'experience' 
     }, [type, slug, auth.currentUser]);
 
     return bullets;
-} 
+}
 
-export function useBullet<T>(resume: string, type: 'additional' | 'experience' | 'education', payload: string, slug: string) {
+export function useBullet<T>(resume: string, type: 'additional' | 'experience' | 'education', payload: string, slug: string): BulletHook {
     const [bullet, setBullet] = useState<Bullet | null>(null);
 
     useEffect(() => {
@@ -256,5 +256,5 @@ export function useBullet<T>(resume: string, type: 'additional' | 'experience' |
         return () => unsubscribe();
     }, [type, slug, auth.currentUser]);
 
-    return bullet;
+    return { bullet };
 }

@@ -37,3 +37,7 @@ export interface ResumePageProps {
 export interface TextProps extends React.HTMLProps<HTMLParagraphElement> {
     children: React.ReactNode;
 }
+
+export interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+    label: string;
+}

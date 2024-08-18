@@ -1,5 +1,5 @@
 import { useAdditional, useBullet, useBullets, useEducation, useExperience, useResume } from "@/lib/hooks"
-import { Additional, Education, Experience, Resume } from '@/lib/types'
+import { Additional, AdditionalHook, BulletHook, Education, EducationHook, Experience, ExperienceHook, Resume, ResumeHook } from '@/lib/types'
 import Text from "./Text";
 import View from "./View";
 import { formatTimestamp } from "@/lib/helper";
@@ -8,9 +8,10 @@ import Dots from "./Dots";
 import Checkbox from "./Checkbox";
 import React from "react";
 import { auth, getResumeDocRef } from "@/lib/firebase";
+import { TextInputProps } from "@/lib/props";
 
 export function ResumePart({ resumeSlug }: { resumeSlug: string }) {
-    const { resume, resumeDocRef } = useResume(resumeSlug);
+    const { resume, resumeDocRef }: ResumeHook = useResume(resumeSlug);
 
     if (!resumeDocRef || !resume) {
         return null;
@@ -78,9 +79,7 @@ function HeaderPart({ children }: { children: React.ReactNode }) {
     )
 }
 
-interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-    label: string;
-}
+
 
 function TextInput({ label, ...rest }: TextInputProps) {
     return (
@@ -109,7 +108,7 @@ function TextInput({ label, ...rest }: TextInputProps) {
 }
 
 export function EducationPart({ resumeSlug, educationSlug }: { resumeSlug: string, educationSlug: string }) {
-    const education: Education | null = useEducation(resumeSlug, educationSlug);
+    const { education }: EducationHook = useEducation(resumeSlug, educationSlug);
 
     if (!education) {
         return null;
@@ -133,7 +132,7 @@ export function EducationPart({ resumeSlug, educationSlug }: { resumeSlug: strin
 }
 
 export function ExperiencePart({ resumeSlug, experienceSlug }: { resumeSlug: string, experienceSlug: string }) {
-    const experience: Experience | null = useExperience(resumeSlug, experienceSlug);
+    const { experience }: ExperienceHook = useExperience(resumeSlug, experienceSlug);
 
     if (!experience) {
         return null;
@@ -157,7 +156,7 @@ export function ExperiencePart({ resumeSlug, experienceSlug }: { resumeSlug: str
 }
 
 export function AdditionalPart({ resumeSlug, additionalSlug }: { resumeSlug: string, additionalSlug: string }) {
-    const additional: Additional | null = useAdditional(resumeSlug, additionalSlug);
+    const { additional }: AdditionalHook = useAdditional(resumeSlug, additionalSlug);
 
     if (!additional) {
         return null;
@@ -175,7 +174,7 @@ export function AdditionalPart({ resumeSlug, additionalSlug }: { resumeSlug: str
 }
 
 function Bullet({ resumeSlug, part, partSlug, bulletSlug }: { resumeSlug: string, part: 'education' | 'experience' | 'additional', partSlug: string, bulletSlug: string }) {
-    const bullet = useBullet(resumeSlug, part, partSlug, bulletSlug);
+    const { bullet }: BulletHook = useBullet(resumeSlug, part, partSlug, bulletSlug);
 
     if (!bullet) {
         return null;

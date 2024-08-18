@@ -1,4 +1,4 @@
-import { FieldValue, Timestamp } from "firebase/firestore";
+import { DocumentReference, FieldValue, Timestamp } from "firebase/firestore";
 
 export interface User { 
     email: string;
@@ -23,6 +23,26 @@ export interface Education {
     bullets: string[] | null;
 }
 
+export interface EducationHook {
+    education: Education | null;
+}
+
+export interface ExperienceHook {
+    experience: Experience | null;
+}
+
+export interface AdditionalHook {
+    additional: Additional | null;
+}
+
+export interface BulletHook {
+    bullet: Bullet | null;
+}
+
+export interface ResumeHook {
+    resume: Resume | null;
+    resumeDocRef: DocumentReference<Resume> | null;
+}
 
 export interface Experience {
     slug: string;
