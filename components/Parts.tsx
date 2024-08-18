@@ -78,7 +78,7 @@ export function EducationPart({ resumeSlug, educationSlug }: { resumeSlug: strin
                     display: 'flex',
                     flexDirection: 'row',
                 }}>
-                    <Editable label='Degree(s)' value={education.degree} onSubmit={(newValue: string) => handleSubmit('degree', newValue)} />
+                    <Editable label='Degree(s)' value={education.degree || ''} onSubmit={(newValue: string) => handleSubmit('degree', newValue)} />
                     <Text style={{
                         paddingRight: '4px',
                     }}>,</Text>

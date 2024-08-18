@@ -3,11 +3,12 @@ import Loader from "@/components/Loader";
 import { AdditionalPart, EducationPart, ExperiencePart, ResumePart } from "@/components/Parts";
 import Text from "@/components/Text";
 import View from "@/components/View";
+import { createNewAdditional, createNewEducation, createNewExperience } from "@/lib/firebase";
 import { formatTime } from "@/lib/helper";
 import { useResume } from "@/lib/hooks";
 import { ResumePageProps } from "@/lib/props";
-import { SubmitResume } from "@/lib/types";
-import { serverTimestamp, Timestamp, updateDoc } from "firebase/firestore";
+import { Additional, Education, Experience, SubmitResume } from "@/lib/types";
+import { addDoc, collection, DocumentReference, serverTimestamp, Timestamp, updateDoc } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -34,6 +35,27 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
         });
     };
 
+    const handleEducation = async () => {
+        const newEducationRef: DocumentReference<Education> = await createNewEducation(resumeDocRef);
+        await updateDoc(resumeDocRef, {
+            educations: [...(resume.educations || []), newEducationRef.id],
+        });
+    }
+
+    const handleExperience = async () => {
+        const newExperienceRef: DocumentReference<Experience> = await createNewExperience(resumeDocRef);
+        await updateDoc(resumeDocRef, {
+            experiences: [...(resume.experiences || []), newExperienceRef.id],
+        });
+    }
+
+    const handleAdditional = async () => {
+        const newAdditionalRef: DocumentReference<Additional> = await createNewAdditional(resumeDocRef);
+        await updateDoc(resumeDocRef, {
+            additionals: [...(resume.additionals || []), newAdditionalRef.id],
+        });
+    }
+
     return (
         <main>
             <View style={{
@@ -48,19 +70,19 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
 
             <ResumePart resumeSlug={resumeSlug} onSubmit={handleSubmit} />
 
-            <Header label='Education' />
+            <Header label='Education' onClick={handleEducation} />
             {resume.educations.map((educationSlug) => <EducationPart key={educationSlug} resumeSlug={resumeSlug} educationSlug={educationSlug} />)}
 
-            <Header label='Experience' />
+            <Header label='Experience' onClick={handleExperience} />
             {resume.experiences.map((experienceSlug) => <ExperiencePart key={experienceSlug} resumeSlug={resumeSlug} experienceSlug={experienceSlug} />)}
 
-            <Header label='Additional' />
+            <Header label='Additional' onClick={handleAdditional} />
             {resume.additionals.map((additionalSlug) => <AdditionalPart key={additionalSlug} resumeSlug={resumeSlug} additionalSlug={additionalSlug} />)}
         </main >
     )
 }
 
-function Header({ label }: { label: string }) {
+function Header({ label, onClick }: { label: string, onClick?: () => Promise<void> | void }) {
     return (
         <View style={{
             display: 'flex',
@@ -69,7 +91,7 @@ function Header({ label }: { label: string }) {
             alignItems: 'center',
         }}>
             <h2>{label}</h2>
-            <PlusButton />
+            <PlusButton onClick={onClick} />
         </View>
     )
 }

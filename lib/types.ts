@@ -16,7 +16,7 @@ export interface Education {
     school: string | null;
     location: string | null;
     college: string | null;
-    degree: string;
+    degree: string | null;
     startDate: Timestamp | FieldValue | null;
     endDate: Timestamp | FieldValue | null;
     bullets: string[] | null;
@@ -58,7 +58,6 @@ export interface Experience {
     slug: string;
     title: string | null;
     organization: string | null;
-    displayOrganizationAs: string | null;
     industry: string | null;
     function: string | null;
     startDate: Timestamp | FieldValue | null;
