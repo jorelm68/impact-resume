@@ -16,49 +16,24 @@ export function ResumePart({ resumeSlug }: { resumeSlug: string }) {
         return null;
     }
 
-    const handleChangeFullName = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const handleChange = async (
+        field: "fullName" | "email" | "linkedInURL" | "address" | "phone",
+        e: React.ChangeEvent<HTMLTextAreaElement>
+    ) => {
         await updateDoc(resumeDocRef, {
-            fullName: e.target.value,
+            [field]: e.target.value,
             updatedAt: serverTimestamp(),
         });
-    }
-
-    const handleChangeEmail = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        await updateDoc(resumeDocRef, {
-            email: e.target.value,
-            updatedAt: serverTimestamp(),
-        });
-    }
-
-    const handleChangeLinkedInURL = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        await updateDoc(resumeDocRef, {
-            linkedInURL: e.target.value,
-            updatedAt: serverTimestamp(),
-        });
-    }
-
-    const handleChangeAddress = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        await updateDoc(resumeDocRef, {
-            address: e.target.value,
-            updatedAt: serverTimestamp(),
-        });
-    }
-
-    const handleChangePhone = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        await updateDoc(resumeDocRef, {
-            phone: e.target.value,
-            updatedAt: serverTimestamp(),
-        });
-    }
+    };
 
     return (
         <Wrapper>
             <HeaderPart>
-                <Editable label='Your Full Name' value={resume.fullName || ''} onChange={handleChangeFullName} />
-                <Editable label='Your Email' value={resume.email || ''} onChange={handleChangeEmail} />
-                <Editable label='Your LinkedIn URL' value={resume.linkedInURL || ''} onChange={handleChangeLinkedInURL} />
-                <Editable label='Your Address' value={resume.address || ''} onChange={handleChangeAddress} />
-                <Editable label='Your Phone Number' value={resume.phone || ''} onChange={handleChangePhone} />
+                <Editable label='Your Full Name' value={resume.fullName || ''} onChange={(e) => handleChange('fullName', e)} />
+                <Editable label='Your Email' value={resume.email || ''} onChange={(e) => handleChange('email', e)} />
+                <Editable label='Your LinkedIn URL' value={resume.linkedInURL || ''} onChange={(e) => handleChange('linkedInURL', e)} />
+                <Editable label='Your Address' value={resume.address || ''} onChange={(e) => handleChange('address', e)} />
+                <Editable label='Your Phone Number' value={resume.phone || ''} onChange={(e) => handleChange('phone', e)} />
             </HeaderPart>
         </Wrapper>
     )
