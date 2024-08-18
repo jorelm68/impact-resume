@@ -1,32 +1,36 @@
+import Loader from "@/components/Loader";
 import { AdditionalPart, EducationPart, ExperiencePart, ResumePart } from "@/components/Parts";
 import PlusButton from "@/components/PlusButton";
 import View from "@/components/View";
+import { auth, getResumeDocRef } from "@/lib/firebase";
 import { useResume } from "@/lib/hooks";
 import { ResumePageProps } from "@/lib/props";
 import { Resume } from "@/lib/types";
+import { DocumentReference, DocumentSnapshot, onSnapshot } from "firebase/firestore";
 import { GetServerSideProps } from "next";
+import { useEffect, useState } from "react";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { resume } = context.params as { resume: string };
 
     return {
         props: {
-            resume,
+            slug: resume,
         }
     };
 };
 
-export default function ResumePage({ resume }: ResumePageProps) {
-    const resumeDoc: Resume | null = useResume(resume);
+export default function ResumePage({ slug }: ResumePageProps) {
+    const { resume } = useResume(slug);
 
-    if (!resumeDoc || !resumeDoc.educations || !resumeDoc.experiences || !resumeDoc.additionals) {
-        return <p>Loading...</p>
+    if (!resume || !resume.educations || !resume.experiences || !resume.additionals) {
+        return <Loader />;
     }
 
     return (
         <main>
             <h1>Resume</h1>
-            <ResumePart resume={resumeDoc} />
+            <ResumePart slug={slug} />
 
             <View style={{
                 display: 'flex',
@@ -37,7 +41,7 @@ export default function ResumePage({ resume }: ResumePageProps) {
                 <h2>Education</h2>
                 <PlusButton />
             </View>
-            {resumeDoc.educations.map((slug) => <EducationPart key={slug} resume={resume} slug={slug} />)}
+            {resume.educations.map((educationSlug) => <EducationPart key={educationSlug} resume={slug} slug={educationSlug} />)}
 
             <View style={{
                 display: 'flex',
@@ -48,7 +52,7 @@ export default function ResumePage({ resume }: ResumePageProps) {
                 <h2>Experience</h2>
                 <PlusButton />
             </View>
-            {resumeDoc.experiences.map((slug) => <ExperiencePart key={slug} resume={resume} slug={slug} />)}
+            {resume.experiences.map((experienceSlug) => <ExperiencePart key={experienceSlug} resume={slug} slug={experienceSlug} />)}
 
             <View style={{
                 display: 'flex',
@@ -59,7 +63,7 @@ export default function ResumePage({ resume }: ResumePageProps) {
                 <h2>Additional</h2>
                 <PlusButton />
             </View>
-            {resumeDoc.additionals.map((slug) => <AdditionalPart key={slug} resume={resume} slug={slug} />)}
+            {resume.additionals.map((additionalSlug) => <AdditionalPart key={additionalSlug} resume={slug} slug={additionalSlug} />)}
         </main >
     )
 }

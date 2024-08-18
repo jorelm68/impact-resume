@@ -2,10 +2,10 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider, signInWithPopup, User as FirebaseUser, UserCredential } from "firebase/auth";
-import { doc, DocumentReference, DocumentSnapshot, getDoc, getFirestore, serverTimestamp, setDoc } from "firebase/firestore";
+import { collection, CollectionReference, doc, DocumentReference, DocumentSnapshot, getDoc, getFirestore, serverTimestamp, setDoc } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import { userConverter } from "./converters";
-import { User } from "./types";
+import { resumeConverter, userConverter } from "./converters";
+import { Resume, User } from "./types";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -54,4 +54,21 @@ export const signInWithUmich = async () => {
             photoURL: user.photoURL ? user.photoURL : 'https://github.com/fireship-io/next-firebase-course/blob/main/public/hacker.png?raw=true',
         });
     }
+}
+
+export const getResumeDocRef = async (uid: string | undefined, resume: string): Promise<DocumentReference<Resume> | null> => {
+    if (!uid) {
+        return null;
+    }
+
+    const userCollection: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
+    const userDocRef: DocumentReference<User> = doc(userCollection, uid);
+    const resumeCollection: CollectionReference<Resume> = collection(userDocRef, 'resumes').withConverter(resumeConverter);
+    const resumeDocRef: DocumentReference<Resume> = doc(resumeCollection, resume);
+
+    if (!resumeDocRef) {
+        return null;
+    }
+
+    return resumeDocRef;
 }

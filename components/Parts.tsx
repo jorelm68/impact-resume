@@ -3,17 +3,62 @@ import { Additional, Education, Experience, Resume } from '@/lib/types'
 import Text from "./Text";
 import View from "./View";
 import { formatTimestamp } from "@/lib/helper";
-import { Timestamp } from "firebase/firestore";
+import { DocumentReference, serverTimestamp, Timestamp, updateDoc } from "firebase/firestore";
 import Dots from "./Dots";
 import Checkbox from "./Checkbox";
+import React from "react";
+import { auth, getResumeDocRef } from "@/lib/firebase";
 
-export function ResumePart({ resume }: { resume: Resume }) {
+export function ResumePart({ slug }: { slug: string }) {
+    const { resume, resumeDocRef } = useResume(slug);
+
+    if (!resumeDocRef || !resume) {
+        return null;
+    }
+
+    const handleChangeFullName = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        await updateDoc(resumeDocRef, {
+            fullName: event.target.value,
+            updatedAt: serverTimestamp(),
+        });
+    }
+
+    const handleChangeEmail = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        await updateDoc(resumeDocRef, {
+            email: event.target.value,
+            updatedAt: serverTimestamp(),
+        });
+    }
+
+    const handleChangeLinkedInURL = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        await updateDoc(resumeDocRef, {
+            linkedInURL: event.target.value,
+            updatedAt: serverTimestamp(),
+        });
+    }
+
+    const handleChangeAddress = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        await updateDoc(resumeDocRef, {
+            address: event.target.value,
+            updatedAt: serverTimestamp(),
+        });
+    }
+
+    const handleChangePhone = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        await updateDoc(resumeDocRef, {
+            phone: event.target.value,
+            updatedAt: serverTimestamp(),
+        });
+    }
+
     return (
         <Wrapper>
             <HeaderPart>
-                <TextInput label='Your Full Name' placeholder='Full Name' />
-                <TextInput label='Your Email' placeholder='Email' />
-                <TextInput label='LinkedIn URL' placeholder='LinkedIn URL' />
+                <TextInput label='Your Full Name' placeholder='Full Name' value={resume.fullName || ''} onChange={handleChangeFullName} />
+                <TextInput label='Your Email' placeholder='Email' value={resume.email || ''} onChange={handleChangeEmail} />
+                <TextInput label='LinkedIn URL' placeholder='LinkedIn URL' value={resume.linkedInURL || ''} onChange={handleChangeLinkedInURL} />
+                <TextInput label='Address' placeholder='Address' value={resume.address || ''} onChange={handleChangeAddress} />
+                <TextInput label='Phone' placeholder='Phone' value={resume.phone || ''} onChange={handleChangePhone} />
             </HeaderPart>
         </Wrapper>
     )
@@ -27,14 +72,17 @@ function HeaderPart({ children }: { children: React.ReactNode }) {
             gap: '8px',
             whiteSpace: 'nowrap',
             width: '400px',
-            backgroundColor: 'green',
         }}>
             {children}
         </View>
     )
 }
 
-function TextInput({ label, placeholder }: { label: string, placeholder?: string }) {
+interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+    label: string;
+}
+
+function TextInput({ label, ...rest }: TextInputProps) {
     return (
         <View style={{
             display: 'flex',
@@ -42,11 +90,12 @@ function TextInput({ label, placeholder }: { label: string, placeholder?: string
             alignItems: 'center',
             justifyContent: 'space-between',
             whiteSpace: 'nowrap',
+            fontWeight: 'bold',
         }}>
             <Text>{label}</Text>
             <input
+                {...rest}
                 type="text"
-                placeholder={placeholder}
                 style={{
                     width: '256px',
                     padding: '0.5rem',
@@ -203,8 +252,8 @@ function Wrapper({ children }: { children: React.ReactNode }) {
         <View style={{
             border: '1px solid #ccc',
             borderRadius: '0.5rem',
-            padding: '8px',
-            minWidth: `${400 + 16}px`,
+            padding: '16px',
+            minWidth: `${400 + 32}px`,
         }}>
             {children}
         </View>

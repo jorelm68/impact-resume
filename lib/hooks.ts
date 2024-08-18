@@ -7,6 +7,7 @@ import { additionalConverter, bulletConverter, educationConverter, experienceCon
 
 export function useResume(slug: string) {
     const [resume, setResume] = useState<Resume | null>(null);
+    const [resumeDocRef, setResumeDocRef] = useState<DocumentReference<Resume> | null>(null);
 
     useEffect(() => {
         const firebaseUser: FirebaseUser | null = auth.currentUser;
@@ -17,6 +18,8 @@ export function useResume(slug: string) {
 
         const resumeCollectionRef: CollectionReference<Resume> = collection(userDocRef, 'resumes').withConverter(resumeConverter);
         const resumeDocRef: DocumentReference<Resume> = doc(resumeCollectionRef, slug);
+        setResumeDocRef(resumeDocRef);
+
         const unsubscribe = onSnapshot(resumeDocRef, (snapshot: DocumentSnapshot<Resume>) => {
             const resume: Resume | undefined = snapshot.data();
             if (!resume) return;
@@ -26,7 +29,7 @@ export function useResume(slug: string) {
         return () => unsubscribe();
     }, [slug, auth.currentUser]);
 
-    return resume;
+    return { resume, resumeDocRef };
 }
 
 export function useResumes() {

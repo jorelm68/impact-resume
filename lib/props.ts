@@ -31,7 +31,7 @@ export interface AdditionalPageProps {
 }
 
 export interface ResumePageProps {
-    resume: string;
+    slug: string;
 }
 
 export interface TextProps extends React.HTMLProps<HTMLParagraphElement> {

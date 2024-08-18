@@ -1,7 +1,7 @@
 export type LoaderProps = {
-    show: boolean;
+    show?: boolean;
 }
 
-export default function Loader({ show }: LoaderProps) {
+export default function Loader({ show = true }: LoaderProps) {
     return show ? <div className='loader' /> : null;
 }
