@@ -1,15 +1,13 @@
 import { useAdditional, useBullet, useEducation, useExperience, useResume } from "@/lib/hooks"
-import { Additional, AdditionalHook, BulletHook, Education, EducationHook, Experience, ExperienceHook, Resume, ResumeHook } from '@/lib/types'
+import { AdditionalHook, BulletHook, Education, EducationHook, Experience, ExperienceHook, ResumeHook } from '@/lib/types'
 import Text from "./Text";
 import View from "./View";
 import { formatTime } from "@/lib/helper";
-import { DocumentReference, serverTimestamp, Timestamp, updateDoc } from "firebase/firestore";
-import Dots from "./Dots";
-import Checkbox from "./Checkbox";
-import React, { useState } from "react";
-import { auth, getResumeDocRef } from "@/lib/firebase";
-import { TextInputProps } from "@/lib/props";
+import { serverTimestamp, updateDoc } from "firebase/firestore";
+import React from "react";
 import Editable from "./Editable";
+import Wrapper from "./Layout/Wrapper";
+import Section from "./Layout/Section";
 
 export function ResumePart({ resumeSlug }: { resumeSlug: string }) {
     const { resume, resumeDocRef }: ResumeHook = useResume(resumeSlug);
@@ -77,34 +75,6 @@ function HeaderPart({ children }: { children: React.ReactNode }) {
             flexGrow: 1,
         }}>
             {children}
-        </View>
-    )
-}
-
-
-
-function TextInput({ label, ...rest }: TextInputProps) {
-    return (
-        <View style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            whiteSpace: 'nowrap',
-            fontWeight: 'bold',
-        }}>
-            <Text>{label}</Text>
-            <input
-                {...rest}
-                type="text"
-                style={{
-                    width: '256px',
-                    padding: '0.5rem',
-                    fontSize: '1rem',
-                    border: '1px solid #ccc',
-                    borderRadius: '0.25rem',
-                }}
-            />
         </View>
     )
 }
@@ -244,41 +214,6 @@ function ExperienceHeader({ experience }: { experience: Experience }) {
     )
 }
 
-function Wrapper({ children }: { children: React.ReactNode }) {
-    return (
-        <View style={{
-            border: '1px solid #ccc',
-            borderRadius: '0.5rem',
-            padding: '16px',
-            minWidth: `${400 + 32}px`,
-        }}>
-            {children}
-        </View>
-    )
-}
-
-function Section({ children }: { children: React.ReactNode }) {
-    return (
-        <View style={{
-            display: 'flex',
-            flexDirection: 'row',
-            padding: '4px 0px',
-            gap: '24px',
-            width: '100%',
-        }}>
-            <Checkbox />
-            <Dots />
-            <View style={{
-                display: 'flex',
-                flexDirection: 'column',
-                flexGrow: 1,
-                justifyContent: 'space-between',
-            }}>
-                {children}
-            </View>
-        </View>
-    )
-}
 
 function Indent({ children }: { children: React.ReactNode }) {
     return (
