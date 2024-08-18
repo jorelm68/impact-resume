@@ -9,6 +9,7 @@ import Editable, { EditableTimestamp } from "./Editable";
 import Wrapper from "./Layout/Wrapper";
 import Section from "./Layout/Section";
 import PlusButton from "./PlusButton";
+import Indent from "./Layout/Indent";
 
 export function ResumePart({ resumeSlug, onSubmit }: { resumeSlug: string, onSubmit: SubmitResume }) {
     const { resume }: ResumeHook = useResume(resumeSlug);
@@ -182,12 +183,3 @@ function Bullet({ resumeSlug, part, partSlug, bulletSlug }: { resumeSlug: string
 }
 
 
-function Indent({ children }: { children: React.ReactNode }) {
-    return (
-        <View style={{
-            paddingLeft: '1rem',
-        }}>
-            {children}
-        </View>
-    )
-}
