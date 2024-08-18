@@ -19,29 +19,21 @@ export function ResumePart({ resumeSlug, onSubmit }: { resumeSlug: string, onSub
 
     return (
         <Wrapper>
-            <HeaderPart>
+            <View style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '8px',
+                whiteSpace: 'nowrap',
+                minWidth: '400px',
+                flexGrow: 1,
+            }}>
                 <Editable label='Your Full Name' separateLabel value={resume.fullName || ''} onSubmit={(newValue) => onSubmit('fullName', newValue)} />
                 <Editable label='Your Email' separateLabel value={resume.email || ''} onSubmit={(newValue) => onSubmit('email', newValue)} />
                 <Editable label='Your LinkedIn URL' separateLabel value={resume.linkedInURL || ''} onSubmit={(newValue) => onSubmit('linkedInURL', newValue)} />
                 <Editable label='Your Address' separateLabel value={resume.address || ''} onSubmit={(newValue) => onSubmit('address', newValue)} />
                 <Editable label='Your Phone Number' separateLabel value={resume.phone || ''} onSubmit={(newValue) => onSubmit('phone', newValue)} />
-            </HeaderPart>
+            </View>
         </Wrapper>
-    )
-}
-
-function HeaderPart({ children }: { children: React.ReactNode }) {
-    return (
-        <View style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '8px',
-            whiteSpace: 'nowrap',
-            minWidth: '400px',
-            flexGrow: 1,
-        }}>
-            {children}
-        </View>
     )
 }
 
@@ -76,9 +68,9 @@ export function EducationPart({ resumeSlug, educationSlug }: { resumeSlug: strin
                     flexDirection: 'row',
                 }}>
                     <Editable label='Degree(s)' value={education.degree} onSubmit={(newValue: string) => handleSubmit('degree', newValue)} />
-                        <Text style={{
-                            paddingRight: '4px',
-                        }}>,</Text>
+                    <Text style={{
+                        paddingRight: '4px',
+                    }}>,</Text>
                     <EditableTimestamp label='Graduation Date' value={education.endDate} onSubmit={(newValue: Timestamp | null) => handleSubmit('endDate', newValue)} />
                 </View>
             </Section>
