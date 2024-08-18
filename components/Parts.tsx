@@ -6,9 +6,10 @@ import { formatTime } from "@/lib/helper";
 import { DocumentReference, serverTimestamp, Timestamp, updateDoc } from "firebase/firestore";
 import Dots from "./Dots";
 import Checkbox from "./Checkbox";
-import React from "react";
+import React, { useState } from "react";
 import { auth, getResumeDocRef } from "@/lib/firebase";
 import { TextInputProps } from "@/lib/props";
+import Editable from "./Editable";
 
 export function ResumePart({ resumeSlug }: { resumeSlug: string }) {
     const { resume, resumeDocRef }: ResumeHook = useResume(resumeSlug);
@@ -17,37 +18,37 @@ export function ResumePart({ resumeSlug }: { resumeSlug: string }) {
         return null;
     }
 
-    const handleChangeFullName = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeFullName = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         await updateDoc(resumeDocRef, {
-            fullName: event.target.value,
+            fullName: e.target.value,
             updatedAt: serverTimestamp(),
         });
     }
 
-    const handleChangeEmail = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeEmail = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         await updateDoc(resumeDocRef, {
-            email: event.target.value,
+            email: e.target.value,
             updatedAt: serverTimestamp(),
         });
     }
 
-    const handleChangeLinkedInURL = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeLinkedInURL = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         await updateDoc(resumeDocRef, {
-            linkedInURL: event.target.value,
+            linkedInURL: e.target.value,
             updatedAt: serverTimestamp(),
         });
     }
 
-    const handleChangeAddress = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeAddress = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         await updateDoc(resumeDocRef, {
-            address: event.target.value,
+            address: e.target.value,
             updatedAt: serverTimestamp(),
         });
     }
 
-    const handleChangePhone = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangePhone = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         await updateDoc(resumeDocRef, {
-            phone: event.target.value,
+            phone: e.target.value,
             updatedAt: serverTimestamp(),
         });
     }
@@ -55,11 +56,11 @@ export function ResumePart({ resumeSlug }: { resumeSlug: string }) {
     return (
         <Wrapper>
             <HeaderPart>
-                <TextInput label='Your Full Name' placeholder='Full Name' value={resume.fullName || ''} onChange={handleChangeFullName} />
-                <TextInput label='Your Email' placeholder='Email' value={resume.email || ''} onChange={handleChangeEmail} />
-                <TextInput label='LinkedIn URL' placeholder='LinkedIn URL' value={resume.linkedInURL || ''} onChange={handleChangeLinkedInURL} />
-                <TextInput label='Address' placeholder='Address' value={resume.address || ''} onChange={handleChangeAddress} />
-                <TextInput label='Phone' placeholder='Phone' value={resume.phone || ''} onChange={handleChangePhone} />
+                <Editable label='Your Full Name' value={resume.fullName || ''} onChange={handleChangeFullName} />
+                <Editable label='Your Email' value={resume.email || ''} onChange={handleChangeEmail} />
+                <Editable label='Your LinkedIn URL' value={resume.linkedInURL || ''} onChange={handleChangeLinkedInURL} />
+                <Editable label='Your Address' value={resume.address || ''} onChange={handleChangeAddress} />
+                <Editable label='Your Phone Number' value={resume.phone || ''} onChange={handleChangePhone} />
             </HeaderPart>
         </Wrapper>
     )
@@ -72,7 +73,8 @@ function HeaderPart({ children }: { children: React.ReactNode }) {
             flexDirection: 'column',
             gap: '8px',
             whiteSpace: 'nowrap',
-            width: '400px',
+            minWidth: '400px',
+            flexGrow: 1,
         }}>
             {children}
         </View>
@@ -174,17 +176,26 @@ export function AdditionalPart({ resumeSlug, additionalSlug }: { resumeSlug: str
 }
 
 function Bullet({ resumeSlug, part, partSlug, bulletSlug }: { resumeSlug: string, part: 'education' | 'experience' | 'additional', partSlug: string, bulletSlug: string }) {
-    const { bullet }: BulletHook = useBullet(resumeSlug, part, partSlug, bulletSlug);
+    const { bullet, bulletDocRef }: BulletHook = useBullet(resumeSlug, part, partSlug, bulletSlug);
 
-    if (!bullet) {
+    if (!bullet || !bulletDocRef) {
         return null;
     }
 
+    const handleTextChange = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        updateDoc(bulletDocRef, {
+            text: e.target.value,
+        })
+    };
+
     return (
         <Section>
-            <Text>{bullet.text}</Text>
+            <Editable 
+                value={bullet.text}
+                onChange={handleTextChange}
+            />
         </Section>
-    )
+    );
 }
 
 function EducationHeader({ education }: { education: Education }) {
