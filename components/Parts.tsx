@@ -106,6 +106,13 @@ export function ExperiencePart({ resumeSlug, experienceSlug }: { resumeSlug: str
         return null;
     }
 
+    const createNewBullet = async () => {
+        const newBulletRef: DocumentReference<Bullet> = await createBullet(experienceDocRef);
+        await updateDoc(experienceDocRef, {
+            bullets: [...(experience.bullets || []), newBulletRef.id],
+        });
+    };
+
     const handleSubmit: SubmitExperience = async (field, newValue) => {
         updateDoc(experienceDocRef, {
             [field]: newValue,
@@ -143,7 +150,7 @@ export function ExperiencePart({ resumeSlug, experienceSlug }: { resumeSlug: str
                     )
                 })}
 
-                <PlusButton />
+                <PlusButton onClick={createNewBullet} />
             </Indent>
         </Wrapper>
     )
@@ -156,6 +163,13 @@ export function AdditionalPart({ resumeSlug, additionalSlug }: { resumeSlug: str
         return null;
     }
 
+    const createNewBullet = async () => {
+        const newBulletRef: DocumentReference<Bullet> = await createBullet(additionalDocRef);
+        await updateDoc(additionalDocRef, {
+            bullets: [...(additional.bullets || []), newBulletRef.id],
+        });
+    };
+
     return (
         <Wrapper>
             {additional.bullets.map((bulletSlug, index) => {
@@ -164,7 +178,7 @@ export function AdditionalPart({ resumeSlug, additionalSlug }: { resumeSlug: str
                 )
             })}
 
-            <PlusButton />
+            <PlusButton onClick={createNewBullet} />
         </Wrapper>
     )
 }
