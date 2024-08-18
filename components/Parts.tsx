@@ -1,4 +1,4 @@
-import { useAdditional, useBullet, useBullets, useEducation, useExperience, useResume } from "@/lib/hooks"
+import { useAdditional, useBullet, useEducation, useExperience, useResume } from "@/lib/hooks"
 import { Additional, AdditionalHook, BulletHook, Education, EducationHook, Experience, ExperienceHook, Resume, ResumeHook } from '@/lib/types'
 import Text from "./Text";
 import View from "./View";
