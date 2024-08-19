@@ -3,6 +3,7 @@ import { UserContext } from '@/lib/context';
 import { auth, signInWithUmich } from '@/lib/firebase';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/router';
+import { SignOutButton } from '@/components/Buttons';
 
 export default function EnterPage({ }) {
   const { user } = useContext(UserContext);
@@ -35,16 +36,3 @@ function SignInButton() {
   )
 }
 
-function SignOutButton() {
-  const router = useRouter();
-
-  const signOut = async () => {
-    await auth.signOut();
-    toast.success('Signed out successfully.');
-    router.push(`/enter`);
-  }
-
-  return (
-    <button onClick={signOut}>Sign Out</button>
-  )
-}

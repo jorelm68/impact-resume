@@ -17,12 +17,6 @@ export default function UserPage() {
     const { user, userDocRef }: UserHook = useUser();
     const isPremium = usePremiumStatus();
 
-    const handleSignOut = async () => {
-        await auth.signOut();
-        toast.success('Signed out successfully.');
-        router.push(`/enter`);
-    }
-
     if (!user || !userDocRef) {
         return null;
     }
@@ -84,7 +78,7 @@ export default function UserPage() {
                         <UpgradeButton />
                     )}
 
-                    <SignOutButton onClick={handleSignOut} />
+                    <SignOutButton />
                 </View>
             </AuthCheck>
         </main>

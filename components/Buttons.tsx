@@ -4,7 +4,7 @@ import constants from "@/lib/constants";
 import { ButtonProps, GenericButtonProps, PDFButtonProps } from "@/lib/props";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import ResumePDF from "./ResumePDF";
-import { manageSubscription, upgradeToPremium } from "@/lib/firebase";
+import { auth, manageSubscription, upgradeToPremium } from "@/lib/firebase";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 
@@ -172,14 +172,16 @@ export function ManageButton() {
     return <button onClick={handleManageSubscription} className='btn-blue'>Manage Subscription</button>
 }
 
-export function SignOutButton({ onClick }: ButtonProps) {
+export function SignOutButton() {
+    const router = useRouter();
+
+    const signOut = async () => {
+        await auth.signOut();
+        toast.success('Signed out successfully.');
+        router.push(`/enter`);
+    }
+
     return (
-        <Button onClick={onClick} backgroundColor='transparent'>
-            <span style={{
-                color: 'black',
-                fontSize: '12px',
-                fontWeight: 'bold',
-            }}>Sign Out</span>
-        </Button>
+        <button onClick={signOut}>Sign Out</button>
     )
 }
