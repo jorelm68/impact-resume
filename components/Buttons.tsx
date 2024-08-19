@@ -89,3 +89,15 @@ export function CancelButton({ onClick }: ButtonProps) {
         </Button>
     )
 }
+
+export function EditButton({ onClick }: ButtonProps) {
+    return (
+        <Button onClick={onClick} backgroundColor='black'>
+            <span style={{
+                color: 'white',
+                fontSize: '12px',
+                fontWeight: 'bold',
+            }}>EDIT</span>
+        </Button>
+    )
+}

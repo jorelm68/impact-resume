@@ -1,8 +1,8 @@
 import { createBullet } from "@/lib/firebase";
 import { useExperience } from "@/lib/hooks";
 import { ExperienceHook, Bullet, SubmitExperienceFields, EditableValue } from "@/lib/types";
-import { DocumentReference, updateDoc } from "firebase/firestore";
-import { AddButton } from "../Buttons";
+import { deleteDoc, DocumentReference, updateDoc } from "firebase/firestore";
+import { AddButton, RemoveButton } from "../Buttons";
 import Editable from "../Editable";
 import Indent from "../Layout/Indent";
 import Section from "../Layout/Section";
@@ -14,7 +14,7 @@ import { ExperiencePartProps } from "@/lib/props";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { reorder } from "@/lib/helper";
 
-export default function ExperiencePart({ selection, resumeSlug, experienceSlug, onToggleSelect, dragHandleProps }: ExperiencePartProps) {
+export default function ExperiencePart({ isEditing, selection, resumeSlug, experienceSlug, onToggleSelect, onDeleteExperience, dragHandleProps }: ExperiencePartProps) {
     const { experience, experienceDocRef }: ExperienceHook = useExperience(resumeSlug, experienceSlug);
 
     if (!experience || !experienceDocRef) {
@@ -51,65 +51,78 @@ export default function ExperiencePart({ selection, resumeSlug, experienceSlug, 
         });
     };
 
+    const handleDelete = async () => {
+        await deleteDoc(experienceDocRef);
+    }
+
     return (
-        <Wrapper>
-            <Section dragHandleProps={dragHandleProps} isSelected={isSelected} onToggleSelect={() => onToggleSelect(experienceSlug)}>
-                <View style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    flexDirection: 'row',
-                }}>
-                    <Editable disabled={!isSelected} bold label='Organization' value={experience.organization || ''} onSubmit={(newValue: EditableValue) => handleSubmit('organization', newValue)} />
-                    <Editable disabled={!isSelected} bold label='Location' value={experience.location || ''} onSubmit={(newValue: EditableValue) => handleSubmit('location', newValue)} />
-                </View>
-                <Editable disabled={!isSelected} bold label='Title' value={experience.title || ''} onSubmit={(newValue: EditableValue) => handleSubmit('title', newValue)} />
+        <View style={{
+            display: 'flex',
+            flexDirection: 'row',
+            gap: '8px',
+            alignItems: 'center',
+        }}>
+            {isEditing && <RemoveButton onClick={() => onDeleteExperience(experienceDocRef)} />}
 
-                <View style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    gap: '4px',
-                }}>
-                    <Editable disabled={!isSelected} type='timestamp' timeFormat='M, Y' label='Start Date' value={experience.startDate} onSubmit={(newValue: EditableValue) => handleSubmit('startDate', newValue)} />
-                    <Text>-</Text>
-                    <Editable disabled={!isSelected} type='timestamp' timeFormat='M, Y' label='End Date' value={experience.endDate} onSubmit={(newValue: EditableValue) => handleSubmit('endDate', newValue)} />
-                </View>
-            </Section>
+            <Wrapper>
+                <Section dragHandleProps={dragHandleProps} isSelected={isSelected} onToggleSelect={() => onToggleSelect(experienceSlug)}>
+                    <View style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        flexDirection: 'row',
+                    }}>
+                        <Editable disabled={!isSelected} bold label='Organization' value={experience.organization || ''} onSubmit={(newValue: EditableValue) => handleSubmit('organization', newValue)} />
+                        <Editable disabled={!isSelected} bold label='Location' value={experience.location || ''} onSubmit={(newValue: EditableValue) => handleSubmit('location', newValue)} />
+                    </View>
+                    <Editable disabled={!isSelected} bold label='Title' value={experience.title || ''} onSubmit={(newValue: EditableValue) => handleSubmit('title', newValue)} />
 
-            <Indent>
-            <DragDropContext onDragEnd={onDragEnd}>
-                    <Droppable droppableId="experienceBullets">
-                        {(provided) => (
-                            <div {...provided.droppableProps} ref={provided.innerRef}>
-                                {isSelected && experience.bullets && experience.bullets.length > 0 && experience.bullets.map((bulletSlug, index) => (
-                                    <Draggable key={bulletSlug} draggableId={bulletSlug} index={index}>
-                                        {(provided) => (
-                                            <div
-                                                ref={provided.innerRef}
-                                                {...provided.draggableProps}
-                                            >
-                                                <BulletPart
-                                                    dragHandleProps={provided.dragHandleProps}
-                                                    selection={selection}
-                                                    resumeSlug={resumeSlug}
-                                                    doc={experience}
-                                                    docRef={experienceDocRef}
-                                                    bulletSlug={bulletSlug}
-                                                    onToggleSelect={(slug: string) => onToggleSelect(slug)}
-                                                />
-                                            </div>
-                                        )}
-                                    </Draggable>
-                                ))}
-                                {provided.placeholder}
-                            </div>
-                        )}
-                    </Droppable>
-                </DragDropContext>
+                    <View style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        gap: '4px',
+                    }}>
+                        <Editable disabled={!isSelected} type='timestamp' timeFormat='M, Y' label='Start Date' value={experience.startDate} onSubmit={(newValue: EditableValue) => handleSubmit('startDate', newValue)} />
+                        <Text>-</Text>
+                        <Editable disabled={!isSelected} type='timestamp' timeFormat='M, Y' label='End Date' value={experience.endDate} onSubmit={(newValue: EditableValue) => handleSubmit('endDate', newValue)} />
+                    </View>
+                </Section>
 
-                {isSelected && (
-                    <AddButton onClick={createNewBullet} />
-                )}
-            </Indent>
-        </Wrapper>
+                <Indent>
+                    <DragDropContext onDragEnd={onDragEnd}>
+                        <Droppable droppableId="experienceBullets">
+                            {(provided) => (
+                                <div {...provided.droppableProps} ref={provided.innerRef}>
+                                    {isSelected && experience.bullets && experience.bullets.length > 0 && experience.bullets.map((bulletSlug, index) => (
+                                        <Draggable key={bulletSlug} draggableId={bulletSlug} index={index}>
+                                            {(provided) => (
+                                                <div
+                                                    ref={provided.innerRef}
+                                                    {...provided.draggableProps}
+                                                >
+                                                    <BulletPart
+                                                        dragHandleProps={provided.dragHandleProps}
+                                                        selection={selection}
+                                                        resumeSlug={resumeSlug}
+                                                        doc={experience}
+                                                        docRef={experienceDocRef}
+                                                        bulletSlug={bulletSlug}
+                                                        onToggleSelect={(slug: string) => onToggleSelect(slug)}
+                                                    />
+                                                </div>
+                                            )}
+                                        </Draggable>
+                                    ))}
+                                    {provided.placeholder}
+                                </div>
+                            )}
+                        </Droppable>
+                    </DragDropContext>
+
+                    {isSelected && (
+                        <AddButton onClick={createNewBullet} />
+                    )}
+                </Indent>
+            </Wrapper>
+        </View>
     )
 }

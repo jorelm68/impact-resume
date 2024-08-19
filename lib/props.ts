@@ -86,6 +86,8 @@ export interface ResumePartProps {
 }
 
 export interface EducationPartProps {
+    onDeleteEducation: (educationDocRef: DocumentReference<Education>) => Promise<void>;
+    isEditing: boolean;
     dragHandleProps?: any;
     selection: string[];
     resumeSlug: string;
@@ -94,6 +96,8 @@ export interface EducationPartProps {
 }
 
 export interface ExperiencePartProps {
+    onDeleteExperience: (experienceDocRef: DocumentReference<Experience>) => Promise<void>;
+    isEditing: boolean;
     dragHandleProps?: any;
     selection: string[];
     resumeSlug: string;

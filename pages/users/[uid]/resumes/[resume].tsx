@@ -1,4 +1,4 @@
-import { AddButton } from "@/components/Buttons";
+import { AddButton, CancelButton, EditButton } from "@/components/Buttons";
 import Loader from "@/components/Loader";
 import AdditionalPart from "@/components/Parts/AdditionalPart";
 import BulletPart from "@/components/Parts/BulletPart";
@@ -12,8 +12,9 @@ import { formatTime, reorder } from "@/lib/helper";
 import { useResume } from "@/lib/hooks";
 import { ResumePageProps } from "@/lib/props";
 import { Additional, Education, Experience } from "@/lib/types";
-import { DocumentReference, updateDoc } from "firebase/firestore";
+import { deleteDoc, DocumentReference, updateDoc } from "firebase/firestore";
 import { GetServerSideProps } from "next";
+import { useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -28,29 +29,24 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 export default function ResumePage({ resumeSlug }: ResumePageProps) {
     const { resume, resumeDocRef } = useResume(resumeSlug);
+    const [editingEducation, setEditingEducation] = useState<boolean>(false);
+    const [editingExperience, setEditingExperience] = useState<boolean>(false);
 
     if (!resume || !resumeDocRef || !resume.educations || !resume.experiences || !resume.additionals) {
         return <Loader />;
     }
 
-    const handleEducation = async () => {
+    const handleEducationAdd = async () => {
         const newEducationRef: DocumentReference<Education> = await createNewEducation(resumeDocRef);
         await updateDoc(resumeDocRef, {
             educations: [...(resume.educations || []), newEducationRef.id],
         });
     }
 
-    const handleExperience = async () => {
+    const handleExperienceAdd = async () => {
         const newExperienceRef: DocumentReference<Experience> = await createNewExperience(resumeDocRef);
         await updateDoc(resumeDocRef, {
             experiences: [...(resume.experiences || []), newExperienceRef.id],
-        });
-    }
-
-    const handleAdditional = async () => {
-        const newAdditionalRef: DocumentReference<Additional> = await createNewAdditional(resumeDocRef);
-        await updateDoc(resumeDocRef, {
-            additionals: [...(resume.additionals || []), newAdditionalRef.id],
         });
     }
 
@@ -58,6 +54,22 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
         await updateDoc(resumeDocRef, {
             selected: resume.selected?.includes(selectedSlug) ? resume.selected?.filter((slug) => slug !== selectedSlug) : [...(resume.selected || []), selectedSlug],
         });
+    }
+
+    const handleDeleteEducation = async (educationDocRef: DocumentReference<Education>) => {
+        await updateDoc(resumeDocRef, {
+            educations: resume.educations?.filter((slug) => slug !== educationDocRef.id),
+        });
+
+        await deleteDoc(educationDocRef);
+    }
+
+    const handleDeleteExperience = async (experienceDocRef: DocumentReference<Experience>) => {
+        await updateDoc(resumeDocRef, {
+            experiences: resume.experiences?.filter((slug) => slug !== experienceDocRef.id),
+        });
+
+        await deleteDoc(experienceDocRef);
     }
 
     const onDragEndEducations = async (result: any) => {
@@ -104,7 +116,13 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
 
             <ResumePart resumeSlug={resumeSlug} />
 
-            <Header label='Education' onClick={handleEducation} />
+            <Header
+                label='Education'
+                onAdd={handleEducationAdd}
+                onEdit={() => setEditingEducation(true)}
+                onCancel={() => setEditingEducation(false)}
+                isEditing={editingEducation}
+            />
             <DragDropContext onDragEnd={onDragEndEducations}>
                 <Droppable droppableId="educations">
                     {(provided) => (
@@ -117,6 +135,8 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
                                             {...provided.draggableProps}
                                         >
                                             <EducationPart
+                                                onDeleteEducation={handleDeleteEducation}
+                                                isEditing={editingEducation}
                                                 dragHandleProps={provided.dragHandleProps}
                                                 selection={resume.selected || []}
                                                 key={educationSlug}
@@ -134,7 +154,13 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
                 </Droppable>
             </DragDropContext>
 
-            <Header label='Experience' onClick={handleExperience} />
+            <Header
+                label='Experience'
+                onAdd={handleExperienceAdd}
+                onEdit={() => setEditingExperience(true)}
+                onCancel={() => setEditingExperience(false)}
+                isEditing={editingExperience}
+            />
             <DragDropContext onDragEnd={onDragEndExperiences}>
                 <Droppable droppableId="experiences">
                     {(provided) => (
@@ -147,6 +173,8 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
                                             {...provided.draggableProps}
                                         >
                                             <ExperiencePart
+                                                onDeleteExperience={handleDeleteExperience}
+                                                isEditing={editingExperience}
                                                 dragHandleProps={provided.dragHandleProps}
                                                 selection={resume.selected || []}
                                                 key={experienceSlug}
@@ -164,13 +192,21 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
                 </Droppable>
             </DragDropContext>
 
-            <Header label='Additional' onClick={handleAdditional} />
+            <Header label='Additional' />
             {resume.additionals.map((additionalSlug) => <AdditionalPart selection={resume.selected || []} key={additionalSlug} resumeSlug={resumeSlug} additionalSlug={additionalSlug} onToggleSelect={handleToggleSelect} />)}
         </main >
     )
 }
 
-function Header({ label, onClick }: { label: string, onClick?: () => Promise<void> | void }) {
+interface HeaderProps {
+    label: string;
+    onAdd?: () => Promise<void> | void;
+    onEdit?: () => Promise<void> | void;
+    onCancel?: () => Promise<void> | void;
+    isEditing?: boolean;
+}
+
+function Header({ label, onAdd, onEdit, onCancel, isEditing }: HeaderProps) {
     return (
         <View style={{
             display: 'flex',
@@ -179,7 +215,9 @@ function Header({ label, onClick }: { label: string, onClick?: () => Promise<voi
             alignItems: 'center',
         }}>
             <h2>{label}</h2>
-            <AddButton onClick={onClick} />
+            {onAdd && <AddButton onClick={onAdd} />}
+            {onEdit && !isEditing && <EditButton onClick={onEdit} />}
+            {onEdit && isEditing && <CancelButton onClick={onCancel} />}
         </View>
     )
 }
