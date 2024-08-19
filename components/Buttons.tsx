@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Loader from "./Loader";
 import constants from "@/lib/constants";
 import { ButtonProps, PDFButtonProps } from "@/lib/props";
@@ -105,6 +105,18 @@ export function EditButton({ onClick }: ButtonProps) {
 }
 
 export function PDFButton({ resumeSlug }: PDFButtonProps) {
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setLoading(false);
+        }, 1500)
+    }, [])
+
+    if (loading) {
+        return <Loader />
+    }
+
     return (
         <PDFDownloadLink document={<ResumePDF resumeSlug={resumeSlug} />} fileName="resume.pdf">
             <Button backgroundColor='crimson'>
