@@ -1,7 +1,7 @@
 export default {
     photos: {
-        dots: require('@/public/dots.png'),
-        hacker: require('@/public/hacker.png'),
+        dots: require('../public/dots.svg'),
+        hacker: require('../public/hacker.png'),
     },
 
     colors: {
