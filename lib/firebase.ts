@@ -8,6 +8,7 @@ import { bulletConverter, educationConverter, experienceConverter, resumeConvert
 import { Bullet, Education, Experience, Resume, User } from "./types";
 import { getCheckoutUrl, getPortalUrl, getPremiumStatus } from "./stripePayment";
 import constants from "./constants";
+import toast from "react-hot-toast";
 
 // Initialize Firebase
 const app = initializeApp(constants.FIREBASE_CONFIG);

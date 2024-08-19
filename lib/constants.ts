@@ -9,7 +9,7 @@ export default {
         lightBlue: '#3b49df',
     },
 
-    PRICE_ID: 'price_1Ppd6dBJpQtnod8ASnleDZoq',
+    PRICE_ID: 'price_1PpdWABJpQtnod8A2aRzvoPU',
     REGION: 'us-central1',
 
     FIREBASE_CONFIG: {

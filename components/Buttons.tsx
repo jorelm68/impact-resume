@@ -6,6 +6,7 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import ResumePDF from "./ResumePDF";
 import { manageSubscription, upgradeToPremium } from "@/lib/firebase";
 import { useRouter } from "next/router";
+import toast from "react-hot-toast";
 
 function Button({ onClick, backgroundColor, children }: GenericButtonProps) {
     const [loading, setLoading] = useState(false);
@@ -132,8 +133,12 @@ export function UpgradeButton() {
 
     const handleUpgradeAccount = async () => {
         setLoading(true);
-        const checkoutUrl = await upgradeToPremium();
-        router.push(checkoutUrl);
+        try {
+            const checkoutUrl = await upgradeToPremium();
+            router.push(checkoutUrl);
+        } catch (error: any) {
+            toast.error(error.message);
+        }
         setLoading(false);
     }
 
@@ -151,8 +156,12 @@ export function ManageButton() {
 
     const handleManageSubscription = async () => {
         setLoading(true);
-        const portalUrl = await manageSubscription();
-        router.push(portalUrl);
+        try {
+            const portalUrl = await manageSubscription();
+            router.push(portalUrl);
+        } catch (error: any) {
+            toast.error(error.message);
+        }
         setLoading(false);
     }
 

@@ -4,6 +4,7 @@ import { collection, CollectionReference, doc, DocumentReference, DocumentSnapsh
 import { auth, checkPremium, firestore, getResumeDocRef } from "./firebase";
 import { User as FirebaseUser } from 'firebase/auth';
 import { bulletConverter, educationConverter, experienceConverter, resumeConverter, userConverter } from "./converters";
+import toast from "react-hot-toast";
 
 export function useUser(): UserHook {
     const [user, setUser] = useState<User | null>(null);
@@ -130,7 +131,7 @@ export function useEducation(resume: string, slug: string): EducationHook {
     return { education, educationDocRef };
 }
 
-export function useBullet<T>(resume: string, docRef: DocumentReference<Experience | Resume | Education>, slug: string): BulletHook {
+export function useBullet(resume: string, docRef: DocumentReference<Experience | Resume | Education>, slug: string): BulletHook {
     const [bullet, setBullet] = useState<Bullet | null>(null);
     const [bulletDocRef, setBulletDocRef] = useState<DocumentReference<Bullet> | null>(null);
 
@@ -162,8 +163,10 @@ export function usePremiumStatus(): boolean {
     const [isPremium, setIsPremium] = useState<boolean>(false);
 
     useEffect(() => {
-        checkPremium().then((premiumStatus) => {
+        checkPremium().then((premiumStatus: boolean) => {
             setIsPremium(premiumStatus);
+        }).catch((error: any) => {
+            toast.error(error.message);
         })
     }, [auth.currentUser?.uid]);
 
