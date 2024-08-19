@@ -7,8 +7,8 @@ import { createNewAdditional, createNewEducation, createNewExperience } from "@/
 import { formatTime } from "@/lib/helper";
 import { useResume } from "@/lib/hooks";
 import { ResumePageProps } from "@/lib/props";
-import { Additional, EditableValue, Education, Experience, SubmitResumeFields } from "@/lib/types";
-import { addDoc, collection, DocumentReference, serverTimestamp, Timestamp, updateDoc } from "firebase/firestore";
+import { Additional, Education, Experience } from "@/lib/types";
+import { DocumentReference, updateDoc } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {

@@ -38,11 +38,11 @@ export function ResumePart({ resumeSlug }: { resumeSlug: string }) {
                 minWidth: '400px',
                 flexGrow: 1,
             }}>
-                <Editable label='Your Full Name' separateLabel value={resume.fullName || ''} onSubmit={(newValue: EditableValue) => handleSubmit('fullName', newValue)} />
-                <Editable label='Your Email' separateLabel value={resume.email || ''} onSubmit={(newValue: EditableValue) => handleSubmit('email', newValue)} />
-                <Editable label='Your LinkedIn URL' separateLabel value={resume.linkedInURL || ''} onSubmit={(newValue: EditableValue) => handleSubmit('linkedInURL', newValue)} />
-                <Editable label='Your Address' separateLabel value={resume.address || ''} onSubmit={(newValue: EditableValue) => handleSubmit('address', newValue)} />
-                <Editable label='Your Phone Number' separateLabel value={resume.phone || ''} onSubmit={(newValue: EditableValue) => handleSubmit('phone', newValue)} />
+                <Editable label='Full Name' separateLabel value={resume.fullName || ''} onSubmit={(newValue: EditableValue) => handleSubmit('fullName', newValue)} />
+                <Editable label='Email' separateLabel value={resume.email || ''} onSubmit={(newValue: EditableValue) => handleSubmit('email', newValue)} />
+                <Editable label='LinkedIn (optional)' separateLabel value={resume.linkedInURL || ''} onSubmit={(newValue: EditableValue) => handleSubmit('linkedInURL', newValue)} />
+                <Editable label='Address (optional)' separateLabel value={resume.address || ''} onSubmit={(newValue: EditableValue) => handleSubmit('address', newValue)} />
+                <Editable label='Phone (optional)' separateLabel value={resume.phone || ''} onSubmit={(newValue: EditableValue) => handleSubmit('phone', newValue)} />
             </View>
         </Wrapper>
     )
