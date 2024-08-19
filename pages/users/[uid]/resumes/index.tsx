@@ -3,7 +3,7 @@ import { auth, firestore, generateSlug, getResumeDocRef } from "@/lib/firebase";
 import { useResumes } from "@/lib/hooks";
 import { Resume, User } from "@/lib/types";
 import { User as FirebaseUser } from "firebase/auth";
-import { collection, CollectionReference, doc, DocumentReference, DocumentSnapshot, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
+import { collection, CollectionReference, doc, DocumentReference, DocumentSnapshot, getDoc, serverTimestamp, setDoc, Timestamp } from "firebase/firestore";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -34,6 +34,13 @@ function ResumeList() {
 
     if (!resumes) return <p>Loading...</p>;
 
+    // Sort them by updatedAt
+    resumes.sort((a, b) => {
+        const aUpdatedAt = a.updatedAt instanceof Timestamp ? a.updatedAt.toMillis() : typeof a.updatedAt === 'number' ? a.updatedAt : 0;
+        const bUpdatedAt = b.updatedAt instanceof Timestamp ? b.updatedAt.toMillis() : typeof b.updatedAt === 'number' ? b.updatedAt : 0;
+        return bUpdatedAt - aUpdatedAt;
+    });
+    
     return (
         <section>
             {resumes.map((resume, index) => <ResumeItem key={index} resume={resume} />)}
