@@ -59,3 +59,8 @@ export interface CheckboxProps {
     isChecked: boolean;
     onChange: ChangeEventHandler<HTMLInputElement>;
 }
+export interface SectionProps {
+    children: React.ReactNode;
+    isSelected: boolean;
+    onToggleSelect: ChangeEventHandler<HTMLInputElement>;
+}

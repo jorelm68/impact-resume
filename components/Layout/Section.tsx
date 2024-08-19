@@ -1,8 +1,9 @@
+import { SectionProps } from "@/lib/props";
 import Checkbox from "../Checkbox";
 import Dots from "../Dots";
 import View from "../View";
 
-export default function Section({ children }: { children: React.ReactNode }) {
+export default function Section({ children, isSelected, onToggleSelect }: SectionProps) {
     return (
         <View style={{
             display: 'flex',
@@ -11,7 +12,7 @@ export default function Section({ children }: { children: React.ReactNode }) {
             gap: '24px',
             width: '100%',
         }}>
-            <Checkbox />
+            <Checkbox isChecked={isSelected} onChange={onToggleSelect}/>
             <Dots />
             <View style={{
                 display: 'flex',

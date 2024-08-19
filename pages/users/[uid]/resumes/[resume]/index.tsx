@@ -49,6 +49,12 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
         });
     }
 
+    const handleToggleSelect = async (selectedSlug: string) => {
+        await updateDoc(resumeDocRef, {
+            selected: resume.selected?.includes(selectedSlug) ? resume.selected?.filter((slug) => slug !== selectedSlug) : [...(resume.selected || []), selectedSlug],
+        });
+    }
+
     return (
         <main>
             <View style={{
@@ -64,10 +70,10 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
             <ResumePart resumeSlug={resumeSlug} />
 
             <Header label='Education' onClick={handleEducation} />
-            {resume.educations.map((educationSlug) => <EducationPart key={educationSlug} resumeSlug={resumeSlug} educationSlug={educationSlug} />)}
+            {resume.educations.map((educationSlug) => <EducationPart selection={resume.selected || []} key={educationSlug} resumeSlug={resumeSlug} educationSlug={educationSlug} onToggleSelect={() => handleToggleSelect(educationSlug)} />)}
 
             <Header label='Experience' onClick={handleExperience} />
-            {resume.experiences.map((experienceSlug) => <ExperiencePart key={experienceSlug} resumeSlug={resumeSlug} experienceSlug={experienceSlug} />)}
+            {resume.experiences.map((experienceSlug) => <ExperiencePart selection={resume.selected || []} key={experienceSlug} resumeSlug={resumeSlug} experienceSlug={experienceSlug} onToggleSelect={() => handleToggleSelect(experienceSlug)} />)}
 
             <Header label='Additional' onClick={handleAdditional} />
             {resume.additionals.map((additionalSlug) => <AdditionalPart key={additionalSlug} resumeSlug={resumeSlug} additionalSlug={additionalSlug} />)}

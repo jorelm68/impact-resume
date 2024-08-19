@@ -20,6 +20,7 @@ export interface Education {
     startDate: Timestamp | FieldValue | null;
     endDate: Timestamp | FieldValue | null;
     bullets: string[] | null;
+    selected: string[] | null;
 }
 
 export type SubmitResumeFields = "fullName" | "email" | "linkedInURL" | "address" | "phone";
@@ -66,11 +67,13 @@ export interface Experience {
     location: string | null;
     workPhone: string | null;
     bullets: string[] | null;
+    selected: string[] | null;
 }
 
 export interface Additional {
     slug: string;
     bullets: string[] | null;
+    selected: string[] | null;
 }
 
 export interface Resume {
@@ -86,6 +89,8 @@ export interface Resume {
     educations: string[] | null;
     experiences: string[] | null;
     additionals: string[] | null;
+
+    selected: string[] | null;
 
     createdAt: number | FieldValue | null;
     updatedAt: number | FieldValue | null;

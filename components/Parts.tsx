@@ -48,7 +48,7 @@ export function ResumePart({ resumeSlug }: { resumeSlug: string }) {
     )
 }
 
-export function EducationPart({ resumeSlug, educationSlug }: { resumeSlug: string, educationSlug: string }) {
+export function EducationPart({ selection, resumeSlug, educationSlug, onToggleSelect }: { selection: string[], resumeSlug: string, educationSlug: string, onToggleSelect: () => void }) {
     const { education, educationDocRef }: EducationHook = useEducation(resumeSlug, educationSlug);
 
     if (!education || !educationDocRef) {
@@ -70,7 +70,7 @@ export function EducationPart({ resumeSlug, educationSlug }: { resumeSlug: strin
 
     return (
         <Wrapper>
-            <Section>
+            <Section isSelected={selection.includes(educationSlug) || false} onToggleSelect={onToggleSelect}>
                 <View style={{
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -106,7 +106,7 @@ export function EducationPart({ resumeSlug, educationSlug }: { resumeSlug: strin
     )
 }
 
-export function ExperiencePart({ resumeSlug, experienceSlug }: { resumeSlug: string, experienceSlug: string }) {
+export function ExperiencePart({ selection, resumeSlug, experienceSlug, onToggleSelect }: { selection: string[], resumeSlug: string, experienceSlug: string, onToggleSelect: () => void }) {
     const { experience, experienceDocRef }: ExperienceHook = useExperience(resumeSlug, experienceSlug);
 
     if (!experience || !experienceDocRef) {
@@ -128,8 +128,8 @@ export function ExperiencePart({ resumeSlug, experienceSlug }: { resumeSlug: str
 
     return (
         <Wrapper>
-            <Section>
-                <View style={{
+            <Section isSelected={selection.includes(experienceSlug) || false} onToggleSelect={onToggleSelect}>
+            <View style={{
                     display: 'flex',
                     justifyContent: 'space-between',
                     flexDirection: 'row',
@@ -212,8 +212,14 @@ function BulletPart({ doc, docRef, resumeSlug, bulletSlug }: BulletPartProps) {
         await deleteDoc(bulletDocRef);
     }
 
+    const handleToggleSelect = async () => {
+        await updateDoc(docRef, {
+            selected: doc.selected?.includes(bulletSlug) ? doc.selected?.filter((slug) => slug !== bulletSlug) : [...(doc.selected || []), bulletSlug],
+        });
+    }
+
     return (
-        <Section>
+        <Section isSelected={doc.selected?.includes(bulletSlug) || false} onToggleSelect={handleToggleSelect}>
             <Editable
                 label='New Bullet'
                 value={bullet.text}
