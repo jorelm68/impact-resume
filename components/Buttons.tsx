@@ -4,7 +4,7 @@ import constants from "@/lib/constants";
 import { ButtonProps, GenericButtonProps, PDFButtonProps } from "@/lib/props";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import ResumePDF from "./ResumePDF";
-import { auth, manageSubscription, upgradeToPremium } from "@/lib/firebase";
+import { auth, manageSubscription, signInWithUmich, upgradeToPremium } from "@/lib/firebase";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 
@@ -185,3 +185,24 @@ export function SignOutButton() {
         <button onClick={signOut}>Sign Out</button>
     )
 }
+
+export function SignInButton() {
+    const router = useRouter();
+  
+    const signInWithGoogle = async () => {
+      try {
+        await signInWithUmich();
+        toast.success('Signed in successfully.');
+        router.push(`/users/${auth.currentUser?.uid}`);
+      } catch (error: any) {
+        await auth.signOut();
+        toast.error(error.message);
+      }
+    }
+  
+    return (
+      <button className='btn-google' onClick={signInWithGoogle}>
+        <img alt="" src={'/google.webp'} /> Sign in with Google
+      </button>
+    )
+  }
