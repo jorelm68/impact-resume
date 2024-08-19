@@ -3,7 +3,7 @@ import Checkbox from "../Checkbox";
 import Dots from "../Dots";
 import View from "../View";
 
-export default function Section({ children, isSelected, onToggleSelect }: SectionProps) {
+export default function Section({ children, isSelected, onToggleSelect, dragHandleProps }: SectionProps) {
     return (
         <View style={{
             display: 'flex',
@@ -13,7 +13,7 @@ export default function Section({ children, isSelected, onToggleSelect }: Sectio
             width: '100%',
         }}>
             <Checkbox isChecked={isSelected} onChange={onToggleSelect}/>
-            <Dots />
+            <Dots dragHandleProps={dragHandleProps} />
             <View style={{
                 display: 'flex',
                 flexDirection: 'column',

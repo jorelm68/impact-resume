@@ -51,17 +51,22 @@ export interface BulletPartProps {
     resumeSlug: string,
     bulletSlug: string,
     onToggleSelect: (bulletSlug: string) => void,
+    dragHandleProps?: any; // Add this line to accept dragHandleProps
 }
 
 export interface ButtonProps {
     onClick?: () => Promise<void> | void;
 }
 
+export interface DotsProps {
+    dragHandleProps?: any;
+}
 export interface CheckboxProps {
     isChecked: boolean;
     onChange: ChangeEventHandler<HTMLInputElement>;
 }
 export interface SectionProps {
+    dragHandleProps?: any;
     children: React.ReactNode;
     isSelected: boolean;
     onToggleSelect: ChangeEventHandler<HTMLInputElement>;

@@ -6,6 +6,14 @@ import { PlusButton } from "../Buttons";
 import Wrapper from "../Layout/Wrapper";
 import BulletPart from "./BulletPart";
 import { AdditionalPartProps } from "@/lib/props";
+import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
+
+const reorder = (list: string[], startIndex: number, endIndex: number): string[] => {
+    const result = Array.from(list);
+    const [removed] = result.splice(startIndex, 1);
+    result.splice(endIndex, 0, removed);
+    return result;
+};
 
 export default function AdditionalPart({ selection, resumeSlug, additionalSlug, onToggleSelect }: AdditionalPartProps) {
     const { additional, additionalDocRef }: AdditionalHook = useAdditional(resumeSlug, additionalSlug);
@@ -21,16 +29,54 @@ export default function AdditionalPart({ selection, resumeSlug, additionalSlug, 
         });
     };
 
+    const onDragEnd = async (result: DropResult) => {
+        if (!result.destination) {
+            return;
+        }
+        const reorderedBullets = reorder(
+            additional.bullets || [],
+            result.source.index,
+            result.destination.index
+        );
+
+        await updateDoc(additionalDocRef, {
+            bullets: reorderedBullets,
+        });
+    };
+
     return (
         <Wrapper>
-            {additional.bullets.map((bulletSlug, index) => {
-                return (
-                    <BulletPart selection={selection} key={index} resumeSlug={resumeSlug} doc={additional} docRef={additionalDocRef} bulletSlug={bulletSlug} onToggleSelect={(bulletSlug: string) => onToggleSelect(bulletSlug)} />
-                )
-            })}
+            <DragDropContext onDragEnd={onDragEnd}>
+                <Droppable droppableId="droppable">
+                    {(provided) => (
+                        <div {...provided.droppableProps} ref={provided.innerRef}>
+                            {additional.bullets?.map((bulletSlug, index) => (
+                                <Draggable key={bulletSlug} draggableId={bulletSlug} index={index}>
+                                    {(provided) => (
+                                        <div
+                                            ref={provided.innerRef}
+                                            {...provided.draggableProps}
+                                        >
+                                            <BulletPart
+                                                selection={selection}
+                                                resumeSlug={resumeSlug}
+                                                doc={additional}
+                                                docRef={additionalDocRef}
+                                                bulletSlug={bulletSlug}
+                                                onToggleSelect={(slug: string) => onToggleSelect(slug)}
+                                                dragHandleProps={provided.dragHandleProps}
+                                            />
+                                        </div>
+                                    )}
+                                </Draggable>
+                            ))}
+                            {provided.placeholder}
+                        </div>
+                    )}
+                </Droppable>
+            </DragDropContext>
 
             <PlusButton onClick={createNewBullet} />
         </Wrapper>
-    )
+    );
 }
-

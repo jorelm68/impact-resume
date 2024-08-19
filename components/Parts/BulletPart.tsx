@@ -5,7 +5,7 @@ import { updateDoc, deleteDoc } from "firebase/firestore";
 import Editable from "../Editable";
 import Section from "../Layout/Section";
 
-export default function BulletPart({ selection, doc, docRef, resumeSlug, bulletSlug, onToggleSelect }: BulletPartProps) {
+export default function BulletPart({ selection, doc, docRef, resumeSlug, bulletSlug, onToggleSelect, dragHandleProps }: BulletPartProps) {
     const { bullet, bulletDocRef }: BulletHook = useBullet(resumeSlug, docRef, bulletSlug);
 
     if (!bullet || !bulletDocRef) {
@@ -27,7 +27,7 @@ export default function BulletPart({ selection, doc, docRef, resumeSlug, bulletS
     }
 
     return (
-        <Section isSelected={selection.includes(bulletSlug) || false} onToggleSelect={() => onToggleSelect(bulletSlug)}>
+        <Section dragHandleProps={dragHandleProps} isSelected={selection.includes(bulletSlug) || false} onToggleSelect={() => onToggleSelect(bulletSlug)}>
             <Editable
                 disabled={!selection.includes(bulletSlug)}
                 label='New Bullet'
