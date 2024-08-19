@@ -75,6 +75,7 @@ export interface Additional {
 
 export interface Resume {
     slug: string;
+    resumeName: string;
     fullName: string | null;
     email: string | null;
     linkedInURL: string | null;
