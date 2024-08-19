@@ -1,7 +1,9 @@
 import { useState } from "react";
 import Loader from "./Loader";
 import constants from "@/lib/constants";
-import { ButtonProps } from "@/lib/props";
+import { ButtonProps, PDFButtonProps } from "@/lib/props";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import ResumePDF from "./ResumePDF";
 
 interface GenericButtonProps {
     onClick?: () => Promise<void> | void;
@@ -102,14 +104,16 @@ export function EditButton({ onClick }: ButtonProps) {
     )
 }
 
-export function PdfButton({ onClick }: ButtonProps) {
+export function PDFButton({ resumeSlug }: PDFButtonProps) {
     return (
-        <Button onClick={onClick} backgroundColor='crimson'>
-            <span style={{
-                color: 'white',
-                fontSize: '12px',
-                fontWeight: 'bold',
-            }}>PDF</span>
-        </Button>
+        <PDFDownloadLink document={<ResumePDF resumeSlug={resumeSlug} />} fileName="resume.pdf">
+            <Button backgroundColor='crimson'>
+                <span style={{
+                    color: 'white',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                }}>PDF</span>
+            </Button>
+        </PDFDownloadLink>
     )
 }

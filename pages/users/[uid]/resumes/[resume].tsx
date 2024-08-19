@@ -1,4 +1,4 @@
-import { AddButton, CancelButton, EditButton, PdfButton } from "@/components/Buttons";
+import { AddButton, CancelButton, EditButton, PDFButton } from "@/components/Buttons";
 import Editable from "@/components/Editable";
 import Loader from "@/components/Loader";
 import AdditionalPart from "@/components/Parts/AdditionalPart";
@@ -136,7 +136,7 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
                     flexDirection: 'row',
                     alignItems: 'center',
                 }}>
-                    <PdfButton onClick={() => exportToPdf(resumeSlug)}/>
+                    <PDFButton resumeSlug={resumeSlug} />
                     <Editable
                         header
                         label='Resume'

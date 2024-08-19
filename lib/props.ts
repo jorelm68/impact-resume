@@ -104,3 +104,8 @@ export interface ExperiencePartProps {
     experienceSlug: string;
     onToggleSelect: (bulletSlug: string) => void;
 }
+
+
+export interface PDFButtonProps {
+    resumeSlug: string;
+}
