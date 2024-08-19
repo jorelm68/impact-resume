@@ -66,3 +66,30 @@ export interface SectionProps {
     isSelected: boolean;
     onToggleSelect: ChangeEventHandler<HTMLInputElement>;
 }
+
+export interface AdditionalPartProps {
+    selection: string[];
+    resumeSlug: string;
+    additionalSlug: string;
+    onToggleSelect: (bulletSlug: string) => void;
+}
+
+export interface ResumePartProps {
+    selection: string[];
+    resumeSlug: string;
+    onToggleSelect: (bulletSlug: string) => void;
+}
+
+export interface EducationPartProps {
+    selection: string[];
+    resumeSlug: string;
+    educationSlug: string;
+    onToggleSelect: (bulletSlug: string) => void;
+}
+
+export interface ExperiencePartProps {
+    selection: string[];
+    resumeSlug: string;
+    experienceSlug: string;
+    onToggleSelect: (bulletSlug: string) => void;
+}

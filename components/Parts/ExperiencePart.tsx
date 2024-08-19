@@ -10,8 +10,9 @@ import Wrapper from "../Layout/Wrapper";
 import View from "../View";
 import BulletPart from "./BulletPart";
 import Text from "../Text";
+import { ExperiencePartProps } from "@/lib/props";
 
-export default function ExperiencePart({ selection, resumeSlug, experienceSlug, onToggleSelect }: { selection: string[], resumeSlug: string, experienceSlug: string, onToggleSelect: (slug: string) => void }) {
+export default function ExperiencePart({ selection, resumeSlug, experienceSlug, onToggleSelect }: ExperiencePartProps) {
     const { experience, experienceDocRef }: ExperienceHook = useExperience(resumeSlug, experienceSlug);
 
     if (!experience || !experienceDocRef) {

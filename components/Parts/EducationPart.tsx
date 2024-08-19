@@ -10,8 +10,9 @@ import Wrapper from "../Layout/Wrapper";
 import View from "../View";
 import BulletPart from "./BulletPart";
 import Text from "../Text";
+import { EducationPartProps } from "@/lib/props";
 
-export default function EducationPart({ selection, resumeSlug, educationSlug, onToggleSelect }: { selection: string[], resumeSlug: string, educationSlug: string, onToggleSelect: (slug: string) => void }) {
+export default function EducationPart({ selection, resumeSlug, educationSlug, onToggleSelect }: EducationPartProps) {
     const { education, educationDocRef }: EducationHook = useEducation(resumeSlug, educationSlug);
 
     if (!education || !educationDocRef) {

@@ -5,8 +5,9 @@ import { DocumentReference, updateDoc } from "firebase/firestore";
 import { PlusButton } from "../Buttons";
 import Wrapper from "../Layout/Wrapper";
 import BulletPart from "./BulletPart";
+import { AdditionalPartProps } from "@/lib/props";
 
-export default function AdditionalPart({ selection, resumeSlug, additionalSlug, onToggleSelect }: { selection: string[], resumeSlug: string, additionalSlug: string, onToggleSelect: (bulletSlug: string) => void }) {
+export default function AdditionalPart({ selection, resumeSlug, additionalSlug, onToggleSelect }: AdditionalPartProps) {
     const { additional, additionalDocRef }: AdditionalHook = useAdditional(resumeSlug, additionalSlug);
 
     if (!additional || !additionalDocRef || !additional.bullets) {
