@@ -163,50 +163,6 @@ export default function ResumePDF({ resumeSlug }: ResumePDFProps) {
 
                 {/* Additional Section */}
                 <AdditionalSection resumeSlug={resumeSlug} additionalSlug={resume.additionals[0]} />
-
-                {/* <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Experience</Text>
-                    <View style={styles.item}>
-                        <Text>ABC Company, Ann Arbor, MI</Text>
-                        <Text>Marketing Intern, Summer 2023</Text>
-                        <View style={styles.bulletPoint}>
-                            <Text>•</Text>
-                            <Text style={styles.bulletText}>
-                                Developed and executed a digital marketing strategy, increasing website traffic by 20%.
-                            </Text>
-                        </View>
-                        <View style={styles.bulletPoint}>
-                            <Text>•</Text>
-                            <Text style={styles.bulletText}>
-                                Conducted market research and presented findings to senior management, leading to a new product launch.
-                            </Text>
-                        </View>
-                    </View>
-                </View> */}
-
-                {/* Leadership and Activities Section */}
-                {/* <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Leadership and Activities</Text>
-                    <View style={styles.item}>
-                        <Text>University of Michigan - Business Club</Text>
-                        <Text>President, 2022-Present</Text>
-                        <View style={styles.bulletPoint}>
-                            <Text>•</Text>
-                            <Text style={styles.bulletText}>
-                                Led a team of 15 members in organizing events and workshops, improving participation by 30%.
-                            </Text>
-                        </View>
-                    </View>
-                </View> */}
-
-                {/* Skills Section */}
-                {/* <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Skills</Text>
-                    <View style={styles.item}>
-                        <Text>Technical Skills: Microsoft Excel, SQL, Python</Text>
-                        <Text>Languages: Spanish (Fluent), French (Conversational)</Text>
-                    </View>
-                </View> */}
             </Page>
         </Document>
     )
