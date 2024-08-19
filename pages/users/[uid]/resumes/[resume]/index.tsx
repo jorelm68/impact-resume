@@ -64,7 +64,7 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
                 alignItems: 'center',
             }}>
                 <h2>{resumeSlug}</h2>
-                <Text>{formatTime(resume.updatedAt, 'H:M(am/pm) M D, Y')}</Text>
+                <Text>Last Updated {formatTime(resume.updatedAt, 'H:M(am/pm) M D, Y')}</Text>
             </View>
 
             <ResumePart resumeSlug={resumeSlug} />
