@@ -3,6 +3,7 @@ import { UserContext } from "@/lib/context";
 import { auth } from "@/lib/firebase";
 import Link from "next/link";
 import { useContext } from "react";
+import { SignInButton } from "./Buttons";
 
 
 export default function Navbar() {
@@ -13,7 +14,7 @@ export default function Navbar() {
             <ul>
                 <li>
                     <Link href="/">
-                        <button className='btn-logo'>HOME</button>
+                        <img alt="" src={constants.photos.logo} />
                     </Link>
                 </li>
 
@@ -33,12 +34,11 @@ export default function Navbar() {
                     </>
                 ) : (
                     <li>
-                        <Link href="/enter">
-                            <button className='btn-blue'>Log in</button>
-                        </Link>
+                        <SignInButton />
                     </li>
                 )}
             </ul>
+
         </nav>
     )
 }

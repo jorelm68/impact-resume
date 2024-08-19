@@ -212,7 +212,7 @@ export function SignOutButton() {
     const signOut = async () => {
         await auth.signOut();
         toast.success('Signed out successfully.');
-        router.push(`/enter`);
+        router.push('/');
     }
 
     return (

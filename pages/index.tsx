@@ -11,6 +11,10 @@ export default function Home() {
         alignItems: 'center',
         gap: '10px',
       }}>
+        <img src={constants.photos.nameTransparent} alt="logo" />
+
+        <img src={constants.photos.resume1} alt="resume" />
+
         <Text style={{
         }}>Welcome to the PDF Generator</Text>
         <Text style={{
@@ -20,10 +24,7 @@ export default function Home() {
         <Text style={{
         }}>$10.00</Text>
 
-        <img src={constants.photos.logoTransparent} alt="logo" style={{
-          width: '100px',
-          height: '100px',
-        }} />
+
       </View>
     </main>
   );

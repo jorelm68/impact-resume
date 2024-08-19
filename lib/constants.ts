@@ -4,6 +4,9 @@ export default {
         hacker: 'https://i.imgur.com/1AUj5mE.png',
         logo: 'https://i.imgur.com/9W63fEH.png',
         logoTransparent: 'https://i.imgur.com/O7gs1d8.png',
+        name: 'https://i.imgur.com/0TBB9Bd.png',
+        nameTransparent: 'https://i.imgur.com/en3h9xc.png',
+        resume1: 'https://i.imgur.com/NQSYiCY.png',
     },
 
     colors: {
