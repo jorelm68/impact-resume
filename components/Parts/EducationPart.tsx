@@ -11,6 +11,8 @@ import View from "../View";
 import BulletPart from "./BulletPart";
 import Text from "../Text";
 import { EducationPartProps } from "@/lib/props";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { reorder } from "@/lib/helper";
 
 export default function EducationPart({ selection, resumeSlug, educationSlug, onToggleSelect }: EducationPartProps) {
     const { education, educationDocRef }: EducationHook = useEducation(resumeSlug, educationSlug);
@@ -33,6 +35,21 @@ export default function EducationPart({ selection, resumeSlug, educationSlug, on
     };
 
     const isSelected = selection.includes(educationSlug) || false;
+
+    const onDragEnd = async (result: any) => {
+        if (!result.destination) {
+            return;
+        }
+        const reorderedBullets = reorder(
+            education.bullets || [],
+            result.source.index,
+            result.destination.index
+        );
+
+        await updateDoc(educationDocRef, {
+            bullets: reorderedBullets,
+        });
+    };
 
     return (
         <Wrapper>
@@ -60,11 +77,35 @@ export default function EducationPart({ selection, resumeSlug, educationSlug, on
             </Section>
 
             <Indent>
-                {isSelected && education.bullets && education.bullets.length > 0 && education.bullets.map((bulletSlug, index) => {
-                    return (
-                        <BulletPart selection={selection} key={index} resumeSlug={resumeSlug} doc={education} docRef={educationDocRef} bulletSlug={bulletSlug} onToggleSelect={(bulletSlug: string) => onToggleSelect(bulletSlug)} />
-                    )
-                })}
+                <DragDropContext onDragEnd={onDragEnd}>
+                    <Droppable droppableId="educationBullets">
+                        {(provided) => (
+                            <div {...provided.droppableProps} ref={provided.innerRef}>
+                                {isSelected && education.bullets && education.bullets.length > 0 && education.bullets.map((bulletSlug, index) => (
+                                    <Draggable key={bulletSlug} draggableId={bulletSlug} index={index}>
+                                        {(provided) => (
+                                            <div
+                                                ref={provided.innerRef}
+                                                {...provided.draggableProps}
+                                                {...provided.dragHandleProps}
+                                            >
+                                                <BulletPart
+                                                    selection={selection}
+                                                    resumeSlug={resumeSlug}
+                                                    doc={education}
+                                                    docRef={educationDocRef}
+                                                    bulletSlug={bulletSlug}
+                                                    onToggleSelect={(slug: string) => onToggleSelect(slug)}
+                                                />
+                                            </div>
+                                        )}
+                                    </Draggable>
+                                ))}
+                                {provided.placeholder}
+                            </div>
+                        )}
+                    </Droppable>
+                </DragDropContext>
 
                 {isSelected && (
                     <PlusButton onClick={createNewBullet} />

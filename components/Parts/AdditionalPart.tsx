@@ -7,13 +7,7 @@ import Wrapper from "../Layout/Wrapper";
 import BulletPart from "./BulletPart";
 import { AdditionalPartProps } from "@/lib/props";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
-
-const reorder = (list: string[], startIndex: number, endIndex: number): string[] => {
-    const result = Array.from(list);
-    const [removed] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed);
-    return result;
-};
+import { reorder } from "@/lib/helper";
 
 export default function AdditionalPart({ selection, resumeSlug, additionalSlug, onToggleSelect }: AdditionalPartProps) {
     const { additional, additionalDocRef }: AdditionalHook = useAdditional(resumeSlug, additionalSlug);
@@ -47,7 +41,7 @@ export default function AdditionalPart({ selection, resumeSlug, additionalSlug, 
     return (
         <Wrapper>
             <DragDropContext onDragEnd={onDragEnd}>
-                <Droppable droppableId="droppable">
+                <Droppable droppableId="additionalBullets">
                     {(provided) => (
                         <div {...provided.droppableProps} ref={provided.innerRef}>
                             {additional.bullets?.map((bulletSlug, index) => (

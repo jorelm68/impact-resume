@@ -11,6 +11,8 @@ import View from "../View";
 import BulletPart from "./BulletPart";
 import Text from "../Text";
 import { ExperiencePartProps } from "@/lib/props";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { reorder } from "@/lib/helper";
 
 export default function ExperiencePart({ selection, resumeSlug, experienceSlug, onToggleSelect }: ExperiencePartProps) {
     const { experience, experienceDocRef }: ExperienceHook = useExperience(resumeSlug, experienceSlug);
@@ -33,6 +35,21 @@ export default function ExperiencePart({ selection, resumeSlug, experienceSlug, 
     };
 
     const isSelected = selection.includes(experienceSlug) || false;
+
+    const onDragEnd = async (result: any) => {
+        if (!result.destination) {
+            return;
+        }
+        const reorderedBullets = reorder(
+            experience.bullets || [],
+            result.source.index,
+            result.destination.index
+        );
+
+        await updateDoc(experienceDocRef, {
+            bullets: reorderedBullets,
+        });
+    };
 
     return (
         <Wrapper>
@@ -59,11 +76,35 @@ export default function ExperiencePart({ selection, resumeSlug, experienceSlug, 
             </Section>
 
             <Indent>
-                {isSelected && experience.bullets && experience.bullets.length > 0 && experience.bullets.map((bulletSlug, index) => {
-                    return (
-                        <BulletPart selection={selection} key={index} resumeSlug={resumeSlug} doc={experience} docRef={experienceDocRef} bulletSlug={bulletSlug} onToggleSelect={(bulletSlug: string) => onToggleSelect(bulletSlug)} />
-                    )
-                })}
+            <DragDropContext onDragEnd={onDragEnd}>
+                    <Droppable droppableId="experienceBullets">
+                        {(provided) => (
+                            <div {...provided.droppableProps} ref={provided.innerRef}>
+                                {isSelected && experience.bullets && experience.bullets.length > 0 && experience.bullets.map((bulletSlug, index) => (
+                                    <Draggable key={bulletSlug} draggableId={bulletSlug} index={index}>
+                                        {(provided) => (
+                                            <div
+                                                ref={provided.innerRef}
+                                                {...provided.draggableProps}
+                                                {...provided.dragHandleProps}
+                                            >
+                                                <BulletPart
+                                                    selection={selection}
+                                                    resumeSlug={resumeSlug}
+                                                    doc={experience}
+                                                    docRef={experienceDocRef}
+                                                    bulletSlug={bulletSlug}
+                                                    onToggleSelect={(slug: string) => onToggleSelect(slug)}
+                                                />
+                                            </div>
+                                        )}
+                                    </Draggable>
+                                ))}
+                                {provided.placeholder}
+                            </div>
+                        )}
+                    </Droppable>
+                </DragDropContext>
 
                 {isSelected && (
                     <PlusButton onClick={createNewBullet} />
