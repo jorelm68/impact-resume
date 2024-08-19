@@ -69,6 +69,10 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
         });
 
         await deleteDoc(educationDocRef);
+
+        if (resume.educations?.length === 0) {
+            setEditingEducation(false);
+        }
     }
 
     const handleDeleteExperience = async (experienceDocRef: DocumentReference<Experience>) => {
@@ -78,6 +82,10 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
         });
 
         await deleteDoc(experienceDocRef);
+
+        if (resume.experiences?.length === 0) {
+            setEditingExperience(false);
+        }
     }
 
     const onDragEndEducations = async (result: any) => {
