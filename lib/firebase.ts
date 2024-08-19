@@ -44,10 +44,6 @@ export const signInWithUmich = async (): Promise<void> => {
         throw new Error('Google sign-in failed. Missing email or uid.');
     }
 
-    if (!user.email.endsWith('@umich.edu')) {
-        throw new Error('Google sign-in failed. Only umich.edu emails are allowed.');
-    }
-
     // Set user details in the database
     const userRef: DocumentReference<User> = doc(firestore, 'users', user.uid).withConverter(userConverter);
     const userDoc: DocumentSnapshot<User> = await getDoc(userRef);
