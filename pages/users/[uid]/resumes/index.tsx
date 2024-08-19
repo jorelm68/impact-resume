@@ -45,7 +45,7 @@ function ResumeItem({ resume }: { resume: Resume }) {
     return (
         <Link href={`/users/${auth.currentUser?.uid}/resumes/${resume.slug}`}>
             <button>
-                {resume.slug}
+                {resume.resumeName}
             </button>
         </Link>
     )

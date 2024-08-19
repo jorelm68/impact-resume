@@ -124,7 +124,7 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
                     header
                     label='Resume'
                     value={resume.resumeName}
-                    onSubmit={(newValue: EditableValue) => updateDoc(resumeDocRef, { resumeName: newValue })}
+                    onSubmit={(newValue: EditableValue) => updateDoc(resumeDocRef, { resumeName: newValue, updatedAt: serverTimestamp() })}
                 />
                 <Text>Last Updated {formatTime(resume.updatedAt, 'H:M(am/pm) M D, Y')}</Text>
             </View>
