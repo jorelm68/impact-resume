@@ -56,6 +56,7 @@ export const signInWithUmich = async () => {
     }
 }
 
+
 export const getResumeDocRef = (uid: string | undefined, resume: string): DocumentReference<Resume> | null => {
     if (!uid) {
         return null;

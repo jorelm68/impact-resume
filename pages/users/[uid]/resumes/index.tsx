@@ -42,7 +42,7 @@ function ResumeList() {
         const bUpdatedAt = b.updatedAt instanceof Timestamp ? b.updatedAt.toMillis() : typeof b.updatedAt === 'number' ? b.updatedAt : 0;
         return bUpdatedAt - aUpdatedAt;
     });
-    
+
     return (
         <section>
             {resumes.map((resume, index) => <ResumeItem key={index} resume={resume} />)}
@@ -58,15 +58,15 @@ function ResumeItem({ resume }: { resume: Resume }) {
             gap: '8px',
             alignItems: 'center',
         }}>
-        <Link href={`/users/${auth.currentUser?.uid}/resumes/${resume.slug}`}>
-            <button>
-                {resume.resumeName}
-            </button>
-        </Link>
+            <Link href={`/users/${auth.currentUser?.uid}/resumes/${resume.slug}`}>
+                <button>
+                    {resume.resumeName}
+                </button>
+            </Link>
 
-        <Text>
-            Last Updated {formatTime(resume.updatedAt, 'H:M(am/pm) M D, Y')}
-        </Text>
+            <Text>
+                Last Updated {formatTime(resume.updatedAt, 'H:M(am/pm) M D, Y')}
+            </Text>
         </View>
     )
 }

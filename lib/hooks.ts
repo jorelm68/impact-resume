@@ -1,9 +1,33 @@
 import { useEffect, useState } from "react";
-import { Additional, AdditionalHook, Bullet, BulletHook, Education, EducationHook, Experience, ExperienceHook, Resume, User } from "./types";
+import { Additional, AdditionalHook, Bullet, BulletHook, Education, EducationHook, Experience, ExperienceHook, Resume, User, UserHook } from "./types";
 import { collection, CollectionReference, doc, DocumentReference, DocumentSnapshot, onSnapshot, QuerySnapshot } from "firebase/firestore";
 import { auth, firestore, getResumeDocRef } from "./firebase";
 import { User as FirebaseUser } from 'firebase/auth';
 import { additionalConverter, bulletConverter, educationConverter, experienceConverter, resumeConverter, userConverter } from "./converters";
+
+export function useUser(): UserHook {
+    const [user, setUser] = useState<User | null>(null);
+    const [userDocRef, setUserDocRef] = useState<DocumentReference<User> | null>(null);
+
+    useEffect(() => {
+        const firebaseUser: FirebaseUser | null = auth.currentUser;
+        if (!firebaseUser) return;
+
+        const userCollectionRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
+        const userDocRef: DocumentReference<User> = doc(userCollectionRef, firebaseUser.uid);
+        setUserDocRef(userDocRef);
+
+        const unsubscribe = onSnapshot(userDocRef, (snapshot: DocumentSnapshot<User>) => {
+            const user: User | undefined = snapshot.data();
+            if (!user) return;
+            setUser(user);
+        });
+
+        return () => unsubscribe();
+    }, [auth.currentUser]);
+
+    return { user, userDocRef };
+}
 
 export function useResumes() {
     const [resumes, setResumes] = useState<Resume[] | null>(null);

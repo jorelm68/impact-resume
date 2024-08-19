@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { UserContext } from '@/lib/context';
 import { auth, signInWithUmich } from '@/lib/firebase';
 import toast from 'react-hot-toast';
+import { useRouter } from 'next/router';
 
 export default function EnterPage({ }) {
   const { user } = useContext(UserContext);
@@ -14,10 +15,13 @@ export default function EnterPage({ }) {
 }
 
 function SignInButton() {
+  const router = useRouter();
+
   const signInWithGoogle = async () => {
     try {
       await signInWithUmich();
       toast.success('Signed in successfully.');
+      router.push(`/users/${auth.currentUser?.uid}`);
     } catch (error: any) {
       await auth.signOut();
       toast.error(error.message);
@@ -32,9 +36,12 @@ function SignInButton() {
 }
 
 function SignOutButton() {
+  const router = useRouter();
+
   const signOut = async () => {
     await auth.signOut();
     toast.success('Signed out successfully.');
+    router.push(`/enter`);
   }
 
   return (

@@ -93,3 +93,8 @@ export interface Resume {
     createdAt: number | FieldValue | null;
     updatedAt: number | FieldValue | null;
 }
+
+export interface UserHook {
+    user: User | null;
+    userDocRef: DocumentReference<User> | null;
+}
