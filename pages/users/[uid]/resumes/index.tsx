@@ -16,7 +16,15 @@ export default function ResumesPage() {
         <main>
             <h1>Resumes</h1>
 
-            <ResumeList />
+            <View style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '4rem',
+            }}>
+                <ResumeList />
+
+                <CreateResume />
+            </View>
         </main>
     )
 }
@@ -35,18 +43,11 @@ function ResumeList() {
 
 function ResumeItem({ resume }: { resume: Resume }) {
     return (
-        <View style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '4rem',
-        }}>
-            <Link href={`/users/${auth.currentUser?.uid}/resumes/${resume.slug}`}>
-                <button>
-                    {resume.slug}
-                </button>
-            </Link>
-            <CreateResume />
-        </View>
+        <Link href={`/users/${auth.currentUser?.uid}/resumes/${resume.slug}`}>
+            <button>
+                {resume.slug}
+            </button>
+        </Link>
     )
 }
 
@@ -98,7 +99,7 @@ function CreateResume() {
         toast.success('Resume created!');
 
         // Imperative navigation after doc is set
-        router.push(`/${auth.currentUser?.uid}/${slug}`);
+        router.push(`/${auth.currentUser?.uid}/resumes/${slug}`);
     }
 
     return (
