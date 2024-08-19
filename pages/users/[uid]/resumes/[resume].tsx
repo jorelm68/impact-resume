@@ -1,4 +1,5 @@
 import { AddButton, CancelButton, EditButton } from "@/components/Buttons";
+import Editable from "@/components/Editable";
 import Loader from "@/components/Loader";
 import AdditionalPart from "@/components/Parts/AdditionalPart";
 import BulletPart from "@/components/Parts/BulletPart";
@@ -11,7 +12,7 @@ import { createNewAdditional, createNewEducation, createNewExperience } from "@/
 import { formatTime, reorder } from "@/lib/helper";
 import { useResume } from "@/lib/hooks";
 import { ResumePageProps } from "@/lib/props";
-import { Additional, Education, Experience } from "@/lib/types";
+import { Additional, EditableValue, Education, Experience } from "@/lib/types";
 import { deleteDoc, DocumentReference, updateDoc } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import { useState } from "react";
@@ -109,8 +110,15 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
                 gap: '16px',
                 flexDirection: 'row',
                 alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingBottom: '16px',
             }}>
-                <h2>{resumeSlug}</h2>
+                <Editable
+                    header
+                    label='Resume'
+                    value={resume.resumeName}
+                    onSubmit={(newValue: EditableValue) => updateDoc(resumeDocRef, { resumeName: newValue })}
+                />
                 <Text>Last Updated {formatTime(resume.updatedAt, 'H:M(am/pm) M D, Y')}</Text>
             </View>
 

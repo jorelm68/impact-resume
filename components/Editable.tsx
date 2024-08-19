@@ -13,6 +13,7 @@ interface EditableProps {
     value: string | Timestamp | FieldValue | null;
     label?: string;
     bold?: boolean;
+    header?: boolean;
     onSubmit?: (newValue: string | Timestamp | null) => Promise<void> | void;
     onDelete?: () => Promise<void> | void;
     separateLabel?: boolean;
@@ -22,6 +23,7 @@ interface EditableProps {
 
 export default function Editable({
     disabled = false,
+    header = false,
     value,
     label,
     bold = false,
@@ -159,8 +161,8 @@ export default function Editable({
                     onClick={() => setIsEditing(true)}
                     style={{
                         cursor: "pointer",
-                        fontSize: "1rem",
-                        fontWeight: bold ? "bold" : "normal",
+                        fontSize: header ? '2rem' : '1rem',
+                        fontWeight: bold || header ? "bold" : "normal",
                         color: disabled || ['Not shown', 'New bullet'].includes(displayText) ? "grey" : "inherit",
                     }}
                 >
