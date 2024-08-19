@@ -5,6 +5,28 @@ import { auth, firestore, getResumeDocRef } from "./firebase";
 import { User as FirebaseUser } from 'firebase/auth';
 import { additionalConverter, bulletConverter, educationConverter, experienceConverter, resumeConverter, userConverter } from "./converters";
 
+export function useResumes() {
+    const [resumes, setResumes] = useState<Resume[] | null>(null);
+
+    useEffect(() => {
+        const firebaseUser: FirebaseUser | null = auth.currentUser;
+        if (!firebaseUser) return;
+
+        const userCollectionRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
+        const userDocRef: DocumentReference<User> = doc(userCollectionRef, firebaseUser.uid);
+        const resumeCollectionRef: CollectionReference<Resume> = collection(userDocRef, 'resumes').withConverter(resumeConverter);
+
+        const unsubscribe = onSnapshot(resumeCollectionRef, (snapshot: QuerySnapshot<Resume>) => {
+            const resumes: Resume[] = snapshot.docs.map((doc) => doc.data());
+            setResumes(resumes);
+        });
+
+        return () => unsubscribe();
+    }, [auth.currentUser]);
+
+    return resumes;
+}
+
 export function useResume(slug: string) {
     const [resume, setResume] = useState<Resume | null>(null);
     const [resumeDocRef, setResumeDocRef] = useState<DocumentReference<Resume> | null>(null);

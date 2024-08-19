@@ -1,6 +1,9 @@
 import { auth } from "@/lib/firebase";
 import { useResumes } from "@/lib/hooks";
 import { Resume } from "@/lib/types";
+import { User as FirebaseUser } from "firebase/auth";
+import { collection, CollectionReference } from "firebase/firestore";
+import Link from "next/link";
 
 export default function ResumesPage() {
     return (
@@ -18,16 +21,18 @@ function ResumeList() {
     if (!resumes) return <p>Loading...</p>;
 
     return (
-        <ul>
-            {resumes.map((resume) => ResumeItem(resume))}
-        </ul>
+        <section>
+            {resumes.map((resume, index) => <ResumeItem key={index} resume={resume} />)}
+        </section>
     )
 }
 
-function ResumeItem(resume: Resume) {
+function ResumeItem({ resume }: { resume: Resume }) {
     return (
-        <li key={resume.slug}>
-            <a href={`/users/${auth.currentUser?.uid}/resumes/${resume.slug}`}>{resume.slug}</a>
-        </li>
+        <Link href={`/users/${auth.currentUser?.uid}/resumes/${resume.slug}`}>
+            <button>
+                {resume.slug}
+            </button>
+        </Link>
     )
 }
