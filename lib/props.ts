@@ -1,5 +1,6 @@
 import { DocumentData, DocumentReference } from "firebase/firestore";
 import { Additional, Education, Experience, Resume } from "./types";
+import { ChangeEvent, ChangeEventHandler } from "react";
 
 export interface AuthCheckProps {
     children: React.ReactNode;
@@ -52,4 +53,9 @@ export interface BulletPartProps {
 
 export interface ButtonProps {
     onClick?: () => Promise<void> | void;
+}
+
+export interface CheckboxProps {
+    isChecked: boolean;
+    onChange: ChangeEventHandler<HTMLInputElement>;
 }
