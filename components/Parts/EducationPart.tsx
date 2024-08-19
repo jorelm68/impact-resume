@@ -2,7 +2,7 @@ import { createBullet } from "@/lib/firebase";
 import { useEducation } from "@/lib/hooks";
 import { EducationHook, SubmitEducationFields, EditableValue, Bullet } from "@/lib/types";
 import { updateDoc, DocumentReference } from "firebase/firestore";
-import { PlusButton } from "../Buttons";
+import { AddButton } from "../Buttons";
 import Editable from "../Editable";
 import Indent from "../Layout/Indent";
 import Section from "../Layout/Section";
@@ -108,7 +108,7 @@ export default function EducationPart({ selection, resumeSlug, educationSlug, on
                 </DragDropContext>
 
                 {isSelected && (
-                    <PlusButton onClick={createNewBullet} />
+                    <AddButton onClick={createNewBullet} />
                 )}
             </Indent>
         </Wrapper>

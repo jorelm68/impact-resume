@@ -2,7 +2,7 @@ import { createBullet } from "@/lib/firebase";
 import { useAdditional } from "@/lib/hooks";
 import { AdditionalHook, Bullet } from "@/lib/types";
 import { DocumentReference, updateDoc } from "firebase/firestore";
-import { PlusButton } from "../Buttons";
+import { AddButton } from "../Buttons";
 import Wrapper from "../Layout/Wrapper";
 import BulletPart from "./BulletPart";
 import { AdditionalPartProps } from "@/lib/props";
@@ -70,7 +70,7 @@ export default function AdditionalPart({ selection, resumeSlug, additionalSlug, 
                 </Droppable>
             </DragDropContext>
 
-            <PlusButton onClick={createNewBullet} />
+            <AddButton onClick={createNewBullet} />
         </Wrapper>
     );
 }

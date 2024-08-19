@@ -1,4 +1,4 @@
-import { PlusButton } from "@/components/Buttons";
+import { AddButton } from "@/components/Buttons";
 import Loader from "@/components/Loader";
 import AdditionalPart from "@/components/Parts/AdditionalPart";
 import BulletPart from "@/components/Parts/BulletPart";
@@ -179,7 +179,7 @@ function Header({ label, onClick }: { label: string, onClick?: () => Promise<voi
             alignItems: 'center',
         }}>
             <h2>{label}</h2>
-            <PlusButton onClick={onClick} />
+            <AddButton onClick={onClick} />
         </View>
     )
 }

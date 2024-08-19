@@ -2,7 +2,7 @@ import { createBullet } from "@/lib/firebase";
 import { useExperience } from "@/lib/hooks";
 import { ExperienceHook, Bullet, SubmitExperienceFields, EditableValue } from "@/lib/types";
 import { DocumentReference, updateDoc } from "firebase/firestore";
-import { PlusButton } from "../Buttons";
+import { AddButton } from "../Buttons";
 import Editable from "../Editable";
 import Indent from "../Layout/Indent";
 import Section from "../Layout/Section";
@@ -107,7 +107,7 @@ export default function ExperiencePart({ selection, resumeSlug, experienceSlug, 
                 </DragDropContext>
 
                 {isSelected && (
-                    <PlusButton onClick={createNewBullet} />
+                    <AddButton onClick={createNewBullet} />
                 )}
             </Indent>
         </Wrapper>

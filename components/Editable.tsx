@@ -3,7 +3,7 @@ import Text from "./Text";
 import View from "./View";
 import { FieldValue, Timestamp } from "firebase/firestore";
 import { formatTime, parseDateStringToTimestamp } from "@/lib/helper";
-import { CancelButton, CheckButton, MinusButton } from "./Buttons";
+import { CancelButton, SaveButton, RemoveButton } from "./Buttons";
 import { TimeFormat } from "@/lib/types";
 
 type EditableType = "text" | "timestamp";
@@ -151,8 +151,8 @@ export default function Editable({
                         />
                     )}
                     <CancelButton onClick={handleCancel} />
-                    {onSubmit && <CheckButton onClick={handleSubmit} />}
-                    {onDelete && <MinusButton onClick={onDelete} />}
+                    {onSubmit && <SaveButton onClick={handleSubmit} />}
+                    {onDelete && <RemoveButton onClick={onDelete} />}
                 </View>
             ) : (
                 <Text

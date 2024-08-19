@@ -42,7 +42,7 @@ function Button({ onClick, backgroundColor, children }: GenericButtonProps) {
     )
 }
 
-export function MinusButton({ onClick }: ButtonProps) {
+export function RemoveButton({ onClick }: ButtonProps) {
     return (
         <Button onClick={onClick} backgroundColor='red'>
             <span style={{
@@ -54,7 +54,7 @@ export function MinusButton({ onClick }: ButtonProps) {
     )
 }
 
-export function PlusButton({ onClick }: ButtonProps) {
+export function AddButton({ onClick }: ButtonProps) {
     return (
         <Button onClick={onClick} backgroundColor={constants.colors.lightBlue}>
             <span style={{
@@ -66,7 +66,7 @@ export function PlusButton({ onClick }: ButtonProps) {
     )
 }
 
-export function CheckButton({ onClick }: ButtonProps) {
+export function SaveButton({ onClick }: ButtonProps) {
     return (
         <Button onClick={onClick} backgroundColor='green'>
             <span style={{
