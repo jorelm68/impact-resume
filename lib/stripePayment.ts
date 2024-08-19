@@ -10,6 +10,7 @@ import {
   where,
 } from "firebase/firestore";
 import { getFunctions, httpsCallable } from "firebase/functions";
+import constants from "./constants";
 
 export const getCheckoutUrl = async (
   app: FirebaseApp,
@@ -58,7 +59,7 @@ export const getPortalUrl = async (app: FirebaseApp): Promise<string> => {
 
   let dataWithUrl: any;
   try {
-    const functions = getFunctions(app, "us-central1");
+    const functions = getFunctions(app, constants.REGION);
     const functionRef = httpsCallable(
       functions,
       "ext-firestore-stripe-payments-createPortalLink"

@@ -7,23 +7,10 @@ import { getStorage } from "firebase/storage";
 import { bulletConverter, educationConverter, experienceConverter, resumeConverter, userConverter } from "./converters";
 import { Bullet, Education, Experience, Resume, User } from "./types";
 import { getCheckoutUrl, getPortalUrl, getPremiumStatus } from "./stripePayment";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-    apiKey: "AIzaSyBlduTuBPlAyZHD_H-p1q63EtpjidNuU10",
-    authDomain: "dorm-tools.firebaseapp.com",
-    projectId: "dorm-tools",
-    storageBucket: "dorm-tools.appspot.com",
-    messagingSenderId: "998532745943",
-    appId: "1:998532745943:web:88136a61fa3b1a02983e92",
-    measurementId: "G-XXCV8CGZ2R"
-};
+import constants from "./constants";
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+const app = initializeApp(constants.FIREBASE_CONFIG);
 
 export const auth = getAuth(app);
 export const googleAuthProvider = new GoogleAuthProvider();
@@ -32,8 +19,7 @@ export const storage = getStorage(app);
 export const serverTimestampValue = serverTimestamp()
 
 export const upgradeToPremium = async (): Promise<string> => {
-    const priceId = 'price_1PpanOBJpQtnod8AxWlbZMPg';
-    const checkoutUrl = await getCheckoutUrl(app, priceId);
+    const checkoutUrl = await getCheckoutUrl(app, constants.PRICE_ID);
 
     return checkoutUrl;
 }

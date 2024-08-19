@@ -5,6 +5,7 @@ import { FieldValue, Timestamp } from "firebase/firestore";
 import { formatTime, parseDateStringToTimestamp } from "@/lib/helper";
 import { CancelButton, SaveButton, RemoveButton } from "./Buttons";
 import { TimeFormat } from "@/lib/types";
+import constants from "@/lib/constants";
 
 type EditableType = "text" | "timestamp";
 
@@ -89,7 +90,7 @@ export default function Editable({
         (newValue && type === "timestamp"
             ? formatTime(parseDateStringToTimestamp(newValue), timeFormat)
             : newValue) ||
-        (separateLabel ? "Not shown" : label || "Not shown");
+        (separateLabel ? constants.NOT_SHOWN : label || constants.NOT_SHOWN);
 
     return (
         <View
@@ -163,7 +164,7 @@ export default function Editable({
                         cursor: "pointer",
                         fontSize: header ? '2rem' : '1rem',
                         fontWeight: bold || header ? "bold" : "normal",
-                        color: disabled || ['Not shown', 'New bullet'].includes(displayText) ? "grey" : "inherit",
+                        color: disabled || [constants.NOT_SHOWN, constants.DEFAULT_BULLET].includes(displayText) ? "grey" : "inherit",
                     }}
                 >
                     {displayText}

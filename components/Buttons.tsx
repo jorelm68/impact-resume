@@ -1,17 +1,11 @@
 import { useEffect, useState } from "react";
 import Loader from "./Loader";
 import constants from "@/lib/constants";
-import { ButtonProps, PDFButtonProps } from "@/lib/props";
+import { ButtonProps, GenericButtonProps, PDFButtonProps } from "@/lib/props";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import ResumePDF from "./ResumePDF";
 import { manageSubscription, upgradeToPremium } from "@/lib/firebase";
 import { useRouter } from "next/router";
-
-interface GenericButtonProps {
-    onClick?: () => Promise<void> | void;
-    backgroundColor?: string;
-    children: React.ReactNode;
-}
 
 function Button({ onClick, backgroundColor, children }: GenericButtonProps) {
     const [loading, setLoading] = useState(false);

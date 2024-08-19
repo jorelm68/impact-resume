@@ -112,3 +112,9 @@ export interface PDFButtonProps {
 export interface ResumePDFProps {
     resumeSlug: string;
 }
+
+export interface GenericButtonProps {
+    onClick?: () => Promise<void> | void;
+    backgroundColor?: string;
+    children: React.ReactNode;
+}
