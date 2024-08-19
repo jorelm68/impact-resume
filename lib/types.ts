@@ -17,7 +17,7 @@ export type SubmitExperienceFields = "title" | "organization" | "industry" | "fu
 
 export type EditableType = "text" | "timestamp";
 export type EditableValue = string | Timestamp | null;
-export type TimeFormat = 'M, Y' | 'H:M(am/pm) M D, Y' | 'YYYY-MM-DD';
+export type TimeFormat = 'M, Y' | 'H:M(am/pm) M D, Y' | 'YYYY-MM-DD' | 'YYYY';
 
 export interface EducationHook {
     education: Education | null;

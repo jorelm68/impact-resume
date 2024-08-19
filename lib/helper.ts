@@ -33,6 +33,12 @@ export function formatTime(timestamp: Timestamp | FieldValue | null | number, ty
         return `${year}-${month}-${day}`;
     }
 
+    else if (type === 'YYYY') {
+        return timestamp.toDate().toLocaleDateString('en-US', {
+            year: 'numeric',
+        });
+    } 
+
     else return '';
 }
 
