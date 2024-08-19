@@ -70,7 +70,7 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
 
         await deleteDoc(educationDocRef);
 
-        if (resume.educations?.length === 0) {
+        if (resume.educations?.length === 1) {
             setEditingEducation(false);
         }
     }
@@ -83,7 +83,7 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
 
         await deleteDoc(experienceDocRef);
 
-        if (resume.experiences?.length === 0) {
+        if (resume.experiences?.length === 1) {
             setEditingExperience(false);
         }
     }
