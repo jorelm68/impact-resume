@@ -30,7 +30,7 @@ export default function BulletPart({ selection, doc, docRef, resumeSlug, bulletS
         <Section dragHandleProps={dragHandleProps} isSelected={selection.includes(bulletSlug) || false} onToggleSelect={() => onToggleSelect(bulletSlug)}>
             <Editable
                 disabled={!selection.includes(bulletSlug)}
-                label='New Bullet'
+                label='New bullet'
                 value={bullet.text}
                 onSubmit={handleSubmit}
                 onDelete={handleDelete}
