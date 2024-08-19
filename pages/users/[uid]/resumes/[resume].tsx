@@ -1,4 +1,4 @@
-import { AddButton, CancelButton, EditButton } from "@/components/Buttons";
+import { AddButton, CancelButton, EditButton, PdfButton } from "@/components/Buttons";
 import Editable from "@/components/Editable";
 import Loader from "@/components/Loader";
 import AdditionalPart from "@/components/Parts/AdditionalPart";
@@ -9,7 +9,7 @@ import ResumePart from "@/components/Parts/ResumePart";
 import Text from "@/components/Text";
 import View from "@/components/View";
 import { createNewAdditional, createNewEducation, createNewExperience } from "@/lib/firebase";
-import { formatTime, reorder } from "@/lib/helper";
+import { exportToPdf, formatTime, reorder } from "@/lib/helper";
 import { useResume } from "@/lib/hooks";
 import { ResumePageProps } from "@/lib/props";
 import { Additional, EditableValue, Education, Experience } from "@/lib/types";
@@ -130,12 +130,20 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
                 justifyContent: 'space-between',
                 paddingBottom: '16px',
             }}>
-                <Editable
-                    header
-                    label='Resume'
-                    value={resume.resumeName}
-                    onSubmit={(newValue: EditableValue) => updateDoc(resumeDocRef, { resumeName: newValue, updatedAt: serverTimestamp() })}
-                />
+                <View style={{
+                    display: 'flex',
+                    gap: '16px',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                }}>
+                    <PdfButton onClick={() => exportToPdf(resumeSlug)}/>
+                    <Editable
+                        header
+                        label='Resume'
+                        value={resume.resumeName}
+                        onSubmit={(newValue: EditableValue) => updateDoc(resumeDocRef, { resumeName: newValue, updatedAt: serverTimestamp() })}
+                    />
+                </View>
                 <Text>Last Updated {formatTime(resume.updatedAt, 'H:M(am/pm) M D, Y')}</Text>
             </View>
 

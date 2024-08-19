@@ -53,3 +53,8 @@ export const reorder = (list: string[], startIndex: number, endIndex: number): s
     result.splice(endIndex, 0, removed);
     return result;
 };
+
+
+export const exportToPdf = async (resumeSlug: string): Promise<void> => {
+    
+}

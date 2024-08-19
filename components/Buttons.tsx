@@ -101,3 +101,15 @@ export function EditButton({ onClick }: ButtonProps) {
         </Button>
     )
 }
+
+export function PdfButton({ onClick }: ButtonProps) {
+    return (
+        <Button onClick={onClick} backgroundColor='crimson'>
+            <span style={{
+                color: 'white',
+                fontSize: '12px',
+                fontWeight: 'bold',
+            }}>PDF</span>
+        </Button>
+    )
+}
