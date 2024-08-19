@@ -6,6 +6,7 @@ import { collection, CollectionReference, doc, DocumentData, DocumentReference, 
 import { getStorage } from "firebase/storage";
 import { bulletConverter, educationConverter, experienceConverter, resumeConverter, userConverter } from "./converters";
 import { Bullet, Education, Experience, Resume, User } from "./types";
+import { getCheckoutUrl } from "./stripePayment";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -29,6 +30,13 @@ export const googleAuthProvider = new GoogleAuthProvider();
 export const firestore = getFirestore(app);
 export const storage = getStorage(app);
 export const serverTimestampValue = serverTimestamp()
+
+export const upgradeAccount = async () => {
+    const priceId = 'price_1PpanOBJpQtnod8AxWlbZMPg';
+    const checkoutUrl = await getCheckoutUrl(app, priceId);
+
+    return checkoutUrl;
+}
 
 
 export const signInWithUmich = async () => {

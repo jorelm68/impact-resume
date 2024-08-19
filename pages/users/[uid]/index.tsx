@@ -1,6 +1,7 @@
 import AuthCheck from "@/components/AuthCheck";
-import { auth } from "@/lib/firebase";
+import { auth, upgradeAccount } from "@/lib/firebase";
 import { useUser } from "@/lib/hooks";
+import { getCheckoutUrl } from "@/lib/stripePayment";
 import { User, UserHook } from "@/lib/types";
 import { DocumentReference } from "firebase/firestore";
 import Link from "next/link";
@@ -22,6 +23,11 @@ export default function UserPage() {
         return null;
     }
 
+    const handleUpgradeAccount = async () => {
+        const checkoutUrl = await upgradeAccount();
+        router.push(checkoutUrl);
+    }
+
     return (
         <main>
             <AuthCheck fallback={(
@@ -35,6 +41,10 @@ export default function UserPage() {
                         My Resumes
                     </button>
                 </Link>
+
+                <button onClick={handleUpgradeAccount} className='btn-blue'>
+                    Upgrade Account
+                </button>
 
                 <button onClick={handleSignOut}>Sign Out</button>
             </AuthCheck>
