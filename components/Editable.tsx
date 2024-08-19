@@ -1,243 +1,155 @@
-import { ChangeEvent, ChangeEventHandler, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Text from "./Text";
 import View from "./View";
 import { FieldValue, Timestamp } from "firebase/firestore";
 import { formatTime, parseDateStringToTimestamp } from "@/lib/helper";
 import { CheckButton, MinusButton } from "./Buttons";
 
+type EditableType = "text" | "timestamp";
+
 interface EditableProps {
-    value: string;
+    value: string | Timestamp | FieldValue | null;
     label?: string;
     bold?: boolean;
-    onSubmit?: (newValue: string) => Promise<void> | void;
+    onSubmit?: (newValue: string | Timestamp | null) => Promise<void> | void;
     onDelete?: () => Promise<void> | void;
     separateLabel?: boolean;
+    type?: EditableType;
 }
 
-export default function Editable({ value, label, bold = false, onSubmit, onDelete, separateLabel = false }: EditableProps) {
-    const [newValue, setNewValue] = useState(value);
+export default function Editable({
+    value,
+    label,
+    bold = false,
+    onSubmit,
+    onDelete,
+    separateLabel = false,
+    type = "text",
+}: EditableProps) {
+    const [newValue, setNewValue] = useState<string>(
+        type === "timestamp" && value instanceof Timestamp
+            ? formatTime(value, "YYYY-MM-DD")
+            : (value as string) || ""
+    );
     const [isEditing, setIsEditing] = useState(false);
-    const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+    const inputRef = useRef<HTMLTextAreaElement | HTMLInputElement | null>(null);
 
     useEffect(() => {
-        if (isEditing && textareaRef.current) {
-            const textarea = textareaRef.current;
-            textarea.focus();
-            // Move cursor to the end of the text
-            textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+        if (isEditing && inputRef.current) {
+            inputRef.current.focus();
+            if (type === "text") {
+                const textarea = inputRef.current as HTMLTextAreaElement;
+                textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+            }
         }
-    }, [isEditing]);
+    }, [isEditing, type]);
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>) => {
         if (e.key === "Enter") {
             e.preventDefault();
             handleSubmit();
         }
-        if (e.key === 'Escape') {
+        if (e.key === "Escape") {
             handleCancel();
         }
     };
 
     const handleSubmit = async () => {
-        if (onSubmit) await onSubmit(newValue);
-        setIsEditing(false);
-    }
+        let finalValue: string | Timestamp | null = newValue;
 
-    const handleChange = async (e: ChangeEvent<HTMLTextAreaElement>) => {
-        setNewValue(e.target.value);
-    }
+        if (type === "timestamp") {
+            finalValue = newValue ? parseDateStringToTimestamp(newValue) : null;
+        }
+
+        if (onSubmit) await onSubmit(finalValue);
+        setIsEditing(false);
+    };
 
     const handleCancel = () => {
         setIsEditing(false);
-        setNewValue(value);
-    }
+        setNewValue(
+            type === "timestamp" && value instanceof Timestamp
+                ? formatTime(value, "YYYY-MM-DD")
+                : (value as string) || ""
+        );
+    };
 
-    let text = '';
-    if (!separateLabel) {
-        if (value) {
-            text = value;
-        }
-        else {
-            if (label) {
-                text = label;
-            }
-            else {
-                text = 'Not shown';
-            }
-        }
-    }
-    else {
-        if (value) {
-            text = value;
-        }
-        else {
-            text = 'Not shown';
-        }
-    }
+    const handleChange = (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+        setNewValue(e.target.value);
+    };
+
+    const displayText = !separateLabel
+        ? newValue || label || "Not shown"
+        : newValue || "Not shown";
 
     return (
-        <View style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: '16px',
-        }}>
+        <View
+            style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: "16px",
+            }}
+        >
             {label && separateLabel && (
-                <Text style={{
-                    fontWeight: 'bold',
-                    minWidth: '200px',
-                }}>{label}</Text>
+                <Text
+                    style={{
+                        fontWeight: "bold",
+                        minWidth: "200px",
+                    }}
+                >
+                    {label}
+                </Text>
             )}
             {isEditing ? (
                 <>
-                    <textarea
-                        ref={textareaRef}
-                        value={newValue}
-                        onChange={handleChange}
-                        onKeyDown={handleKeyDown}
-                        onBlur={() => setTimeout(() => handleCancel(), 2000)}
-                        style={{
-                            padding: '0.5rem',
-                            fontSize: '1rem',
-                            border: '1px solid #ccc',
-                            borderRadius: '0.25rem',
-                            width: '100%',
-                            height: '100%',
-                            resize: 'vertical', // Allows the user to resize the textarea vertically
-                        }}
-                    />
-
-                    {onDelete && (
-                        <MinusButton onClick={onDelete} />
+                    {type === "text" ? (
+                        <textarea
+                            ref={inputRef as React.RefObject<HTMLTextAreaElement>}
+                            value={newValue}
+                            onChange={handleChange}
+                            onKeyDown={handleKeyDown}
+                            onBlur={() => setTimeout(() => handleCancel(), 2000)}
+                            style={{
+                                padding: "0.5rem",
+                                fontSize: "1rem",
+                                border: "1px solid #ccc",
+                                borderRadius: "0.25rem",
+                                width: "100%",
+                                height: "100%",
+                                resize: "vertical",
+                            }}
+                        />
+                    ) : (
+                        <input
+                            type="date"
+                            ref={inputRef as React.RefObject<HTMLInputElement>}
+                            value={newValue}
+                            onChange={handleChange}
+                            onKeyDown={handleKeyDown}
+                            onBlur={handleCancel}
+                            style={{
+                                padding: "0.5rem",
+                                fontSize: "1rem",
+                                border: "1px solid #ccc",
+                                borderRadius: "0.25rem",
+                                width: "100%",
+                            }}
+                        />
                     )}
-                    {onSubmit && (
-                        <CheckButton onClick={handleSubmit} />
-                    )}
+                    {onDelete && <MinusButton onClick={onDelete} />}
+                    {onSubmit && <CheckButton onClick={handleSubmit} />}
                 </>
             ) : (
                 <Text
                     onClick={() => setIsEditing(true)}
                     style={{
-                        cursor: 'pointer',
-                        fontSize: '1rem',
-                        fontWeight: bold ? 'bold' : 'normal',
+                        cursor: "pointer",
+                        fontSize: "1rem",
+                        fontWeight: bold ? "bold" : "normal",
                     }}
                 >
-                    {text}
-                </Text>
-            )}
-        </View>
-    );
-}
-
-interface EditableTimestampProps {
-    label?: string;
-    value: Timestamp | FieldValue | null;
-    bold?: boolean;
-    onSubmit: (newValue: Timestamp | null) => Promise<void> | void;
-    separateLabel?: boolean;
-    prefix?: string;
-    suffix?: string;
-}
-
-export function EditableTimestamp({ label, value, bold = false, onSubmit, separateLabel = false, prefix, suffix }: EditableTimestampProps) {
-    const formattedValue = value ? formatTime(value, 'YYYY-MM-DD') : '';
-    const [newValue, setNewValue] = useState<string>(formattedValue);
-    const [isEditing, setIsEditing] = useState(false);
-    const inputRef = useRef<HTMLInputElement | null>(null);
-
-    useEffect(() => {
-        if (isEditing && inputRef.current) {
-            inputRef.current.focus();
-        }
-    }, [isEditing]);
-
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            handleSubmit();
-        }
-        if (e.key === 'Escape') {
-            handleCancel();
-        }
-    };
-
-    const handleSubmit = async () => {
-        if (!newValue) {
-            await onSubmit(null);
-        }
-        else {
-            const newTimestamp = parseDateStringToTimestamp(newValue);
-            await onSubmit(newTimestamp);
-        }
-        setIsEditing(false);
-    };
-
-    const handleCancel = () => {
-        setIsEditing(false);
-        setNewValue(formattedValue);
-    };
-
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setNewValue(e.target.value);
-    };
-
-    let text = '';
-    if (!separateLabel) {
-        if (formattedValue) {
-            text = formatTime(parseDateStringToTimestamp(formattedValue), 'M, Y');
-        }
-        else {
-            if (label) {
-                text = label;
-            }
-            else {
-                text = 'Not shown';
-            }
-        }
-    }
-    else {
-        if (formattedValue) {
-            text = formatTime(parseDateStringToTimestamp(formattedValue), 'M, Y');
-        }
-        else {
-            text = 'Not shown';
-        }
-    }
-
-    return (
-        <View style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: '16px',
-        }}>
-            {isEditing ? (
-                <input
-                    type="date"
-                    ref={inputRef}
-                    value={newValue}
-                    onChange={handleChange}
-                    onKeyDown={handleKeyDown}
-                    onBlur={handleCancel}
-                    style={{
-                        padding: '0.5rem',
-                        fontSize: '1rem',
-                        border: '1px solid #ccc',
-                        borderRadius: '0.25rem',
-                        width: '100%',
-                    }}
-                />
-            ) : (
-                <Text
-                    onClick={() => setIsEditing(true)}
-                    style={{
-                        cursor: 'pointer',
-                        fontSize: '1rem',
-                        fontWeight: bold ? 'bold' : 'normal',
-                    }}
-                >
-                    {text}
+                    {displayText}
                 </Text>
             )}
         </View>

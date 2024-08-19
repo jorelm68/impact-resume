@@ -23,11 +23,11 @@ export interface Education {
 }
 
 export type SubmitResumeFields = "fullName" | "email" | "linkedInURL" | "address" | "phone";
-export type SubmitResume = (field: SubmitResumeFields, newValue: string) => Promise<void>;
 export type SubmitEducationFields = "school" | "location" | "college" | "degree" | "startDate" | "endDate";
-export type SubmitEducation = (field: SubmitEducationFields, newValue: string | Timestamp | null) => Promise<void>;
 export type SubmitExperienceFields = "title" | "organization" | "industry" | "function" | "startDate" | "endDate" | "location" | "workPhone";
-export type SubmitExperience = (field: SubmitExperienceFields, newValue: string | Timestamp | null) => Promise<void>;
+
+export type EditableType = "text" | "timestamp";
+export type EditableValue = string | Timestamp | null;
 
 export interface EducationHook {
     education: Education | null;

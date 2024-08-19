@@ -7,7 +7,7 @@ import { createNewAdditional, createNewEducation, createNewExperience } from "@/
 import { formatTime } from "@/lib/helper";
 import { useResume } from "@/lib/hooks";
 import { ResumePageProps } from "@/lib/props";
-import { Additional, Education, Experience, SubmitResume } from "@/lib/types";
+import { Additional, EditableValue, Education, Experience, SubmitResumeFields } from "@/lib/types";
 import { addDoc, collection, DocumentReference, serverTimestamp, Timestamp, updateDoc } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 
@@ -27,13 +27,6 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
     if (!resume || !resumeDocRef || !resume.educations || !resume.experiences || !resume.additionals) {
         return <Loader />;
     }
-
-    const handleSubmit: SubmitResume = async (field, newValue) => {
-        await updateDoc(resumeDocRef, {
-            [field]: newValue,
-            updatedAt: serverTimestamp(),
-        });
-    };
 
     const handleEducation = async () => {
         const newEducationRef: DocumentReference<Education> = await createNewEducation(resumeDocRef);
@@ -68,7 +61,7 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
                 <Text>{formatTime(resume.updatedAt, 'H:M(am/pm) M D, Y')}</Text>
             </View>
 
-            <ResumePart resumeSlug={resumeSlug} onSubmit={handleSubmit} />
+            <ResumePart resumeSlug={resumeSlug} />
 
             <Header label='Education' onClick={handleEducation} />
             {resume.educations.map((educationSlug) => <EducationPart key={educationSlug} resumeSlug={resumeSlug} educationSlug={educationSlug} />)}
