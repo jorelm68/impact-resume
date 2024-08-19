@@ -68,39 +68,43 @@ export function EducationPart({ selection, resumeSlug, educationSlug, onToggleSe
         });
     };
 
+    const isSelected = selection.includes(educationSlug) || false;
+
     return (
         <Wrapper>
-            <Section isSelected={selection.includes(educationSlug) || false} onToggleSelect={() => onToggleSelect(educationSlug)}>
+            <Section isSelected={isSelected} onToggleSelect={() => onToggleSelect(educationSlug)}>
                 <View style={{
                     display: 'flex',
                     justifyContent: 'space-between',
                     flexDirection: 'row',
                 }}>
-                    <Editable bold label='School' value={education.school || ''} onSubmit={(newValue: EditableValue) => handleSubmit('school', newValue)} />
-                    <Editable bold label='Location' value={education.location || ''} onSubmit={(newValue: EditableValue) => handleSubmit('location', newValue)} />
+                    <Editable disabled={!isSelected} bold label='School' value={education.school || ''} onSubmit={(newValue: EditableValue) => handleSubmit('school', newValue)} />
+                    <Editable disabled={!isSelected} bold label='Location' value={education.location || ''} onSubmit={(newValue: EditableValue) => handleSubmit('location', newValue)} />
                 </View>
-                <Editable bold label='College' value={education.college || ''} onSubmit={(newValue: EditableValue) => handleSubmit('college', newValue)} />
+                <Editable disabled={!isSelected} bold label='College' value={education.college || ''} onSubmit={(newValue: EditableValue) => handleSubmit('college', newValue)} />
 
                 <View style={{
                     display: 'flex',
                     flexDirection: 'row',
                 }}>
-                    <Editable label='Degree(s)' value={education.degree || ''} onSubmit={(newValue: EditableValue) => handleSubmit('degree', newValue)} />
+                    <Editable disabled={!isSelected} label='Degree(s)' value={education.degree || ''} onSubmit={(newValue: EditableValue) => handleSubmit('degree', newValue)} />
                     <Text style={{
                         paddingRight: '4px',
                     }}>,</Text>
-                    <Editable type='timestamp' timeFormat='M, Y' label='Graduation Date' value={education.endDate} onSubmit={(newValue: EditableValue) => handleSubmit('endDate', newValue)} />
+                    <Editable disabled={!isSelected} type='timestamp' timeFormat='M, Y' label='Graduation Date' value={education.endDate} onSubmit={(newValue: EditableValue) => handleSubmit('endDate', newValue)} />
                 </View>
             </Section>
 
             <Indent>
-                {education.bullets && education.bullets.length > 0 && education.bullets.map((bulletSlug, index) => {
+                {isSelected && education.bullets && education.bullets.length > 0 && education.bullets.map((bulletSlug, index) => {
                     return (
-                        <BulletPart selection={selection} key={index} resumeSlug={resumeSlug} doc={education} docRef={educationDocRef} bulletSlug={bulletSlug} onToggleSelect={(bulletSlug: string) => onToggleSelect(bulletSlug)}/>
+                        <BulletPart selection={selection} key={index} resumeSlug={resumeSlug} doc={education} docRef={educationDocRef} bulletSlug={bulletSlug} onToggleSelect={(bulletSlug: string) => onToggleSelect(bulletSlug)} />
                     )
                 })}
 
-                <PlusButton onClick={createNewBullet} />
+                {isSelected && (
+                    <PlusButton onClick={createNewBullet} />
+                )}
             </Indent>
         </Wrapper>
     )
@@ -126,38 +130,42 @@ export function ExperiencePart({ selection, resumeSlug, experienceSlug, onToggle
         })
     };
 
+    const isSelected = selection.includes(experienceSlug) || false;
+
     return (
         <Wrapper>
-            <Section isSelected={selection.includes(experienceSlug) || false} onToggleSelect={() => onToggleSelect(experienceSlug)}>
-            <View style={{
+            <Section isSelected={isSelected} onToggleSelect={() => onToggleSelect(experienceSlug)}>
+                <View style={{
                     display: 'flex',
                     justifyContent: 'space-between',
                     flexDirection: 'row',
                 }}>
-                    <Editable bold label='Organization' value={experience.organization || ''} onSubmit={(newValue: EditableValue) => handleSubmit('organization', newValue)} />
-                    <Editable bold label='Location' value={experience.location || ''} onSubmit={(newValue: EditableValue) => handleSubmit('location', newValue)} />
+                    <Editable disabled={!isSelected} bold label='Organization' value={experience.organization || ''} onSubmit={(newValue: EditableValue) => handleSubmit('organization', newValue)} />
+                    <Editable disabled={!isSelected} bold label='Location' value={experience.location || ''} onSubmit={(newValue: EditableValue) => handleSubmit('location', newValue)} />
                 </View>
-                <Editable bold label='Title' value={experience.title || ''} onSubmit={(newValue: EditableValue) => handleSubmit('title', newValue)} />
+                <Editable disabled={!isSelected} bold label='Title' value={experience.title || ''} onSubmit={(newValue: EditableValue) => handleSubmit('title', newValue)} />
 
                 <View style={{
                     display: 'flex',
                     flexDirection: 'row',
                     gap: '4px',
                 }}>
-                    <Editable type='timestamp' timeFormat='M, Y' label='Start Date' value={experience.startDate} onSubmit={(newValue: EditableValue) => handleSubmit('startDate', newValue)} />
+                    <Editable disabled={!isSelected} type='timestamp' timeFormat='M, Y' label='Start Date' value={experience.startDate} onSubmit={(newValue: EditableValue) => handleSubmit('startDate', newValue)} />
                     <Text>-</Text>
-                    <Editable type='timestamp' timeFormat='M, Y' label='End Date' value={experience.endDate} onSubmit={(newValue: EditableValue) => handleSubmit('endDate', newValue)} />
+                    <Editable disabled={!isSelected} type='timestamp' timeFormat='M, Y' label='End Date' value={experience.endDate} onSubmit={(newValue: EditableValue) => handleSubmit('endDate', newValue)} />
                 </View>
             </Section>
 
             <Indent>
-                {experience.bullets && experience.bullets.length > 0 && experience.bullets.map((bulletSlug, index) => {
+                {isSelected && experience.bullets && experience.bullets.length > 0 && experience.bullets.map((bulletSlug, index) => {
                     return (
-                        <BulletPart selection={selection} key={index} resumeSlug={resumeSlug} doc={experience} docRef={experienceDocRef} bulletSlug={bulletSlug} onToggleSelect={(bulletSlug: string) => onToggleSelect(bulletSlug)}/>
+                        <BulletPart selection={selection} key={index} resumeSlug={resumeSlug} doc={experience} docRef={experienceDocRef} bulletSlug={bulletSlug} onToggleSelect={(bulletSlug: string) => onToggleSelect(bulletSlug)} />
                     )
                 })}
 
-                <PlusButton onClick={createNewBullet} />
+                {isSelected && (
+                    <PlusButton onClick={createNewBullet} />
+                )}
             </Indent>
         </Wrapper>
     )
@@ -181,7 +189,7 @@ export function AdditionalPart({ selection, resumeSlug, additionalSlug, onToggle
         <Wrapper>
             {additional.bullets.map((bulletSlug, index) => {
                 return (
-                    <BulletPart selection={selection} key={index} resumeSlug={resumeSlug} doc={additional} docRef={additionalDocRef} bulletSlug={bulletSlug} onToggleSelect={(bulletSlug: string) => onToggleSelect(bulletSlug)}/>
+                    <BulletPart selection={selection} key={index} resumeSlug={resumeSlug} doc={additional} docRef={additionalDocRef} bulletSlug={bulletSlug} onToggleSelect={(bulletSlug: string) => onToggleSelect(bulletSlug)} />
                 )
             })}
 
