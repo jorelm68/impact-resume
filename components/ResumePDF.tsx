@@ -1,65 +1,168 @@
 import React from 'react';
-import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Font, Link } from '@react-pdf/renderer';
 import { ResumePDFProps } from '@/lib/props';
-import { EducationHook, ExperienceHook, ResumeHook } from '@/lib/types';
-import { useEducation, useExperience, useResume } from '@/lib/hooks';
+import { Additional, AdditionalHook, BulletHook, Education, EducationHook, Experience, ExperienceHook, ResumeHook } from '@/lib/types';
+import { useAdditional, useBullet, useEducation, useExperience, useResume } from '@/lib/hooks';
 import Loader from './Loader';
 import { formatTime } from '@/lib/helper';
+import { DocumentReference } from 'firebase/firestore';
+
+// Register custom fonts
+Font.register({
+    family: 'Calibri',
+    fonts: [
+        { src: '/fonts/calibri-regular.ttf', fontWeight: 'normal' },
+        { src: '/fonts/calibri-bold.ttf', fontWeight: 'bold' },
+    ],
+});
 
 // Create styles
 const styles = StyleSheet.create({
     page: {
-        padding: 36,
+        paddingLeft: 47.75,
+        paddingRight: 47.75,
+        paddingTop: 43.8,
+        paddingBottom: 43.8,
         fontSize: 12,
+        fontFamily: 'Calibri',
+        lineHeight: 1,
     },
     fullName: {
         fontSize: 15,
+        lineHeight: 1,
         fontWeight: 'bold',
+        textTransform: 'uppercase',
+        overflowWrap: 'normal',
+        wordBreak: 'normal',
+        hyphens: 'none',
     },
     contactInfo: {
         fontSize: 11,
+        lineHeight: 1,
         fontWeight: 'normal',
+        overflowWrap: 'normal',
+        wordBreak: 'normal',
+        hyphens: 'none',
+    },
+
+    bigCapBold: {
+        fontSize: 12,
+        fontWeight: 'bold',
+        textTransform: 'uppercase',
+        overflowWrap: 'normal',
+        wordBreak: 'normal',
+        hyphens: 'none',
+    },
+    bigBold: {
+        fontSize: 12,
+        fontWeight: 'bold',
+        overflowWrap: 'normal',
+        wordBreak: 'normal',
+        hyphens: 'none',
+    },
+    mediumBold: {
+        fontSize: 11,
+        fontWeight: 'bold',
+        overflowWrap: 'normal',
+        wordBreak: 'normal',
+        hyphens: 'none',
+    },
+    medium: {
+        fontSize: 11,
+        fontWeight: 'normal',
+        overflowWrap: 'normal',
+        wordBreak: 'normal',
+        hyphens: 'none',
+    },
+    bulletPoint: {
+        fontSize: 12.5,
+        alignItems: 'center',
+        textAlign: 'center',
+        justifyContent: 'center',
+    },
+
+    leftColumn: {
+        display: 'flex',
+        flexDirection: 'column',
+        width: '16%'
+    },
+    middleColumn: {
+        display: 'flex',
+        flexDirection: 'column',
+        width: '84%'
+    },
+
+    separatedRow: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+
+    row: {
+        display: 'flex',
+        flexDirection: 'row',
+    },
+
+    section: {
+        display: 'flex',
+        flexDirection: 'row',
+        marginBottom: 8,
+    },
+
+    truncate: {
+        width: '95%',
+    },
+
+    header: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    headerDivider: {
+        borderBottomColor: 'black',
+        borderBottomWidth: 1,
+        marginTop: 2,
+        marginBottom: 2,
     },
 });
 
-export default function ResumePDF({ resumeSlug }: ResumePDFProps) {
-    const { resume }: ResumeHook = useResume(resumeSlug);
+function BulletPoint(): JSX.Element {
+    return (
+        <Text style={styles.bulletPoint}>•</Text>
+    )
+}
 
-    if (!resume) {
+export default function ResumePDF({ resumeSlug }: ResumePDFProps) {
+    const { resume, resumeDocRef }: ResumeHook = useResume(resumeSlug);
+
+    if (!resume || !resume.additionals) {
         return <Loader />
     }
 
     return (
         <Document>
-            <Page size="A4" style={styles.page}>
+            <Page size='LETTER' style={styles.page}>
                 {/* Header */}
-                <View style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                }}>
+                <View style={styles.header}>
                     <Text style={styles.fullName}>John Doe</Text>
-                    <Text style={styles.contactInfo}>{resume.email} • {resume.phone || ''} • {resume.linkedInURL || ''}</Text>
+                    <Text style={styles.contactInfo}>{resume.email} {<BulletPoint />} {resume.phone || ''} {<BulletPoint />} {<Link href={resume.linkedInURL || ''}>{resume.linkedInURL?.split('www.')[1]}</Link>}</Text>
                 </View>
 
-                <View style={{
-                    borderBottomColor: 'black',
-                    borderBottomWidth: 1,
-                    marginTop: 10,
-                    marginBottom: 10,
-                }} />
+                <View style={styles.headerDivider} />
 
                 {/* Education Section */}
                 {resume.educations?.map((educationSlug, index) => {
-                    return <EducationSection key={index} index={index} resumeSlug={resumeSlug} educationSlug={educationSlug} />
+                    return <EducationSection key={index} index={index} selection={resume.selected || []} resumeSlug={resumeSlug} educationSlug={educationSlug} />
                 })}
 
                 {/* Experience Section */}
                 {resume.experiences?.map((experienceSlug, index) => {
-                    return <ExperienceSection key={index} index={index} resumeSlug={resumeSlug} experienceSlug={experienceSlug} />
+                    return <ExperienceSection key={index} index={index} selection={resume.selected || []} resumeSlug={resumeSlug} experienceSlug={experienceSlug} />
                 })}
 
+                {/* Additional Section */}
+                <AdditionalSection resumeSlug={resumeSlug} additionalSlug={resume.additionals[0]} />
 
                 {/* <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Experience</Text>
@@ -110,120 +213,104 @@ export default function ResumePDF({ resumeSlug }: ResumePDFProps) {
 }
 
 
-function EducationSection({ index, resumeSlug, educationSlug }: { index: number, resumeSlug: string, educationSlug: string }) {
-    const { education }: EducationHook = useEducation(resumeSlug, educationSlug);
+function EducationSection({ selection, index, resumeSlug, educationSlug }: { selection: string[], index: number, resumeSlug: string, educationSlug: string }) {
+    const { education, educationDocRef }: EducationHook = useEducation(resumeSlug, educationSlug);
 
-    if (!education) {
+    if (!education || !educationDocRef) {
         return <Loader />
     }
 
     return (
-        <View style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginBottom: 10,
-        }}>
-            <View style={{
-                display: 'flex',
-                flexDirection: 'column',
-                width: '16%'
-            }}>
-                <Text style={{
-                    fontWeight: 'bold',
-                    textTransform: 'uppercase',
-                    fontSize: 12,
-                }}>{index === 0 ? 'EDUCATION' : ''}</Text>
+        <View style={styles.section}>
+            <View style={styles.leftColumn}>
+                <Text style={styles.bigCapBold}>{index === 0 ? 'EDUCATION' : ''}</Text>
             </View>
 
-            <View style={{
-                display: 'flex',
-                flexDirection: 'column',
-                width: '84%'
-            }}>
-                <View style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                }}>
-                    <Text style={{
-                        fontWeight: 'bold',
-                        fontSize: 12,
-                        textTransform: 'uppercase',
-                    }}>{education.school}</Text>
-                    <Text style={{
-                        fontSize: 12,
-                        fontWeight: 'bold',
-                    }}>{education.location}</Text>
+            <View style={styles.middleColumn}>
+                <View style={styles.separatedRow}>
+                    <Text style={styles.bigCapBold}>{education.school}</Text>
+                    <Text style={styles.mediumBold}>{education.location}</Text>
                 </View>
-                <Text style={{
-                    fontSize: 11,
-                    fontWeight: 'bold',
-                }}>{education.college}</Text>
-                <Text style={{
-                    fontSize: 11,
-                }}>{education.degree}, {formatTime(education.endDate, 'M, Y')}</Text>
+
+                <View style={styles.truncate}>
+                    <Text style={styles.mediumBold}>{education.college}</Text>
+                    <Text style={styles.medium}>{education.degree}, {formatTime(education.endDate, 'M, Y')}</Text>
+
+                    {education.bullets?.filter(slug => selection.includes(slug)).map((bulletSlug, index) => {
+                        return <BulletSection key={index} resumeSlug={resumeSlug} docRef={educationDocRef} bulletSlug={bulletSlug} />
+                    })}
+                </View>
             </View>
         </View>
     )
 }
 
-function ExperienceSection({ index, resumeSlug, experienceSlug }: { index: number, resumeSlug: string, experienceSlug: string }) {
-    const { experience }: ExperienceHook = useExperience(resumeSlug, experienceSlug);
+function ExperienceSection({ selection, index, resumeSlug, experienceSlug }: { selection: string[], index: number, resumeSlug: string, experienceSlug: string }) {
+    const { experience, experienceDocRef }: ExperienceHook = useExperience(resumeSlug, experienceSlug);
 
-    if (!experience) {
+    if (!experience || !experienceDocRef) {
         return <Loader />
     }
 
     return (
-        <View style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginBottom: 10,
-        }}>
-            <View style={{
-                display: 'flex',
-                flexDirection: 'column',
-                width: '16%'
-            }}>
-                <Text style={{
-                    fontWeight: 'bold',
-                    textTransform: 'uppercase',
-                    fontSize: 12,
-                }}>{index === 0 ? 'EXPERIENCE' : ''}</Text>
-                <Text style={{
-                    fontSize: 12,
-                    fontWeight: 'bold',
-                    textTransform: 'uppercase',
-                }}>{formatTime(experience.startDate, 'YYYY') === formatTime(experience.endDate, 'YYYY') ? formatTime(experience.startDate, 'YYYY') : `${formatTime(experience.startDate, 'YYYY')} - ${formatTime(experience.endDate, 'YYYY')}`}</Text>
+        <View style={styles.section}>
+            <View style={styles.leftColumn}>
+                <Text style={styles.bigCapBold}>{index === 0 ? 'EXPERIENCE' : ''}</Text>
+                <Text style={styles.bigCapBold}>{formatTime(experience.startDate, 'YYYY') === formatTime(experience.endDate, 'YYYY') ? formatTime(experience.startDate, 'YYYY') : `${formatTime(experience.startDate, 'YYYY')}-${formatTime(experience.endDate, 'YYYY')}`}</Text>
             </View>
 
-            <View style={{
-                display: 'flex',
-                flexDirection: 'column',
-                width: '84%'
-            }}>
-                <View style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                }}>
-                    <Text style={{
-                        fontWeight: 'bold',
-                        textTransform: 'uppercase',
-                        fontSize: 12,
-                    }}>{experience.organization}</Text>
-                    <Text style={{
-                        fontSize: 12,
-                        fontWeight: 'bold',
-                    }}>{experience.location}</Text>
+            <View style={styles.middleColumn}>
+                <View style={styles.separatedRow}>
+                    <Text style={styles.bigCapBold}>{experience.organization}</Text>
+                    <Text style={styles.mediumBold}>{experience.location}</Text>
                 </View>
 
-                <Text style={{
-                    fontWeight: 'bold',
-                    fontSize: 11,
-                }}>{experience.title}</Text>
+                <View style={styles.truncate}>
+                    <Text style={styles.mediumBold}>{experience.title}</Text>
+
+                    {experience.bullets?.filter(slug => selection.includes(slug)).map((bulletSlug, index) => {
+                        return <BulletSection key={index} resumeSlug={resumeSlug} docRef={experienceDocRef} bulletSlug={bulletSlug} />
+                    })}
+                </View>
+
+            </View>
+        </View>
+    )
+}
+
+function BulletSection({ resumeSlug, docRef, bulletSlug }: { resumeSlug: string, docRef: DocumentReference<Education | Experience | Additional>, bulletSlug: string }) {
+    const { bullet }: BulletHook = useBullet(resumeSlug, docRef, bulletSlug);
+
+    if (!bullet) {
+        return <Loader />
+    }
+
+    return (
+        <View style={styles.row}>
+            <BulletPoint />
+            <Text style={styles.medium}>{' '}</Text>
+            <Text style={styles.medium}>{bullet.text}</Text>
+        </View>
+    )
+}
+
+function AdditionalSection({ resumeSlug, additionalSlug }: { resumeSlug: string, additionalSlug: string }) {
+    const { additional, additionalDocRef }: AdditionalHook = useAdditional(resumeSlug, additionalSlug);
+
+    if (!additional || !additionalDocRef) {
+        return <Loader />
+    }
+
+    return (
+        <View style={styles.section}>
+            <View style={styles.leftColumn}>
+                <Text style={styles.bigCapBold}>ADDITIONAL</Text>
+            </View>
+
+            <View style={styles.middleColumn}>
+                {additional.bullets?.map((bulletSlug, index) => {
+                    return <BulletSection key={index} resumeSlug={resumeSlug} docRef={additionalDocRef} bulletSlug={bulletSlug} />
+                })}
             </View>
         </View>
     )
