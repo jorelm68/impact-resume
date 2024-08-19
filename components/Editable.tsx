@@ -161,7 +161,7 @@ export default function Editable({
                         cursor: "pointer",
                         fontSize: "1rem",
                         fontWeight: bold ? "bold" : "normal",
-                        color: disabled ? "grey" : "inherit",
+                        color: disabled || displayText === 'Not shown' ? "grey" : "inherit",
                     }}
                 >
                     {displayText}
