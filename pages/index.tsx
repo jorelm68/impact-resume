@@ -1,16 +1,30 @@
-import DraggableList from "@/components/DraggableList";
-import ResumePDF from "@/components/ResumePDF";
-import { useState } from "react";
-
-// Define initial items
-const initialItems = [
-  { id: '1', content: 'Item 1' },
-  { id: '2', content: 'Item 2' },
-  { id: '3', content: 'Item 3' },
-];
+import constants from "@/lib/constants";
+import { View, Text, StyleSheet } from "@react-pdf/renderer";
 
 export default function Home() {
   return (
-    <ResumePDF resumeSlug={'hog-buddy'}/>
+    <main>
+      <View style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: '10px',
+      }}>
+        <Text style={{
+        }}>Welcome to the PDF Generator</Text>
+        <Text style={{
+        }}>This is a simple example of how to generate a PDF file using React and React-PDF.</Text>
+        <Text style={{
+        }}>You can generate a PDF file by clicking the button below.</Text>
+        <Text style={{
+        }}>$10.00</Text>
+
+        <img src={constants.photos.logoTransparent} alt="logo" style={{
+          width: '100px',
+          height: '100px',
+        }} />
+      </View>
+    </main>
   );
-}
+};

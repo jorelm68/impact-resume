@@ -1,3 +1,4 @@
+import constants from "@/lib/constants";
 import { UserContext } from "@/lib/context";
 import { auth } from "@/lib/firebase";
 import Link from "next/link";
@@ -26,7 +27,7 @@ export default function Navbar() {
 
                         <li>
                             <Link href={`/users/${auth.currentUser?.uid}`}>
-                                <img alt="" src={user.photoURL ? user.photoURL : require('@/public/hacker.png')} />
+                                <img alt="" src={user.photoURL ? user.photoURL : constants.photos.hacker} />
                             </Link>
                         </li>
                     </>

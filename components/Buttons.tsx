@@ -236,7 +236,7 @@ export function SignInButton() {
   
     return (
       <button className='btn-google' onClick={signInWithGoogle}>
-        <img alt="" src={'/google.webp'} /> Sign in with Google
+        <img alt="" src={constants.photos.google} /> Sign in with Google
       </button>
     )
   }

@@ -1,7 +1,9 @@
 export default {
     photos: {
-        dots: require('../public/dots.svg'),
-        hacker: require('../public/hacker.png'),
+        google: '/google.webp',
+        hacker: 'https://i.imgur.com/1AUj5mE.png',
+        logo: 'https://i.imgur.com/9W63fEH.png',
+        logoTransparent: 'https://i.imgur.com/O7gs1d8.png',
     },
 
     colors: {
