@@ -4,7 +4,7 @@ import constants from "@/lib/constants";
 import { ButtonProps, PDFButtonProps } from "@/lib/props";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import ResumePDF from "./ResumePDF";
-import { upgradeAccount } from "@/lib/firebase";
+import { manageSubscription, upgradeToPremium } from "@/lib/firebase";
 import { useRouter } from "next/router";
 
 interface GenericButtonProps {
@@ -138,7 +138,7 @@ export function UpgradeButton() {
 
     const handleUpgradeAccount = async () => {
         setLoading(true);
-        const checkoutUrl = await upgradeAccount();
+        const checkoutUrl = await upgradeToPremium();
         router.push(checkoutUrl);
         setLoading(false);
     }
@@ -151,16 +151,22 @@ export function UpgradeButton() {
 }
 
 
-export function ManageButton({ onClick }: ButtonProps) {
-    return (
-        <Button onClick={onClick} backgroundColor='black'>
-            <span style={{
-                color: 'white',
-                fontSize: '12px',
-                fontWeight: 'bold',
-            }}>Manage Subscription</span>
-        </Button>
-    )
+export function ManageButton() {
+    const router = useRouter();
+    const [loading, setLoading] = useState(false);
+
+    const handleManageSubscription = async () => {
+        setLoading(true);
+        const portalUrl = await manageSubscription();
+        router.push(portalUrl);
+        setLoading(false);
+    }
+
+    if (loading) {
+        return <Loader />
+    }
+
+    return <button onClick={handleManageSubscription} className='btn-blue'>Manage Subscription</button>
 }
 
 export function SignOutButton({ onClick }: ButtonProps) {

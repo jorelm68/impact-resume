@@ -6,7 +6,7 @@ import { collection, CollectionReference, doc, DocumentData, DocumentReference, 
 import { getStorage } from "firebase/storage";
 import { bulletConverter, educationConverter, experienceConverter, resumeConverter, userConverter } from "./converters";
 import { Bullet, Education, Experience, Resume, User } from "./types";
-import { getCheckoutUrl, getPremiumStatus } from "./stripePayment";
+import { getCheckoutUrl, getPortalUrl, getPremiumStatus } from "./stripePayment";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -31,7 +31,7 @@ export const firestore = getFirestore(app);
 export const storage = getStorage(app);
 export const serverTimestampValue = serverTimestamp()
 
-export const upgradeAccount = async (): Promise<string> => {
+export const upgradeToPremium = async (): Promise<string> => {
     const priceId = 'price_1PpanOBJpQtnod8AxWlbZMPg';
     const checkoutUrl = await getCheckoutUrl(app, priceId);
 
@@ -41,6 +41,11 @@ export const upgradeAccount = async (): Promise<string> => {
 export const checkPremium = async (): Promise<boolean> => {
     if (!auth.currentUser) return false;
     return await getPremiumStatus(app);
+}
+
+export const manageSubscription = async (): Promise<string> => {
+    const portalUrl = await getPortalUrl(app);
+    return portalUrl;
 }
 
 

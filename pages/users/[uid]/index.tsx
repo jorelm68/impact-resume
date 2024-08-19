@@ -1,7 +1,7 @@
 import AuthCheck from "@/components/AuthCheck";
 import { ManageButton, SignOutButton, UpgradeButton } from "@/components/Buttons";
 import Text from "@/components/Text";
-import { auth, checkPremium } from "@/lib/firebase";
+import { auth, checkPremium, manageSubscription } from "@/lib/firebase";
 import { usePremiumStatus, useUser } from "@/lib/hooks";
 import { getPremiumStatus } from "@/lib/stripePayment";
 import { UserHook } from "@/lib/types";
@@ -21,10 +21,6 @@ export default function UserPage() {
         await auth.signOut();
         toast.success('Signed out successfully.');
         router.push(`/enter`);
-    }
-
-    const handleManage = async () => {
-        router.push(`/users/${auth.currentUser?.uid}/manage`);
     }
 
     if (!user || !userDocRef) {
@@ -83,7 +79,7 @@ export default function UserPage() {
                     }}>Signed in as {user.displayName}</Text>
 
                     {isPremium ? (
-                        <ManageButton onClick={handleManage} />
+                        <ManageButton />
                     ) : (
                         <UpgradeButton />
                     )}

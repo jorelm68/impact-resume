@@ -112,7 +112,3 @@ export interface PDFButtonProps {
 export interface ResumePDFProps {
     resumeSlug: string;
 }
-
-export interface UpgradePageProps {
-    
-}
