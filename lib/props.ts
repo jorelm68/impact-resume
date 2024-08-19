@@ -1,5 +1,5 @@
 import { DocumentData, DocumentReference } from "firebase/firestore";
-import { Additional, Education, Experience, Resume } from "./types";
+import { Education, Experience, Resume } from "./types";
 import { ChangeEvent, ChangeEventHandler } from "react";
 
 export interface AuthCheckProps {
@@ -46,8 +46,8 @@ export interface TextInputProps extends React.InputHTMLAttributes<HTMLInputEleme
 
 export interface BulletPartProps {
     selection: string[];
-    doc: Additional | Education | Experience,
-    docRef: DocumentReference<Additional | Education | Experience>, 
+    doc: Resume | Education | Experience,
+    docRef: DocumentReference<Resume | Education | Experience>, 
     resumeSlug: string,
     bulletSlug: string,
     onToggleSelect: (bulletSlug: string) => void,
@@ -75,7 +75,6 @@ export interface SectionProps {
 export interface AdditionalPartProps {
     selection: string[];
     resumeSlug: string;
-    additionalSlug: string;
     onToggleSelect: (bulletSlug: string) => void;
 }
 

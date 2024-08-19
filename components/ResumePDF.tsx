@@ -1,8 +1,8 @@
 import React from 'react';
 import { Document, Page, Text, View, StyleSheet, Font, Link } from '@react-pdf/renderer';
 import { ResumePDFProps } from '@/lib/props';
-import { Additional, AdditionalHook, BulletHook, Education, EducationHook, Experience, ExperienceHook, ResumeHook } from '@/lib/types';
-import { useAdditional, useBullet, useEducation, useExperience, useResume } from '@/lib/hooks';
+import { BulletHook, Education, EducationHook, Experience, ExperienceHook, Resume, ResumeHook } from '@/lib/types';
+import { useBullet, useEducation, useExperience, useResume } from '@/lib/hooks';
 import Loader from './Loader';
 import { formatTime } from '@/lib/helper';
 import { DocumentReference } from 'firebase/firestore';
@@ -136,7 +136,7 @@ function BulletPoint(): JSX.Element {
 export default function ResumePDF({ resumeSlug }: ResumePDFProps) {
     const { resume, resumeDocRef }: ResumeHook = useResume(resumeSlug);
 
-    if (!resume || !resume.additionals) {
+    if (!resume || !resumeDocRef) {
         return <Loader />
     }
 
@@ -162,7 +162,7 @@ export default function ResumePDF({ resumeSlug }: ResumePDFProps) {
                 })}
 
                 {/* Additional Section */}
-                <AdditionalSection resumeSlug={resumeSlug} additionalSlug={resume.additionals[0]} />
+                <AdditionalSection resumeSlug={resumeSlug} resumeDocRef={resumeDocRef} bullets={resume.bullets || []} />
             </Page>
         </Document>
     )
@@ -234,7 +234,7 @@ function ExperienceSection({ selection, index, resumeSlug, experienceSlug }: { s
     )
 }
 
-function BulletSection({ resumeSlug, docRef, bulletSlug }: { resumeSlug: string, docRef: DocumentReference<Education | Experience | Additional>, bulletSlug: string }) {
+function BulletSection({ resumeSlug, docRef, bulletSlug }: { resumeSlug: string, docRef: DocumentReference<Education | Experience | Resume>, bulletSlug: string }) {
     const { bullet }: BulletHook = useBullet(resumeSlug, docRef, bulletSlug);
 
     if (!bullet) {
@@ -250,13 +250,7 @@ function BulletSection({ resumeSlug, docRef, bulletSlug }: { resumeSlug: string,
     )
 }
 
-function AdditionalSection({ resumeSlug, additionalSlug }: { resumeSlug: string, additionalSlug: string }) {
-    const { additional, additionalDocRef }: AdditionalHook = useAdditional(resumeSlug, additionalSlug);
-
-    if (!additional || !additionalDocRef) {
-        return <Loader />
-    }
-
+function AdditionalSection({ resumeSlug, resumeDocRef, bullets }: { resumeSlug: string, resumeDocRef: DocumentReference<Resume>, bullets: string[] }) {
     return (
         <View style={styles.section}>
             <View style={styles.leftColumn}>
@@ -264,8 +258,8 @@ function AdditionalSection({ resumeSlug, additionalSlug }: { resumeSlug: string,
             </View>
 
             <View style={styles.middleColumn}>
-                {additional.bullets?.map((bulletSlug, index) => {
-                    return <BulletSection key={index} resumeSlug={resumeSlug} docRef={additionalDocRef} bulletSlug={bulletSlug} />
+                {bullets.map((bulletSlug, index) => {
+                    return <BulletSection key={index} resumeSlug={resumeSlug} docRef={resumeDocRef} bulletSlug={bulletSlug} />
                 })}
             </View>
         </View>

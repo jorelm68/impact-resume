@@ -29,11 +29,6 @@ export interface ExperienceHook {
     experienceDocRef: DocumentReference<Experience> | null;
 }
 
-export interface AdditionalHook {
-    additional: Additional | null;
-    additionalDocRef: DocumentReference<Additional> | null;
-}
-
 export interface BulletHook {
     bullet: Bullet | null;
     bulletDocRef: DocumentReference<Bullet> | null;
@@ -68,11 +63,6 @@ export interface Experience {
     bullets: string[] | null;
 }
 
-export interface Additional {
-    slug: string;
-    bullets: string[] | null;
-}
-
 export interface Resume {
     slug: string;
     resumeName: string;
@@ -86,7 +76,7 @@ export interface Resume {
 
     educations: string[] | null;
     experiences: string[] | null;
-    additionals: string[] | null;
+    bullets: string[] | null;
 
     selected: string[] | null;
 

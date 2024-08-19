@@ -2,17 +2,16 @@ import { AddButton, CancelButton, EditButton, PDFButton } from "@/components/But
 import Editable from "@/components/Editable";
 import Loader from "@/components/Loader";
 import AdditionalPart from "@/components/Parts/AdditionalPart";
-import BulletPart from "@/components/Parts/BulletPart";
 import EducationPart from "@/components/Parts/EducationPart";
 import ExperiencePart from "@/components/Parts/ExperiencePart";
 import ResumePart from "@/components/Parts/ResumePart";
 import Text from "@/components/Text";
 import View from "@/components/View";
-import { createNewAdditional, createNewEducation, createNewExperience } from "@/lib/firebase";
-import { exportToPdf, formatTime, reorder } from "@/lib/helper";
+import { createNewEducation, createNewExperience } from "@/lib/firebase";
+import { formatTime, reorder } from "@/lib/helper";
 import { useResume } from "@/lib/hooks";
 import { ResumePageProps } from "@/lib/props";
-import { Additional, EditableValue, Education, Experience } from "@/lib/types";
+import { EditableValue, Education, Experience } from "@/lib/types";
 import { deleteDoc, DocumentReference, serverTimestamp, updateDoc } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import { useState } from "react";
@@ -33,7 +32,7 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
     const [editingEducation, setEditingEducation] = useState<boolean>(false);
     const [editingExperience, setEditingExperience] = useState<boolean>(false);
 
-    if (!resume || !resumeDocRef || !resume.educations || !resume.experiences || !resume.additionals) {
+    if (!resume || !resumeDocRef || !resume.educations || !resume.experiences) {
         return <Loader />;
     }
 
@@ -226,7 +225,7 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
             </DragDropContext>
 
             <Header label='Additional' />
-            {resume.additionals.map((additionalSlug) => <AdditionalPart selection={resume.selected || []} key={additionalSlug} resumeSlug={resumeSlug} additionalSlug={additionalSlug} onToggleSelect={handleToggleSelect} />)}
+            <AdditionalPart selection={resume.selected || []} resumeSlug={resumeSlug} onToggleSelect={handleToggleSelect} />
         </main >
     )
 }

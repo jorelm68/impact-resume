@@ -1,6 +1,6 @@
 import { createBullet } from "@/lib/firebase";
-import { useAdditional, useResume } from "@/lib/hooks";
-import { AdditionalHook, Bullet, ResumeHook } from "@/lib/types";
+import { useResume } from "@/lib/hooks";
+import { Bullet, ResumeHook } from "@/lib/types";
 import { DocumentReference, serverTimestamp, updateDoc } from "firebase/firestore";
 import { AddButton } from "../Buttons";
 import Wrapper from "../Layout/Wrapper";
@@ -9,18 +9,17 @@ import { AdditionalPartProps } from "@/lib/props";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 import { reorder } from "@/lib/helper";
 
-export default function AdditionalPart({ selection, resumeSlug, additionalSlug, onToggleSelect }: AdditionalPartProps) {
-    const { additional, additionalDocRef }: AdditionalHook = useAdditional(resumeSlug, additionalSlug);
+export default function AdditionalPart({ selection, resumeSlug, onToggleSelect }: AdditionalPartProps) {
     const { resume, resumeDocRef }: ResumeHook = useResume(resumeSlug);
 
-    if (!additional || !additionalDocRef || !additional.bullets || !resume || !resumeDocRef) {
+    if (!resume || !resumeDocRef) {
         return null;
     }
 
     const createNewBullet = async () => {
-        const newBulletRef: DocumentReference<Bullet> = await createBullet(additionalDocRef);
-        await updateDoc(additionalDocRef, {
-            bullets: [...(additional.bullets || []), newBulletRef.id],
+        const newBulletRef: DocumentReference<Bullet> = await createBullet(resumeDocRef);
+        await updateDoc(resumeDocRef, {
+            bullets: [...(resume.bullets || []), newBulletRef.id],
         });
 
         await updateDoc(resumeDocRef, {
@@ -34,16 +33,13 @@ export default function AdditionalPart({ selection, resumeSlug, additionalSlug, 
             return;
         }
         const reorderedBullets = reorder(
-            additional.bullets || [],
+            resume.bullets || [],
             result.source.index,
             result.destination.index
         );
 
-        await updateDoc(additionalDocRef, {
-            bullets: reorderedBullets,
-        });
-
         await updateDoc(resumeDocRef, {
+            bullets: reorderedBullets,
             updatedAt: serverTimestamp(),
         });
     };
@@ -51,10 +47,10 @@ export default function AdditionalPart({ selection, resumeSlug, additionalSlug, 
     return (
         <Wrapper>
             <DragDropContext onDragEnd={onDragEnd}>
-                <Droppable droppableId="additionalBullets">
+                <Droppable droppableId="bullets">
                     {(provided) => (
                         <div {...provided.droppableProps} ref={provided.innerRef}>
-                            {additional.bullets?.map((bulletSlug, index) => (
+                            {resume.bullets?.map((bulletSlug, index) => (
                                 <Draggable key={bulletSlug} draggableId={bulletSlug} index={index}>
                                     {(provided) => (
                                         <div
@@ -64,8 +60,8 @@ export default function AdditionalPart({ selection, resumeSlug, additionalSlug, 
                                             <BulletPart
                                                 selection={selection}
                                                 resumeSlug={resumeSlug}
-                                                doc={additional}
-                                                docRef={additionalDocRef}
+                                                doc={resume}
+                                                docRef={resumeDocRef}
                                                 bulletSlug={bulletSlug}
                                                 onToggleSelect={(slug: string) => onToggleSelect(slug)}
                                                 dragHandleProps={provided.dragHandleProps}

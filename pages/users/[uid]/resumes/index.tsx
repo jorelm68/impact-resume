@@ -108,7 +108,7 @@ function CreateResume() {
             displayPhone: false,
             educations: [],
             experiences: [],
-            additionals: [],
+            bullets: [],
             selected: [],
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp(),

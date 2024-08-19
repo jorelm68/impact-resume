@@ -1,5 +1,5 @@
 import { DocumentSnapshot, FirestoreDataConverter, QueryDocumentSnapshot, Timestamp } from "firebase/firestore";
-import { Additional, Bullet, Education, Experience, Resume, User } from "./types";
+import { Bullet, Education, Experience, Resume, User } from "./types";
 
 // Firestore data converter for User
 export const userConverter: FirestoreDataConverter<User> = {
@@ -78,20 +78,5 @@ export const bulletConverter: FirestoreDataConverter<Bullet> = {
         return {
             ...data,
         } as Bullet;
-    }
-}
-
-// Firestore data converter for Additional
-export const additionalConverter: FirestoreDataConverter<Additional> = {
-    toFirestore(additional: Additional) {
-        return {
-            bullets: additional.bullets,
-        };
-    },
-    fromFirestore(snapshot: QueryDocumentSnapshot<Additional>) {
-        const data = snapshot.data();
-        return {
-            bullets: data?.bullets || [],
-        } as Additional;
     }
 }
