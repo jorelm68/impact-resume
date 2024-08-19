@@ -45,10 +45,12 @@ export interface TextInputProps extends React.InputHTMLAttributes<HTMLInputEleme
 }
 
 export interface BulletPartProps {
+    selection: string[];
     doc: Additional | Education | Experience,
     docRef: DocumentReference<Additional | Education | Experience>, 
     resumeSlug: string,
-    bulletSlug: string
+    bulletSlug: string,
+    onToggleSelect: (bulletSlug: string) => void,
 }
 
 export interface ButtonProps {

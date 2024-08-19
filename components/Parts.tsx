@@ -48,7 +48,7 @@ export function ResumePart({ resumeSlug }: { resumeSlug: string }) {
     )
 }
 
-export function EducationPart({ selection, resumeSlug, educationSlug, onToggleSelect }: { selection: string[], resumeSlug: string, educationSlug: string, onToggleSelect: () => void }) {
+export function EducationPart({ selection, resumeSlug, educationSlug, onToggleSelect }: { selection: string[], resumeSlug: string, educationSlug: string, onToggleSelect: (slug: string) => void }) {
     const { education, educationDocRef }: EducationHook = useEducation(resumeSlug, educationSlug);
 
     if (!education || !educationDocRef) {
@@ -70,7 +70,7 @@ export function EducationPart({ selection, resumeSlug, educationSlug, onToggleSe
 
     return (
         <Wrapper>
-            <Section isSelected={selection.includes(educationSlug) || false} onToggleSelect={onToggleSelect}>
+            <Section isSelected={selection.includes(educationSlug) || false} onToggleSelect={() => onToggleSelect(educationSlug)}>
                 <View style={{
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -96,7 +96,7 @@ export function EducationPart({ selection, resumeSlug, educationSlug, onToggleSe
             <Indent>
                 {education.bullets && education.bullets.length > 0 && education.bullets.map((bulletSlug, index) => {
                     return (
-                        <BulletPart key={index} resumeSlug={resumeSlug} doc={education} docRef={educationDocRef} bulletSlug={bulletSlug} />
+                        <BulletPart selection={selection} key={index} resumeSlug={resumeSlug} doc={education} docRef={educationDocRef} bulletSlug={bulletSlug} onToggleSelect={(bulletSlug: string) => onToggleSelect(bulletSlug)}/>
                     )
                 })}
 
@@ -106,7 +106,7 @@ export function EducationPart({ selection, resumeSlug, educationSlug, onToggleSe
     )
 }
 
-export function ExperiencePart({ selection, resumeSlug, experienceSlug, onToggleSelect }: { selection: string[], resumeSlug: string, experienceSlug: string, onToggleSelect: () => void }) {
+export function ExperiencePart({ selection, resumeSlug, experienceSlug, onToggleSelect }: { selection: string[], resumeSlug: string, experienceSlug: string, onToggleSelect: (slug: string) => void }) {
     const { experience, experienceDocRef }: ExperienceHook = useExperience(resumeSlug, experienceSlug);
 
     if (!experience || !experienceDocRef) {
@@ -128,7 +128,7 @@ export function ExperiencePart({ selection, resumeSlug, experienceSlug, onToggle
 
     return (
         <Wrapper>
-            <Section isSelected={selection.includes(experienceSlug) || false} onToggleSelect={onToggleSelect}>
+            <Section isSelected={selection.includes(experienceSlug) || false} onToggleSelect={() => onToggleSelect(experienceSlug)}>
             <View style={{
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -153,7 +153,7 @@ export function ExperiencePart({ selection, resumeSlug, experienceSlug, onToggle
             <Indent>
                 {experience.bullets && experience.bullets.length > 0 && experience.bullets.map((bulletSlug, index) => {
                     return (
-                        <BulletPart key={index} resumeSlug={resumeSlug} doc={experience} docRef={experienceDocRef} bulletSlug={bulletSlug} />
+                        <BulletPart selection={selection} key={index} resumeSlug={resumeSlug} doc={experience} docRef={experienceDocRef} bulletSlug={bulletSlug} onToggleSelect={(bulletSlug: string) => onToggleSelect(bulletSlug)}/>
                     )
                 })}
 
@@ -163,7 +163,7 @@ export function ExperiencePart({ selection, resumeSlug, experienceSlug, onToggle
     )
 }
 
-export function AdditionalPart({ resumeSlug, additionalSlug }: { resumeSlug: string, additionalSlug: string }) {
+export function AdditionalPart({ selection, resumeSlug, additionalSlug, onToggleSelect }: { selection: string[], resumeSlug: string, additionalSlug: string, onToggleSelect: (bulletSlug: string) => void }) {
     const { additional, additionalDocRef }: AdditionalHook = useAdditional(resumeSlug, additionalSlug);
 
     if (!additional || !additionalDocRef || !additional.bullets) {
@@ -181,7 +181,7 @@ export function AdditionalPart({ resumeSlug, additionalSlug }: { resumeSlug: str
         <Wrapper>
             {additional.bullets.map((bulletSlug, index) => {
                 return (
-                    <BulletPart key={index} resumeSlug={resumeSlug} doc={additional} docRef={additionalDocRef} bulletSlug={bulletSlug} />
+                    <BulletPart selection={selection} key={index} resumeSlug={resumeSlug} doc={additional} docRef={additionalDocRef} bulletSlug={bulletSlug} onToggleSelect={(bulletSlug: string) => onToggleSelect(bulletSlug)}/>
                 )
             })}
 
@@ -190,7 +190,7 @@ export function AdditionalPart({ resumeSlug, additionalSlug }: { resumeSlug: str
     )
 }
 
-function BulletPart({ doc, docRef, resumeSlug, bulletSlug }: BulletPartProps) {
+function BulletPart({ selection, doc, docRef, resumeSlug, bulletSlug, onToggleSelect }: BulletPartProps) {
     const { bullet, bulletDocRef }: BulletHook = useBullet(resumeSlug, docRef, bulletSlug);
 
     if (!bullet || !bulletDocRef) {
@@ -212,14 +212,8 @@ function BulletPart({ doc, docRef, resumeSlug, bulletSlug }: BulletPartProps) {
         await deleteDoc(bulletDocRef);
     }
 
-    const handleToggleSelect = async () => {
-        await updateDoc(docRef, {
-            selected: doc.selected?.includes(bulletSlug) ? doc.selected?.filter((slug) => slug !== bulletSlug) : [...(doc.selected || []), bulletSlug],
-        });
-    }
-
     return (
-        <Section isSelected={doc.selected?.includes(bulletSlug) || false} onToggleSelect={handleToggleSelect}>
+        <Section isSelected={selection.includes(bulletSlug) || false} onToggleSelect={() => onToggleSelect(bulletSlug)}>
             <Editable
                 label='New Bullet'
                 value={bullet.text}

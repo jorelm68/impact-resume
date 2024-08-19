@@ -11,18 +11,6 @@ export interface Bullet {
     text: string;
 }
 
-export interface Education {
-    slug: string;
-    school: string | null;
-    location: string | null;
-    college: string | null;
-    degree: string | null;
-    startDate: Timestamp | FieldValue | null;
-    endDate: Timestamp | FieldValue | null;
-    bullets: string[] | null;
-    selected: string[] | null;
-}
-
 export type SubmitResumeFields = "fullName" | "email" | "linkedInURL" | "address" | "phone";
 export type SubmitEducationFields = "school" | "location" | "college" | "degree" | "startDate" | "endDate";
 export type SubmitExperienceFields = "title" | "organization" | "industry" | "function" | "startDate" | "endDate" | "location" | "workPhone";
@@ -56,6 +44,17 @@ export interface ResumeHook {
     resumeDocRef: DocumentReference<Resume> | null;
 }
 
+export interface Education {
+    slug: string;
+    school: string | null;
+    location: string | null;
+    college: string | null;
+    degree: string | null;
+    startDate: Timestamp | FieldValue | null;
+    endDate: Timestamp | FieldValue | null;
+    bullets: string[] | null;
+}
+
 export interface Experience {
     slug: string;
     title: string | null;
@@ -67,13 +66,11 @@ export interface Experience {
     location: string | null;
     workPhone: string | null;
     bullets: string[] | null;
-    selected: string[] | null;
 }
 
 export interface Additional {
     slug: string;
     bullets: string[] | null;
-    selected: string[] | null;
 }
 
 export interface Resume {

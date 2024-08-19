@@ -70,13 +70,13 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
             <ResumePart resumeSlug={resumeSlug} />
 
             <Header label='Education' onClick={handleEducation} />
-            {resume.educations.map((educationSlug) => <EducationPart selection={resume.selected || []} key={educationSlug} resumeSlug={resumeSlug} educationSlug={educationSlug} onToggleSelect={() => handleToggleSelect(educationSlug)} />)}
+            {resume.educations.map((educationSlug) => <EducationPart selection={resume.selected || []} key={educationSlug} resumeSlug={resumeSlug} educationSlug={educationSlug} onToggleSelect={handleToggleSelect} />)}
 
             <Header label='Experience' onClick={handleExperience} />
-            {resume.experiences.map((experienceSlug) => <ExperiencePart selection={resume.selected || []} key={experienceSlug} resumeSlug={resumeSlug} experienceSlug={experienceSlug} onToggleSelect={() => handleToggleSelect(experienceSlug)} />)}
+            {resume.experiences.map((experienceSlug) => <ExperiencePart selection={resume.selected || []} key={experienceSlug} resumeSlug={resumeSlug} experienceSlug={experienceSlug} onToggleSelect={handleToggleSelect} />)}
 
             <Header label='Additional' onClick={handleAdditional} />
-            {resume.additionals.map((additionalSlug) => <AdditionalPart key={additionalSlug} resumeSlug={resumeSlug} additionalSlug={additionalSlug} />)}
+            {resume.additionals.map((additionalSlug) => <AdditionalPart selection={resume.selected || []} key={additionalSlug} resumeSlug={resumeSlug} additionalSlug={additionalSlug} onToggleSelect={handleToggleSelect} />)}
         </main >
     )
 }
