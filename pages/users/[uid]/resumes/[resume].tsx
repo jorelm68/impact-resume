@@ -134,7 +134,7 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
             <Header
                 label='Education'
                 onAdd={handleEducationAdd}
-                onEdit={() => setEditingEducation(true)}
+                onEdit={resume.educations.length > 0 ? () => setEditingEducation(true) : undefined}
                 onCancel={() => setEditingEducation(false)}
                 isEditing={editingEducation}
             />
@@ -173,7 +173,7 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
             <Header
                 label='Experience'
                 onAdd={handleExperienceAdd}
-                onEdit={() => setEditingExperience(true)}
+                onEdit={resume.experiences.length > 0 ? () => setEditingExperience(true) : undefined}
                 onCancel={() => setEditingExperience(false)}
                 isEditing={editingExperience}
             />
