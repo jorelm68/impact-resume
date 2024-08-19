@@ -4,6 +4,7 @@ import View from "./View";
 import { FieldValue, Timestamp } from "firebase/firestore";
 import { formatTime, parseDateStringToTimestamp } from "@/lib/helper";
 import { CheckButton, MinusButton } from "./Buttons";
+import { TimeFormat } from "@/lib/types";
 
 type EditableType = "text" | "timestamp";
 
@@ -15,6 +16,7 @@ interface EditableProps {
     onDelete?: () => Promise<void> | void;
     separateLabel?: boolean;
     type?: EditableType;
+    timeFormat?: TimeFormat;
 }
 
 export default function Editable({
@@ -25,6 +27,7 @@ export default function Editable({
     onDelete,
     separateLabel = false,
     type = "text",
+    timeFormat = 'M, Y',
 }: EditableProps) {
     const [newValue, setNewValue] = useState<string>(
         type === "timestamp" && value instanceof Timestamp
@@ -78,9 +81,11 @@ export default function Editable({
         setNewValue(e.target.value);
     };
 
-    const displayText = !separateLabel
-        ? newValue || label || "Not shown"
-        : newValue || "Not shown";
+    const displayText =
+        (newValue && type === "timestamp"
+            ? formatTime(parseDateStringToTimestamp(newValue), timeFormat)
+            : newValue) ||
+        (separateLabel ? "Not shown" : label || "Not shown");
 
     return (
         <View

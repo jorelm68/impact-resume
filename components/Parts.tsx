@@ -89,7 +89,7 @@ export function EducationPart({ resumeSlug, educationSlug }: { resumeSlug: strin
                     <Text style={{
                         paddingRight: '4px',
                     }}>,</Text>
-                    <Editable type='timestamp' label='Graduation Date' value={education.endDate} onSubmit={(newValue: EditableValue) => handleSubmit('endDate', newValue)} />
+                    <Editable type='timestamp' timeFormat='M, Y' label='Graduation Date' value={education.endDate} onSubmit={(newValue: EditableValue) => handleSubmit('endDate', newValue)} />
                 </View>
             </Section>
 
@@ -144,9 +144,9 @@ export function ExperiencePart({ resumeSlug, experienceSlug }: { resumeSlug: str
                     flexDirection: 'row',
                     gap: '4px',
                 }}>
-                    <Editable type='timestamp' label='Start Date' value={experience.startDate} onSubmit={(newValue: EditableValue) => handleSubmit('startDate', newValue)} />
+                    <Editable type='timestamp' timeFormat='M, Y' label='Start Date' value={experience.startDate} onSubmit={(newValue: EditableValue) => handleSubmit('startDate', newValue)} />
                     <Text>-</Text>
-                    <Editable type='timestamp' label='End Date' value={experience.endDate} onSubmit={(newValue: EditableValue) => handleSubmit('endDate', newValue)} />
+                    <Editable type='timestamp' timeFormat='M, Y' label='End Date' value={experience.endDate} onSubmit={(newValue: EditableValue) => handleSubmit('endDate', newValue)} />
                 </View>
             </Section>
 

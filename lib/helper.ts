@@ -1,7 +1,8 @@
 import { FieldValue, Timestamp } from "firebase/firestore";
+import { TimeFormat } from "./types";
 
 // Format a Timestamp object (firebase) to be displayed as 'Month, Year'
-export function formatTime(timestamp: Timestamp | FieldValue | null | number, type: 'M, Y' | 'H:M(am/pm) M D, Y' | 'YYYY-MM-DD'): string {
+export function formatTime(timestamp: Timestamp | FieldValue | null | number, type: TimeFormat): string {
     if (!timestamp) return '';
     if (typeof timestamp === 'number') {
         timestamp = Timestamp.fromMillis(timestamp);
