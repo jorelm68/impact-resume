@@ -20,6 +20,10 @@ function Button({ onClick, backgroundColor, children }: GenericButtonProps) {
         }
     }
 
+    if (loading) {
+        return <Loader />
+    }
+
     return (
         <button style={{
             margin: '0px',
@@ -33,7 +37,7 @@ function Button({ onClick, backgroundColor, children }: GenericButtonProps) {
             border: 'none',
             cursor: 'pointer',
         }} onClick={handleClick}>
-            {loading ? <Loader /> : children}
+            {children}
         </button>
     )
 }
