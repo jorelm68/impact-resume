@@ -9,6 +9,7 @@ import { TimeFormat } from "@/lib/types";
 type EditableType = "text" | "timestamp";
 
 interface EditableProps {
+    disabled?: boolean;
     value: string | Timestamp | FieldValue | null;
     label?: string;
     bold?: boolean;
@@ -20,6 +21,7 @@ interface EditableProps {
 }
 
 export default function Editable({
+    disabled = false,
     value,
     label,
     bold = false,
@@ -101,6 +103,7 @@ export default function Editable({
                     style={{
                         fontWeight: "bold",
                         minWidth: "200px",
+                        color: disabled ? "grey" : "inherit",
                     }}
                 >
                     {label}
@@ -158,6 +161,7 @@ export default function Editable({
                         cursor: "pointer",
                         fontSize: "1rem",
                         fontWeight: bold ? "bold" : "normal",
+                        color: disabled ? "grey" : "inherit",
                     }}
                 >
                     {displayText}

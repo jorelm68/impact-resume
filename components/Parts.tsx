@@ -214,6 +214,7 @@ function BulletPart({ selection, doc, docRef, resumeSlug, bulletSlug, onToggleSe
     return (
         <Section isSelected={selection.includes(bulletSlug) || false} onToggleSelect={() => onToggleSelect(bulletSlug)}>
             <Editable
+                disabled={!selection.includes(bulletSlug)}
                 label='New Bullet'
                 value={bullet.text}
                 onSubmit={handleSubmit}
