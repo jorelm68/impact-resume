@@ -160,7 +160,6 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
                                             {...provided.draggableProps}
                                         >
                                             <EducationPart
-                                                resumeDocRef={resumeDocRef}
                                                 onDeleteEducation={handleDeleteEducation}
                                                 isEditing={editingEducation}
                                                 dragHandleProps={provided.dragHandleProps}
@@ -199,7 +198,6 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
                                             {...provided.draggableProps}
                                         >
                                             <ExperiencePart
-                                                resumeDocRef={resumeDocRef}
                                                 onDeleteExperience={handleDeleteExperience}
                                                 isEditing={editingExperience}
                                                 dragHandleProps={provided.dragHandleProps}

@@ -1,6 +1,6 @@
 import { createBullet } from "@/lib/firebase";
-import { useEducation } from "@/lib/hooks";
-import { EducationHook, SubmitEducationFields, EditableValue, Bullet } from "@/lib/types";
+import { useEducation, useResume } from "@/lib/hooks";
+import { EducationHook, SubmitEducationFields, EditableValue, Bullet, ResumeHook } from "@/lib/types";
 import { updateDoc, DocumentReference, deleteDoc, serverTimestamp } from "firebase/firestore";
 import { AddButton, RemoveButton } from "../Buttons";
 import Editable from "../Editable";
@@ -14,10 +14,11 @@ import { EducationPartProps } from "@/lib/props";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { reorder } from "@/lib/helper";
 
-export default function EducationPart({ resumeDocRef, isEditing, selection, resumeSlug, educationSlug, onToggleSelect, onDeleteEducation, dragHandleProps }: EducationPartProps) {
+export default function EducationPart({ isEditing, selection, resumeSlug, educationSlug, onToggleSelect, onDeleteEducation, dragHandleProps }: EducationPartProps) {
     const { education, educationDocRef }: EducationHook = useEducation(resumeSlug, educationSlug);
+    const { resume, resumeDocRef }: ResumeHook = useResume(resumeSlug);
 
-    if (!education || !educationDocRef) {
+    if (!education || !educationDocRef || !resume || !resumeDocRef) {
         return null;
     }
 
@@ -39,6 +40,7 @@ export default function EducationPart({ resumeDocRef, isEditing, selection, resu
 
         await updateDoc(resumeDocRef, {
             updatedAt: serverTimestamp(),
+            selected: [...(resume.selected || []), newBulletRef.id],
         });
     };
 

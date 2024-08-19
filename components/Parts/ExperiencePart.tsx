@@ -1,6 +1,6 @@
 import { createBullet } from "@/lib/firebase";
-import { useExperience } from "@/lib/hooks";
-import { ExperienceHook, Bullet, SubmitExperienceFields, EditableValue } from "@/lib/types";
+import { useExperience, useResume } from "@/lib/hooks";
+import { ExperienceHook, Bullet, SubmitExperienceFields, EditableValue, ResumeHook } from "@/lib/types";
 import { deleteDoc, DocumentReference, serverTimestamp, updateDoc } from "firebase/firestore";
 import { AddButton, RemoveButton } from "../Buttons";
 import Editable from "../Editable";
@@ -14,10 +14,11 @@ import { ExperiencePartProps } from "@/lib/props";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { reorder } from "@/lib/helper";
 
-export default function ExperiencePart({ resumeDocRef, isEditing, selection, resumeSlug, experienceSlug, onToggleSelect, onDeleteExperience, dragHandleProps }: ExperiencePartProps) {
+export default function ExperiencePart({ isEditing, selection, resumeSlug, experienceSlug, onToggleSelect, onDeleteExperience, dragHandleProps }: ExperiencePartProps) {
     const { experience, experienceDocRef }: ExperienceHook = useExperience(resumeSlug, experienceSlug);
+    const { resume, resumeDocRef }: ResumeHook = useResume(resumeSlug);
 
-    if (!experience || !experienceDocRef) {
+    if (!experience || !experienceDocRef || !resume || !resumeDocRef) {
         return null;
     }
 
@@ -29,6 +30,7 @@ export default function ExperiencePart({ resumeDocRef, isEditing, selection, res
 
         await updateDoc(resumeDocRef, {
             updatedAt: serverTimestamp(),
+            selected: [...(resume.selected || []), newBulletRef.id],
         });
     };
 
