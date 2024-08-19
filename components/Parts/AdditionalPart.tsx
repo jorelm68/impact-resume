@@ -1,7 +1,7 @@
 import { createBullet } from "@/lib/firebase";
-import { useAdditional } from "@/lib/hooks";
-import { AdditionalHook, Bullet } from "@/lib/types";
-import { DocumentReference, updateDoc } from "firebase/firestore";
+import { useAdditional, useResume } from "@/lib/hooks";
+import { AdditionalHook, Bullet, ResumeHook } from "@/lib/types";
+import { DocumentReference, serverTimestamp, updateDoc } from "firebase/firestore";
 import { AddButton } from "../Buttons";
 import Wrapper from "../Layout/Wrapper";
 import BulletPart from "./BulletPart";
@@ -11,8 +11,9 @@ import { reorder } from "@/lib/helper";
 
 export default function AdditionalPart({ selection, resumeSlug, additionalSlug, onToggleSelect }: AdditionalPartProps) {
     const { additional, additionalDocRef }: AdditionalHook = useAdditional(resumeSlug, additionalSlug);
+    const { resume, resumeDocRef }: ResumeHook = useResume(resumeSlug);
 
-    if (!additional || !additionalDocRef || !additional.bullets) {
+    if (!additional || !additionalDocRef || !additional.bullets || !resume || !resumeDocRef) {
         return null;
     }
 
@@ -21,6 +22,11 @@ export default function AdditionalPart({ selection, resumeSlug, additionalSlug, 
         await updateDoc(additionalDocRef, {
             bullets: [...(additional.bullets || []), newBulletRef.id],
         });
+
+        await updateDoc(resumeDocRef, {
+            updatedAt: serverTimestamp(),
+            selected: [...(resume.selected || []), newBulletRef.id],
+        })
     };
 
     const onDragEnd = async (result: DropResult) => {
@@ -35,6 +41,10 @@ export default function AdditionalPart({ selection, resumeSlug, additionalSlug, 
 
         await updateDoc(additionalDocRef, {
             bullets: reorderedBullets,
+        });
+
+        await updateDoc(resumeDocRef, {
+            updatedAt: serverTimestamp(),
         });
     };
 

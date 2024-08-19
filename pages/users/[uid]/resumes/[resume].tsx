@@ -41,6 +41,7 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
         const newEducationRef: DocumentReference<Education> = await createNewEducation(resumeDocRef);
         await updateDoc(resumeDocRef, {
             educations: [...(resume.educations || []), newEducationRef.id],
+            selected: [...(resume.selected || []), newEducationRef.id],
             updatedAt: serverTimestamp(),
         });
     }
@@ -49,6 +50,7 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
         const newExperienceRef: DocumentReference<Experience> = await createNewExperience(resumeDocRef);
         await updateDoc(resumeDocRef, {
             experiences: [...(resume.experiences || []), newExperienceRef.id],
+            selected: [...(resume.selected || []), newExperienceRef.id],
             updatedAt: serverTimestamp(),
         });
     }
