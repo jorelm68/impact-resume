@@ -22,6 +22,7 @@ function Button({ onClick, backgroundColor, children }: GenericButtonProps) {
 
     return (
         <button style={{
+            margin: '0px',
             width: '24px',
             height: '24px',
             backgroundColor: backgroundColor ? backgroundColor : 'black',
@@ -42,9 +43,9 @@ export function MinusButton({ onClick }: ButtonProps) {
         <Button onClick={onClick} backgroundColor='red'>
             <span style={{
                 color: 'white',
-                fontSize: '24px',
+                fontSize: '12px',
                 fontWeight: 'bold',
-            }}>-</span>
+            }}>REMOVE</span>
         </Button>
     )
 }
@@ -66,9 +67,21 @@ export function CheckButton({ onClick }: ButtonProps) {
         <Button onClick={onClick} backgroundColor='green'>
             <span style={{
                 color: 'white',
-                fontSize: '24px',
+                fontSize: '12px',
                 fontWeight: 'bold',
-            }}>✓</span>
+            }}>SAVE</span>
+        </Button>
+    )
+}
+
+export function CancelButton({ onClick }: ButtonProps) {
+    return (
+        <Button onClick={onClick} backgroundColor='grey'>
+            <span style={{
+                color: 'white',
+                fontSize: '12px',
+                fontWeight: 'bold',
+            }}>CANCEL</span>
         </Button>
     )
 }

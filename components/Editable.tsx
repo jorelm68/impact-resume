@@ -3,7 +3,7 @@ import Text from "./Text";
 import View from "./View";
 import { FieldValue, Timestamp } from "firebase/firestore";
 import { formatTime, parseDateStringToTimestamp } from "@/lib/helper";
-import { CheckButton, MinusButton } from "./Buttons";
+import { CancelButton, CheckButton, MinusButton } from "./Buttons";
 import { TimeFormat } from "@/lib/types";
 
 type EditableType = "text" | "timestamp";
@@ -107,7 +107,13 @@ export default function Editable({
                 </Text>
             )}
             {isEditing ? (
-                <>
+                <View style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: '8px',
+                    flexGrow: 1,
+                }}>
                     {type === "text" ? (
                         <textarea
                             ref={inputRef as React.RefObject<HTMLTextAreaElement>}
@@ -141,9 +147,10 @@ export default function Editable({
                             }}
                         />
                     )}
-                    {onDelete && <MinusButton onClick={onDelete} />}
+                    <CancelButton onClick={handleCancel} />
                     {onSubmit && <CheckButton onClick={handleSubmit} />}
-                </>
+                    {onDelete && <MinusButton onClick={onDelete} />}
+                </View>
             ) : (
                 <Text
                     onClick={() => setIsEditing(true)}
