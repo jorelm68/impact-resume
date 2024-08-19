@@ -109,3 +109,7 @@ export interface ExperiencePartProps {
 export interface PDFButtonProps {
     resumeSlug: string;
 }
+
+export interface ResumePDFProps {
+    resumeSlug: string;
+}
