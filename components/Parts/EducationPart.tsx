@@ -14,7 +14,7 @@ import { EducationPartProps } from "@/lib/props";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { reorder } from "@/lib/helper";
 
-export default function EducationPart({ selection, resumeSlug, educationSlug, onToggleSelect }: EducationPartProps) {
+export default function EducationPart({ selection, resumeSlug, educationSlug, onToggleSelect, dragHandleProps }: EducationPartProps) {
     const { education, educationDocRef }: EducationHook = useEducation(resumeSlug, educationSlug);
 
     if (!education || !educationDocRef) {
@@ -53,7 +53,7 @@ export default function EducationPart({ selection, resumeSlug, educationSlug, on
 
     return (
         <Wrapper>
-            <Section isSelected={isSelected} onToggleSelect={() => onToggleSelect(educationSlug)}>
+            <Section dragHandleProps={dragHandleProps} isSelected={isSelected} onToggleSelect={() => onToggleSelect(educationSlug)}>
                 <View style={{
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -87,9 +87,9 @@ export default function EducationPart({ selection, resumeSlug, educationSlug, on
                                             <div
                                                 ref={provided.innerRef}
                                                 {...provided.draggableProps}
-                                                {...provided.dragHandleProps}
                                             >
                                                 <BulletPart
+                                                    dragHandleProps={provided.dragHandleProps}
                                                     selection={selection}
                                                     resumeSlug={resumeSlug}
                                                     doc={education}

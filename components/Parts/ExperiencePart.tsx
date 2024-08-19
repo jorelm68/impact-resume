@@ -14,7 +14,7 @@ import { ExperiencePartProps } from "@/lib/props";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { reorder } from "@/lib/helper";
 
-export default function ExperiencePart({ selection, resumeSlug, experienceSlug, onToggleSelect }: ExperiencePartProps) {
+export default function ExperiencePart({ selection, resumeSlug, experienceSlug, onToggleSelect, dragHandleProps }: ExperiencePartProps) {
     const { experience, experienceDocRef }: ExperienceHook = useExperience(resumeSlug, experienceSlug);
 
     if (!experience || !experienceDocRef) {
@@ -53,7 +53,7 @@ export default function ExperiencePart({ selection, resumeSlug, experienceSlug, 
 
     return (
         <Wrapper>
-            <Section isSelected={isSelected} onToggleSelect={() => onToggleSelect(experienceSlug)}>
+            <Section dragHandleProps={dragHandleProps} isSelected={isSelected} onToggleSelect={() => onToggleSelect(experienceSlug)}>
                 <View style={{
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -86,9 +86,9 @@ export default function ExperiencePart({ selection, resumeSlug, experienceSlug, 
                                             <div
                                                 ref={provided.innerRef}
                                                 {...provided.draggableProps}
-                                                {...provided.dragHandleProps}
                                             >
                                                 <BulletPart
+                                                    dragHandleProps={provided.dragHandleProps}
                                                     selection={selection}
                                                     resumeSlug={resumeSlug}
                                                     doc={experience}

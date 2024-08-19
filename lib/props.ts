@@ -86,6 +86,7 @@ export interface ResumePartProps {
 }
 
 export interface EducationPartProps {
+    dragHandleProps?: any;
     selection: string[];
     resumeSlug: string;
     educationSlug: string;
@@ -93,6 +94,7 @@ export interface EducationPartProps {
 }
 
 export interface ExperiencePartProps {
+    dragHandleProps?: any;
     selection: string[];
     resumeSlug: string;
     experienceSlug: string;

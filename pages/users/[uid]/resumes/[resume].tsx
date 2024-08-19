@@ -1,18 +1,20 @@
 import { PlusButton } from "@/components/Buttons";
 import Loader from "@/components/Loader";
 import AdditionalPart from "@/components/Parts/AdditionalPart";
+import BulletPart from "@/components/Parts/BulletPart";
 import EducationPart from "@/components/Parts/EducationPart";
 import ExperiencePart from "@/components/Parts/ExperiencePart";
 import ResumePart from "@/components/Parts/ResumePart";
 import Text from "@/components/Text";
 import View from "@/components/View";
 import { createNewAdditional, createNewEducation, createNewExperience } from "@/lib/firebase";
-import { formatTime } from "@/lib/helper";
+import { formatTime, reorder } from "@/lib/helper";
 import { useResume } from "@/lib/hooks";
 import { ResumePageProps } from "@/lib/props";
 import { Additional, Education, Experience } from "@/lib/types";
 import { DocumentReference, updateDoc } from "firebase/firestore";
 import { GetServerSideProps } from "next";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { resume } = context.params as { resume: string };
@@ -58,6 +60,36 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
         });
     }
 
+    const onDragEndEducations = async (result: any) => {
+        if (!result.destination) {
+            return;
+        }
+        const reorderedEducations = reorder(
+            resume.educations || [],
+            result.source.index,
+            result.destination.index
+        );
+
+        await updateDoc(resumeDocRef, {
+            educations: reorderedEducations,
+        });
+    }
+
+    const onDragEndExperiences = async (result: any) => {
+        if (!result.destination) {
+            return;
+        }
+        const reorderedExperiences = reorder(
+            resume.experiences || [],
+            result.source.index,
+            result.destination.index
+        );
+
+        await updateDoc(resumeDocRef, {
+            experiences: reorderedExperiences,
+        });
+    }
+
     return (
         <main>
             <View style={{
@@ -73,10 +105,64 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
             <ResumePart resumeSlug={resumeSlug} />
 
             <Header label='Education' onClick={handleEducation} />
-            {resume.educations.map((educationSlug) => <EducationPart selection={resume.selected || []} key={educationSlug} resumeSlug={resumeSlug} educationSlug={educationSlug} onToggleSelect={handleToggleSelect} />)}
+            <DragDropContext onDragEnd={onDragEndEducations}>
+                <Droppable droppableId="educations">
+                    {(provided) => (
+                        <div {...provided.droppableProps} ref={provided.innerRef}>
+                            {resume.educations?.map((educationSlug, index) => (
+                                <Draggable key={educationSlug} draggableId={educationSlug} index={index}>
+                                    {(provided) => (
+                                        <div
+                                            ref={provided.innerRef}
+                                            {...provided.draggableProps}
+                                        >
+                                            <EducationPart
+                                                dragHandleProps={provided.dragHandleProps}
+                                                selection={resume.selected || []}
+                                                key={educationSlug}
+                                                resumeSlug={resumeSlug}
+                                                educationSlug={educationSlug}
+                                                onToggleSelect={handleToggleSelect}
+                                            />
+                                        </div>
+                                    )}
+                                </Draggable>
+                            ))}
+                            {provided.placeholder}
+                        </div>
+                    )}
+                </Droppable>
+            </DragDropContext>
 
             <Header label='Experience' onClick={handleExperience} />
-            {resume.experiences.map((experienceSlug) => <ExperiencePart selection={resume.selected || []} key={experienceSlug} resumeSlug={resumeSlug} experienceSlug={experienceSlug} onToggleSelect={handleToggleSelect} />)}
+            <DragDropContext onDragEnd={onDragEndExperiences}>
+                <Droppable droppableId="experiences">
+                    {(provided) => (
+                        <div {...provided.droppableProps} ref={provided.innerRef}>
+                            {resume.experiences?.map((experienceSlug, index) => (
+                                <Draggable key={experienceSlug} draggableId={experienceSlug} index={index}>
+                                    {(provided) => (
+                                        <div
+                                            ref={provided.innerRef}
+                                            {...provided.draggableProps}
+                                        >
+                                            <ExperiencePart
+                                                dragHandleProps={provided.dragHandleProps}
+                                                selection={resume.selected || []}
+                                                key={experienceSlug}
+                                                resumeSlug={resumeSlug}
+                                                experienceSlug={experienceSlug}
+                                                onToggleSelect={handleToggleSelect}
+                                            />
+                                        </div>
+                                    )}
+                                </Draggable>
+                            ))}
+                            {provided.placeholder}
+                        </div>
+                    )}
+                </Droppable>
+            </DragDropContext>
 
             <Header label='Additional' onClick={handleAdditional} />
             {resume.additionals.map((additionalSlug) => <AdditionalPart selection={resume.selected || []} key={additionalSlug} resumeSlug={resumeSlug} additionalSlug={additionalSlug} onToggleSelect={handleToggleSelect} />)}
