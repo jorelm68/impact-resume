@@ -10,6 +10,8 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import styles from "@/styles/Admin.module.css";
 import View from "@/components/View";
+import Text from "@/components/Text";
+import { formatTime } from "@/lib/helper";
 
 export default function ResumesPage() {
     return (
@@ -50,11 +52,22 @@ function ResumeList() {
 
 function ResumeItem({ resume }: { resume: Resume }) {
     return (
+        <View style={{
+            display: 'flex',
+            flexDirection: 'row',
+            gap: '8px',
+            alignItems: 'center',
+        }}>
         <Link href={`/users/${auth.currentUser?.uid}/resumes/${resume.slug}`}>
             <button>
                 {resume.resumeName}
             </button>
         </Link>
+
+        <Text>
+            Last Updated {formatTime(resume.updatedAt, 'H:M(am/pm) M D, Y')}
+        </Text>
+        </View>
     )
 }
 
