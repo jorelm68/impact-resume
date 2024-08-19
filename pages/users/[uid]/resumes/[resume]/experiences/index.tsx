@@ -1,12 +1,9 @@
 import { auth } from "@/lib/firebase";
-import { useExperiences } from "@/lib/hooks";
 import { ExperiencesPageProps } from "@/lib/props";
 import { Experience } from "@/lib/types";
 
 export default function ExperiencesPage(props: ExperiencesPageProps) {
-    console.log(props);
     const { resume } = props.params as { resume: string };
-    console.log(resume);
 
     return (
         <main>

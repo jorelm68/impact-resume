@@ -204,7 +204,6 @@ function BulletPart({ selection, doc, docRef, resumeSlug, bulletSlug, onToggleSe
     };
 
     const handleDelete = async () => {
-        console.log('deleting')
         await updateDoc(docRef, {
             bullets: doc.bullets?.filter((slug) => slug !== bulletSlug),
         });
