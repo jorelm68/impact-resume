@@ -1,6 +1,9 @@
 import { PlusButton } from "@/components/Buttons";
 import Loader from "@/components/Loader";
-import { AdditionalPart, EducationPart, ExperiencePart, ResumePart } from "@/components/Parts";
+import AdditionalPart from "@/components/Parts/AdditionalPart";
+import EducationPart from "@/components/Parts/EducationPart";
+import ExperiencePart from "@/components/Parts/ExperiencePart";
+import ResumePart from "@/components/Parts/ResumePart";
 import Text from "@/components/Text";
 import View from "@/components/View";
 import { createNewAdditional, createNewEducation, createNewExperience } from "@/lib/firebase";
