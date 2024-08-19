@@ -7,8 +7,9 @@ import ResumePDF from "./ResumePDF";
 import { auth, manageSubscription, signInWithUmich, upgradeToPremium } from "@/lib/firebase";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
+import { usePremiumStatus } from "@/lib/hooks";
 
-function Button({ onClick, backgroundColor, children }: GenericButtonProps) {
+function Button({ onClick, style, children }: GenericButtonProps) {
     const [loading, setLoading] = useState(false);
 
     const handleClick = async () => {
@@ -27,13 +28,14 @@ function Button({ onClick, backgroundColor, children }: GenericButtonProps) {
         <button style={{
             margin: '0px',
             height: '24px',
-            backgroundColor: backgroundColor ? backgroundColor : 'black',
+            backgroundColor: 'black',
             borderRadius: '8px',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
             border: 'none',
             cursor: 'pointer',
+            ...style,
         }} onClick={handleClick}>
             {children}
         </button>
@@ -42,7 +44,9 @@ function Button({ onClick, backgroundColor, children }: GenericButtonProps) {
 
 export function RemoveButton({ onClick }: ButtonProps) {
     return (
-        <Button onClick={onClick} backgroundColor='red'>
+        <Button onClick={onClick} style={{
+            backgroundColor: 'red',
+        }}>
             <span style={{
                 color: 'white',
                 fontSize: '12px',
@@ -54,7 +58,9 @@ export function RemoveButton({ onClick }: ButtonProps) {
 
 export function AddButton({ onClick }: ButtonProps) {
     return (
-        <Button onClick={onClick} backgroundColor={constants.colors.lightBlue}>
+        <Button onClick={onClick} style={{
+            backgroundColor: constants.colors.lightBlue,
+        }}>
             <span style={{
                 color: 'white',
                 fontSize: '24px',
@@ -66,7 +72,9 @@ export function AddButton({ onClick }: ButtonProps) {
 
 export function SaveButton({ onClick }: ButtonProps) {
     return (
-        <Button onClick={onClick} backgroundColor='green'>
+        <Button onClick={onClick} style={{
+            backgroundColor: 'green',
+        }}>
             <span style={{
                 color: 'white',
                 fontSize: '12px',
@@ -78,7 +86,9 @@ export function SaveButton({ onClick }: ButtonProps) {
 
 export function CancelButton({ onClick }: ButtonProps) {
     return (
-        <Button onClick={onClick} backgroundColor='grey'>
+        <Button onClick={onClick} style={{
+            backgroundColor: 'grey',
+        }}>
             <span style={{
                 color: 'white',
                 fontSize: '12px',
@@ -90,7 +100,9 @@ export function CancelButton({ onClick }: ButtonProps) {
 
 export function EditButton({ onClick }: ButtonProps) {
     return (
-        <Button onClick={onClick} backgroundColor='black'>
+        <Button onClick={onClick} style={{
+            backgroundColor: 'black',
+        }}>
             <span style={{
                 color: 'white',
                 fontSize: '12px',
@@ -102,6 +114,26 @@ export function EditButton({ onClick }: ButtonProps) {
 
 export function PDFButton({ resumeSlug }: PDFButtonProps) {
     const [loading, setLoading] = useState(true);
+    const isPremium = usePremiumStatus();
+
+    const handleClick = async () => {
+        toast.error('You must be a premium member to download PDFs.');
+    }
+
+    if (!isPremium) {
+        return (
+            <Button style={{
+                backgroundColor: 'crimson',
+                cursor: 'not-allowed',
+            }} onClick={handleClick}>
+                <span style={{
+                    color: 'white',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                }}>🔒 PDF</span>
+            </Button>
+        )
+    }
 
     useEffect(() => {
         setTimeout(() => {
@@ -115,7 +147,9 @@ export function PDFButton({ resumeSlug }: PDFButtonProps) {
 
     return (
         <PDFDownloadLink document={<ResumePDF resumeSlug={resumeSlug} />} fileName="resume.pdf">
-            <Button backgroundColor='crimson'>
+            <Button style={{
+                backgroundColro: 'crimson',
+            }}>
                 <span style={{
                     color: 'white',
                     fontSize: '12px',
@@ -131,7 +165,7 @@ export function UpgradeButton() {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
-    const handleUpgradeAccount = async () => {
+    const handleUpgradeToPremium = async () => {
         setLoading(true);
         try {
             const checkoutUrl = await upgradeToPremium();
@@ -146,7 +180,7 @@ export function UpgradeButton() {
         return <Loader />
     }
 
-    return <button onClick={handleUpgradeAccount} className='btn-green'>UPGRADE</button>
+    return <button onClick={handleUpgradeToPremium} className='btn-green'>UPGRADE</button>
 }
 
 

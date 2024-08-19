@@ -115,6 +115,6 @@ export interface ResumePDFProps {
 
 export interface GenericButtonProps {
     onClick?: () => Promise<void> | void;
-    backgroundColor?: string;
+    style?: object;
     children: React.ReactNode;
 }
