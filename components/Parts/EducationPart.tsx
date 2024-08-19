@@ -1,7 +1,7 @@
 import { createBullet } from "@/lib/firebase";
 import { useEducation } from "@/lib/hooks";
 import { EducationHook, SubmitEducationFields, EditableValue, Bullet } from "@/lib/types";
-import { updateDoc, DocumentReference, deleteDoc } from "firebase/firestore";
+import { updateDoc, DocumentReference, deleteDoc, serverTimestamp } from "firebase/firestore";
 import { AddButton, RemoveButton } from "../Buttons";
 import Editable from "../Editable";
 import Indent from "../Layout/Indent";
@@ -14,7 +14,7 @@ import { EducationPartProps } from "@/lib/props";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { reorder } from "@/lib/helper";
 
-export default function EducationPart({ isEditing, selection, resumeSlug, educationSlug, onToggleSelect, onDeleteEducation, dragHandleProps }: EducationPartProps) {
+export default function EducationPart({ resumeDocRef, isEditing, selection, resumeSlug, educationSlug, onToggleSelect, onDeleteEducation, dragHandleProps }: EducationPartProps) {
     const { education, educationDocRef }: EducationHook = useEducation(resumeSlug, educationSlug);
 
     if (!education || !educationDocRef) {
@@ -22,15 +22,23 @@ export default function EducationPart({ isEditing, selection, resumeSlug, educat
     }
 
     const handleSubmit = async (field: SubmitEducationFields, newValue: EditableValue) => {
-        updateDoc(educationDocRef, {
+        await updateDoc(educationDocRef, {
             [field]: newValue,
         })
+
+        await updateDoc(resumeDocRef, {
+            updatedAt: serverTimestamp(),
+        });
     };
 
     const createNewBullet = async () => {
         const newBulletRef: DocumentReference<Bullet> = await createBullet(educationDocRef);
         await updateDoc(educationDocRef, {
             bullets: [...(education.bullets || []), newBulletRef.id],
+        });
+
+        await updateDoc(resumeDocRef, {
+            updatedAt: serverTimestamp(),
         });
     };
 
@@ -48,6 +56,10 @@ export default function EducationPart({ isEditing, selection, resumeSlug, educat
 
         await updateDoc(educationDocRef, {
             bullets: reorderedBullets,
+        });
+
+        await updateDoc(resumeDocRef, {
+            updatedAt: serverTimestamp(),
         });
     };
 

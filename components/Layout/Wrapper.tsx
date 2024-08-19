@@ -8,6 +8,7 @@ export default function Wrapper({ children }: { children: React.ReactNode }) {
             backgroundColor: '#fff',
             padding: '16px',
             minWidth: `${400 + 32}px`,
+            flexGrow: 1,
         }}>
             {children}
         </View>

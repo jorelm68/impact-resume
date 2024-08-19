@@ -1,7 +1,7 @@
 import { createBullet } from "@/lib/firebase";
 import { useExperience } from "@/lib/hooks";
 import { ExperienceHook, Bullet, SubmitExperienceFields, EditableValue } from "@/lib/types";
-import { deleteDoc, DocumentReference, updateDoc } from "firebase/firestore";
+import { deleteDoc, DocumentReference, serverTimestamp, updateDoc } from "firebase/firestore";
 import { AddButton, RemoveButton } from "../Buttons";
 import Editable from "../Editable";
 import Indent from "../Layout/Indent";
@@ -14,7 +14,7 @@ import { ExperiencePartProps } from "@/lib/props";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { reorder } from "@/lib/helper";
 
-export default function ExperiencePart({ isEditing, selection, resumeSlug, experienceSlug, onToggleSelect, onDeleteExperience, dragHandleProps }: ExperiencePartProps) {
+export default function ExperiencePart({ resumeDocRef, isEditing, selection, resumeSlug, experienceSlug, onToggleSelect, onDeleteExperience, dragHandleProps }: ExperiencePartProps) {
     const { experience, experienceDocRef }: ExperienceHook = useExperience(resumeSlug, experienceSlug);
 
     if (!experience || !experienceDocRef) {
@@ -26,11 +26,19 @@ export default function ExperiencePart({ isEditing, selection, resumeSlug, exper
         await updateDoc(experienceDocRef, {
             bullets: [...(experience.bullets || []), newBulletRef.id],
         });
+
+        await updateDoc(resumeDocRef, {
+            updatedAt: serverTimestamp(),
+        });
     };
 
     const handleSubmit = async (field: SubmitExperienceFields, newValue: EditableValue) => {
-        updateDoc(experienceDocRef, {
+        await updateDoc(experienceDocRef, {
             [field]: newValue,
+        })
+
+        await updateDoc(resumeDocRef, {
+            updatedAt: serverTimestamp(),
         })
     };
 
@@ -49,11 +57,11 @@ export default function ExperiencePart({ isEditing, selection, resumeSlug, exper
         await updateDoc(experienceDocRef, {
             bullets: reorderedBullets,
         });
-    };
 
-    const handleDelete = async () => {
-        await deleteDoc(experienceDocRef);
-    }
+        await updateDoc(resumeDocRef, {
+            updatedAt: serverTimestamp(),
+        });
+    };
 
     return (
         <View style={{

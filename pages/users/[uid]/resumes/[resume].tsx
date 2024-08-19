@@ -13,7 +13,7 @@ import { formatTime, reorder } from "@/lib/helper";
 import { useResume } from "@/lib/hooks";
 import { ResumePageProps } from "@/lib/props";
 import { Additional, EditableValue, Education, Experience } from "@/lib/types";
-import { deleteDoc, DocumentReference, updateDoc } from "firebase/firestore";
+import { deleteDoc, DocumentReference, serverTimestamp, updateDoc } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import { useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
@@ -41,6 +41,7 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
         const newEducationRef: DocumentReference<Education> = await createNewEducation(resumeDocRef);
         await updateDoc(resumeDocRef, {
             educations: [...(resume.educations || []), newEducationRef.id],
+            updatedAt: serverTimestamp(),
         });
     }
 
@@ -48,18 +49,21 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
         const newExperienceRef: DocumentReference<Experience> = await createNewExperience(resumeDocRef);
         await updateDoc(resumeDocRef, {
             experiences: [...(resume.experiences || []), newExperienceRef.id],
+            updatedAt: serverTimestamp(),
         });
     }
 
     const handleToggleSelect = async (selectedSlug: string) => {
         await updateDoc(resumeDocRef, {
             selected: resume.selected?.includes(selectedSlug) ? resume.selected?.filter((slug) => slug !== selectedSlug) : [...(resume.selected || []), selectedSlug],
+            updatedAt: serverTimestamp(),
         });
     }
 
     const handleDeleteEducation = async (educationDocRef: DocumentReference<Education>) => {
         await updateDoc(resumeDocRef, {
             educations: resume.educations?.filter((slug) => slug !== educationDocRef.id),
+            updatedAt: serverTimestamp(),
         });
 
         await deleteDoc(educationDocRef);
@@ -68,6 +72,7 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
     const handleDeleteExperience = async (experienceDocRef: DocumentReference<Experience>) => {
         await updateDoc(resumeDocRef, {
             experiences: resume.experiences?.filter((slug) => slug !== experienceDocRef.id),
+            updatedAt: serverTimestamp(),
         });
 
         await deleteDoc(experienceDocRef);
@@ -85,6 +90,7 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
 
         await updateDoc(resumeDocRef, {
             educations: reorderedEducations,
+            updatedAt: serverTimestamp(),
         });
     }
 
@@ -100,6 +106,7 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
 
         await updateDoc(resumeDocRef, {
             experiences: reorderedExperiences,
+            updatedAt: serverTimestamp(),
         });
     }
 
@@ -143,6 +150,7 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
                                             {...provided.draggableProps}
                                         >
                                             <EducationPart
+                                                resumeDocRef={resumeDocRef}
                                                 onDeleteEducation={handleDeleteEducation}
                                                 isEditing={editingEducation}
                                                 dragHandleProps={provided.dragHandleProps}
@@ -181,6 +189,7 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
                                             {...provided.draggableProps}
                                         >
                                             <ExperiencePart
+                                                resumeDocRef={resumeDocRef}
                                                 onDeleteExperience={handleDeleteExperience}
                                                 isEditing={editingExperience}
                                                 dragHandleProps={provided.dragHandleProps}
