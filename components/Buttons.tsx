@@ -31,7 +31,6 @@ function Button({ onClick, backgroundColor, children }: GenericButtonProps) {
     return (
         <button style={{
             margin: '0px',
-            width: '24px',
             height: '24px',
             backgroundColor: backgroundColor ? backgroundColor : 'black',
             borderRadius: '8px',
@@ -149,4 +148,29 @@ export function UpgradeButton() {
     }
 
     return <button onClick={handleUpgradeAccount} className='btn-green'>UPGRADE</button>
+}
+
+
+export function ManageButton({ onClick }: ButtonProps) {
+    return (
+        <Button onClick={onClick} backgroundColor='black'>
+            <span style={{
+                color: 'white',
+                fontSize: '12px',
+                fontWeight: 'bold',
+            }}>Manage Subscription</span>
+        </Button>
+    )
+}
+
+export function SignOutButton({ onClick }: ButtonProps) {
+    return (
+        <Button onClick={onClick} backgroundColor='transparent'>
+            <span style={{
+                color: 'black',
+                fontSize: '12px',
+                fontWeight: 'bold',
+            }}>Sign Out</span>
+        </Button>
+    )
 }

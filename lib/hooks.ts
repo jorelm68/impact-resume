@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Bullet, BulletHook, Education, EducationHook, Experience, ExperienceHook, Resume, User, UserHook } from "./types";
 import { collection, CollectionReference, doc, DocumentReference, DocumentSnapshot, onSnapshot, QuerySnapshot } from "firebase/firestore";
-import { auth, firestore, getResumeDocRef } from "./firebase";
+import { auth, checkPremium, firestore, getResumeDocRef } from "./firebase";
 import { User as FirebaseUser } from 'firebase/auth';
 import { bulletConverter, educationConverter, experienceConverter, resumeConverter, userConverter } from "./converters";
 
@@ -155,4 +155,17 @@ export function useBullet<T>(resume: string, docRef: DocumentReference<Experienc
     }, [slug, auth.currentUser]);
 
     return { bullet, bulletDocRef };
+}
+
+
+export function usePremiumStatus(): boolean {
+    const [isPremium, setIsPremium] = useState<boolean>(false);
+
+    useEffect(() => {
+        checkPremium().then((premiumStatus) => {
+            setIsPremium(premiumStatus);
+        })
+    }, [auth.currentUser?.uid]);
+
+    return isPremium;
 }
