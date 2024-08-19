@@ -145,7 +145,7 @@ export default function ResumePDF({ resumeSlug }: ResumePDFProps) {
             <Page size='LETTER' style={styles.page}>
                 {/* Header */}
                 <View style={styles.header}>
-                    <Text style={styles.fullName}>John Doe</Text>
+                    <Text style={styles.fullName}>{resume.fullName}</Text>
                     <Text style={styles.contactInfo}>{resume.email} {<BulletPoint />} {resume.phone || ''} {<BulletPoint />} {<Link href={resume.linkedInURL || ''}>{resume.linkedInURL?.split('www.')[1]}</Link>}</Text>
                 </View>
 
