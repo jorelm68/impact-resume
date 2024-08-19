@@ -1,9 +1,8 @@
 import AuthCheck from "@/components/AuthCheck";
-import { auth, upgradeAccount } from "@/lib/firebase";
+import { UpgradeButton } from "@/components/Buttons";
+import { auth } from "@/lib/firebase";
 import { useUser } from "@/lib/hooks";
-import { getCheckoutUrl } from "@/lib/stripePayment";
-import { User, UserHook } from "@/lib/types";
-import { DocumentReference } from "firebase/firestore";
+import { UserHook } from "@/lib/types";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
@@ -23,11 +22,6 @@ export default function UserPage() {
         return null;
     }
 
-    const handleUpgradeAccount = async () => {
-        const checkoutUrl = await upgradeAccount();
-        router.push(checkoutUrl);
-    }
-
     return (
         <main>
             <AuthCheck fallback={(
@@ -42,9 +36,7 @@ export default function UserPage() {
                     </button>
                 </Link>
 
-                <button onClick={handleUpgradeAccount} className='btn-blue'>
-                    Upgrade Account
-                </button>
+                <UpgradeButton />
 
                 <button onClick={handleSignOut}>Sign Out</button>
             </AuthCheck>

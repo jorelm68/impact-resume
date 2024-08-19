@@ -4,6 +4,8 @@ import constants from "@/lib/constants";
 import { ButtonProps, PDFButtonProps } from "@/lib/props";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import ResumePDF from "./ResumePDF";
+import { upgradeAccount } from "@/lib/firebase";
+import { useRouter } from "next/router";
 
 interface GenericButtonProps {
     onClick?: () => Promise<void> | void;
@@ -128,4 +130,23 @@ export function PDFButton({ resumeSlug }: PDFButtonProps) {
             </Button>
         </PDFDownloadLink>
     )
+}
+
+
+export function UpgradeButton() {
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
+
+    const handleUpgradeAccount = async () => {
+        setLoading(true);
+        const checkoutUrl = await upgradeAccount();
+        router.push(checkoutUrl);
+        setLoading(false);
+    }
+
+    if (loading) {
+        return <Loader />
+    }
+
+    return <button onClick={handleUpgradeAccount} className='btn-green'>UPGRADE</button>
 }
