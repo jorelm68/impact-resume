@@ -140,6 +140,20 @@ export default function ResumePDF({ resumeSlug }: ResumePDFProps) {
         return <Loader />
     }
 
+    let selection: string[] = [];
+    if (resume.selected) {
+        selection = resume.selected;
+    }
+
+    let educations: string[] = [];
+    if (resume.educations) {
+        educations = resume.educations.filter(slug => selection.includes(slug));
+    }
+    let experiences: string[] = [];
+    if (resume.experiences) {
+        experiences = resume.experiences.filter(slug => selection.includes(slug));
+    }
+
     return (
         <Document>
             <Page size='LETTER' style={styles.page}>
@@ -152,13 +166,13 @@ export default function ResumePDF({ resumeSlug }: ResumePDFProps) {
                 <View style={styles.headerDivider} />
 
                 {/* Education Section */}
-                {resume.educations?.map((educationSlug, index) => {
-                    return <EducationSection key={index} index={index} selection={resume.selected || []} resumeSlug={resumeSlug} educationSlug={educationSlug} />
+                {educations.map((educationSlug, index) => {
+                    return <EducationSection key={index} index={index} selection={selection} resumeSlug={resumeSlug} educationSlug={educationSlug} />
                 })}
 
                 {/* Experience Section */}
-                {resume.experiences?.map((experienceSlug, index) => {
-                    return <ExperienceSection key={index} index={index} selection={resume.selected || []} resumeSlug={resumeSlug} experienceSlug={experienceSlug} />
+                {experiences.map((experienceSlug, index) => {
+                    return <ExperienceSection key={index} index={index} selection={selection} resumeSlug={resumeSlug} experienceSlug={experienceSlug} />
                 })}
 
                 {/* Additional Section */}
@@ -174,6 +188,11 @@ function EducationSection({ selection, index, resumeSlug, educationSlug }: { sel
 
     if (!education || !educationDocRef) {
         return <Loader />
+    }
+
+    let bullets: string[] = [];
+    if (education.bullets) {
+        bullets = education.bullets.filter(slug => selection.includes(slug));
     }
 
     return (
@@ -192,7 +211,7 @@ function EducationSection({ selection, index, resumeSlug, educationSlug }: { sel
                     <Text style={styles.mediumBold}>{education.college}</Text>
                     <Text style={styles.medium}>{education.degree}, {formatTime(education.endDate, 'M, Y')}</Text>
 
-                    {education.bullets?.filter(slug => selection.includes(slug)).map((bulletSlug, index) => {
+                    {bullets.map((bulletSlug, index) => {
                         return <BulletSection key={index} resumeSlug={resumeSlug} docRef={educationDocRef} bulletSlug={bulletSlug} />
                     })}
                 </View>
@@ -206,6 +225,11 @@ function ExperienceSection({ selection, index, resumeSlug, experienceSlug }: { s
 
     if (!experience || !experienceDocRef) {
         return <Loader />
+    }
+
+    let bullets: string[] = [];
+    if (experience.bullets) {
+        bullets = experience.bullets.filter(slug => selection.includes(slug));
     }
 
     return (
@@ -224,7 +248,7 @@ function ExperienceSection({ selection, index, resumeSlug, experienceSlug }: { s
                 <View style={styles.truncate}>
                     <Text style={styles.mediumBold}>{experience.title}</Text>
 
-                    {experience.bullets?.filter(slug => selection.includes(slug)).map((bulletSlug, index) => {
+                    {bullets.map((bulletSlug, index) => {
                         return <BulletSection key={index} resumeSlug={resumeSlug} docRef={experienceDocRef} bulletSlug={bulletSlug} />
                     })}
                 </View>
