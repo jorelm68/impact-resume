@@ -148,7 +148,7 @@ export function PDFButton({ resumeSlug }: PDFButtonProps) {
     return (
         <PDFDownloadLink document={<ResumePDF resumeSlug={resumeSlug} />} fileName="resume.pdf">
             <Button style={{
-                backgroundColro: 'crimson',
+                backgroundColor: 'crimson',
             }}>
                 <span style={{
                     color: 'white',
