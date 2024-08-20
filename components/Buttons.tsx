@@ -120,6 +120,12 @@ export function PDFButton({ resumeSlug }: PDFButtonProps) {
         toast.error('You must be a premium member to download PDFs.');
     }
 
+    useEffect(() => {
+        setTimeout(() => {
+            setLoading(false);
+        }, 1500)
+    }, [])
+
     if (!isPremium) {
         return (
             <Button style={{
@@ -134,12 +140,6 @@ export function PDFButton({ resumeSlug }: PDFButtonProps) {
             </Button>
         )
     }
-
-    useEffect(() => {
-        setTimeout(() => {
-            setLoading(false);
-        }, 1500)
-    }, [])
 
     if (loading) {
         return <Loader />
