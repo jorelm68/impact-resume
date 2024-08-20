@@ -143,7 +143,6 @@ export default function Editable({
                             value={newValue}
                             onChange={handleChange}
                             onKeyDown={handleKeyDown}
-                            onBlur={handleCancel}
                             style={{
                                 padding: "0.5rem",
                                 fontSize: "1rem",
