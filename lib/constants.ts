@@ -9,6 +9,15 @@ export default {
         resume1: 'https://i.imgur.com/NQSYiCY.png',
     },
 
+    gifs: {
+        'resumes': 'https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExbDg4YW1manFuanNmajA0NTg1Y3hleXdmZWdmeGZvOTh1a3BzdHVmbiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/7SBJloJEz7OYwfDCk0/giphy.gif',
+        'additional': 'https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExYjU0Y2dncnRnODJlZTA1eTF4aXZqZmhpZnMybjYwM2J1d3ozdWZuMyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/QVJyrbaai72Wu6B2i1/giphy.webp',
+        'contact': 'https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExY2dybXF1OXViajUwNWw5ZnZ6Nno1OHNuYzh2djg5ajBraWNyZnlzdSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/dqmtvI218TBqIqAGgV/100.webp',
+        'experience': 'https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExanpobnV3d25yd25wcGVpYzBpY250aDU4em9sNjM4eWMzdGh3d3ZhaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/B06pYGacRaw4OkdtNg/giphy.webp',
+        'education': 'https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExaGdtNHEyeWNzcGF6NjgzcGd3aHhwZ3EzamFtZHljOXRhdThwZmhjcCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/sXiFh6CB5cevzTXhag/giphy.webp',
+        'download': 'https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExc3hta2VheGc5a3YwM25uOTJhZTVsYzQ0amJ6c2lyYXg4b2V0cW55cCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/zuzjMEfKnMI7q1G2FH/giphy.webp',
+    },
+
     colors: {
         grey: '#ccc',
         lightBlue: '#3b49df',
