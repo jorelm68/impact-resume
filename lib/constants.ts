@@ -7,6 +7,7 @@ export default {
         name: 'https://i.imgur.com/0TBB9Bd.png',
         nameTransparent: 'https://i.imgur.com/en3h9xc.png',
         resume1: 'https://i.imgur.com/NQSYiCY.png',
+        resume2: 'https://i.imgur.com/hy8NCZ8.png',
     },
 
     gifs: {

@@ -19,7 +19,14 @@ export default function Home() {
           textAlign: 'center',
         }}>Go ahead and sign in with Google to start creating your Impact Resume for free!</Text>
 
-        <img src={constants.photos.resume1} alt="resume" />
+        <img src={constants.gifs.resumes} alt="resumes" />
+        <img src={constants.gifs.contact} alt="contact" />
+        <img src={constants.gifs.education} alt="education" />
+        <img src={constants.gifs.experience} alt="experience" />
+        <img src={constants.gifs.additional} alt="additional" />
+        <img src={constants.gifs.download} alt="download" />
+
+        <img src={constants.photos.resume2} alt="resume" />
       </View>
     </main>
   );
