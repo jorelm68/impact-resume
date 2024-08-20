@@ -54,7 +54,7 @@
 ### Top contributors:
 
 <a href="https://github.com/jorelm68/impact-resume/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=jorelm68/impact-resume" alt="contrib.rocks image" />
+  <img src="https://contrib.rocks/image?repo=jorelm68/nextfire-app" alt="contrib.rocks image" />
 </a>
 
 
