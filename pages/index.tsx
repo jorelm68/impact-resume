@@ -13,11 +13,31 @@ export default function Home() {
       }}>
         <img src={constants.photos.nameTransparent} alt="logo" />
 
+        <View style={{
+          display: 'flex',
+          height: '4px',
+          backgroundColor: 'black',
+          width: '100%',
+        }} />
+
         <Text style={{
           fontSize: '20px',
           fontWeight: 'bold',
           textAlign: 'center',
         }}>Go ahead and sign in with Google to start creating your Impact Resume for free!</Text>
+
+        <Text style={{
+          fontSize: '20px',
+          fontWeight: 'bold',
+          textAlign: 'center',
+        }}>Upgrade to premium for $2.99 a year in order to export your PDFs.</Text>
+
+        <View style={{
+          display: 'flex',
+          height: '4px',
+          backgroundColor: 'black',
+          width: '100%',
+        }} />
 
         <img src={constants.gifs.resumes} alt="resumes" />
         <img src={constants.gifs.contact} alt="contact" />
@@ -26,7 +46,16 @@ export default function Home() {
         <img src={constants.gifs.additional} alt="additional" />
         <img src={constants.gifs.download} alt="download" />
 
-        <img src={constants.photos.resume2} alt="resume" />
+        <Text style={{
+          fontSize: '20px',
+          fontWeight: 'bold',
+          textAlign: 'center',
+        }}>This is the modern resume template with the most Impact.</Text>
+        <View style={{
+          border: '4px solid orange',
+        }}>
+          <img src={constants.photos.resume2} alt="resume" />
+        </View>
       </View>
     </main>
   );
