@@ -119,7 +119,7 @@ function CreateResume() {
         toast.success('Resume created!');
 
         // Imperative navigation after doc is set
-        router.push(`/${auth.currentUser?.uid}/resumes/${slug}`);
+        router.push(`/users/${auth.currentUser?.uid}/resumes/${slug}`);
     }
 
     return (

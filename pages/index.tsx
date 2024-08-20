@@ -13,18 +13,13 @@ export default function Home() {
       }}>
         <img src={constants.photos.nameTransparent} alt="logo" />
 
+        <Text style={{
+          fontSize: '20px',
+          fontWeight: 'bold',
+          textAlign: 'center',
+        }}>Go ahead and sign in with Google to start creating your Impact Resume for free!</Text>
+
         <img src={constants.photos.resume1} alt="resume" />
-
-        <Text style={{
-        }}>Welcome to the PDF Generator</Text>
-        <Text style={{
-        }}>This is a simple example of how to generate a PDF file using React and React-PDF.</Text>
-        <Text style={{
-        }}>You can generate a PDF file by clicking the button below.</Text>
-        <Text style={{
-        }}>$10.00</Text>
-
-
       </View>
     </main>
   );
