@@ -30,7 +30,7 @@ export default function Home() {
           fontSize: '20px',
           fontWeight: 'bold',
           textAlign: 'center',
-        }}>Upgrade to premium for $2.99 a year in order to export your PDFs.</Text>
+        }}>Upgrade to premium for {constants.PRICE} a year in order to export your PDFs.</Text>
 
         <View style={{
           display: 'flex',

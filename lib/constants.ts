@@ -25,6 +25,7 @@ export default {
     },
 
     PRICE_ID: 'price_1PqI1iBJpQtnod8Aysl35XPm',
+    PRICE: '$4.99',
     REGION: 'us-central1',
 
     FIREBASE_CONFIG: {
