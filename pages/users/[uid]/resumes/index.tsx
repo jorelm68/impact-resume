@@ -97,8 +97,6 @@ function CreateResume() {
             linkedInURL: null,
             address: null,
             phone: null,
-            displayAddress: false,
-            displayPhone: false,
 
             educations: [],
             experiences: [],
