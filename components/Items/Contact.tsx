@@ -5,7 +5,7 @@ import Editable from "../Editable";
 import Wrapper from "../Layout/Wrapper";
 import View from "../View";
 
-export default function ResumePart({ resumeSlug }: { resumeSlug: string }) {
+export default function Contact({ resumeSlug }: { resumeSlug: string }) {
     const { resume, resumeDocRef }: ResumeHook = useResume(resumeSlug);
 
     if (!resume || !resumeDocRef) {

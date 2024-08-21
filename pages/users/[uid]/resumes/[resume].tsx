@@ -1,21 +1,21 @@
-import { AddButton, CancelButton, EditButton, PDFButton } from "@/components/Buttons";
+import { AddButton, PDFButton } from "@/components/Buttons";
 import Editable from "@/components/Editable";
 import Loader from "@/components/Loader";
-import AdditionalPart from "@/components/Parts/AdditionalPart";
-import EducationPart from "@/components/Parts/EducationPart";
-import ExperiencePart from "@/components/Parts/ExperiencePart";
-import ResumePart from "@/components/Parts/ResumePart";
+import Contact from "@/components/Items/Contact";
 import Text from "@/components/Text";
 import View from "@/components/View";
-import { createNewEducation, createNewExperience } from "@/lib/firebase";
 import { formatTime, reorder } from "@/lib/helper";
 import { useResume } from "@/lib/hooks";
 import { ResumePageProps } from "@/lib/props";
-import { EditableValue, Education, Experience } from "@/lib/types";
-import { deleteDoc, DocumentReference, serverTimestamp, updateDoc } from "firebase/firestore";
+import { EditableValue, Resume, Section, User } from "@/lib/types";
+import { collection, doc, DocumentReference, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import { GetServerSideProps } from "next";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import ResumeItem from "@/components/Items/ResumeItem";
 import { useState } from "react";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { auth, firestore, generateSlug, getResumeDocRef } from "@/lib/firebase";
+import { CollectionReference } from "firebase/firestore/lite";
+import { userConverter, resumeConverter, sectionConverter } from "@/lib/converters";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { resume } = context.params as { resume: string };
@@ -29,92 +29,43 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 export default function ResumePage({ resumeSlug }: ResumePageProps) {
     const { resume, resumeDocRef } = useResume(resumeSlug);
-    const [editingEducation, setEditingEducation] = useState<boolean>(false);
-    const [editingExperience, setEditingExperience] = useState<boolean>(false);
+    const [sectionName, setSectionName] = useState('');
+    if (!resume || !resumeDocRef) return null;
+    const isValid = sectionName.length > 0 && !resume.sections.includes(sectionName);
 
-    if (!resume || !resumeDocRef || !resume.educations || !resume.experiences) {
-        return <Loader />;
-    }
-
-    const handleEducationAdd = async () => {
-        const newEducationRef: DocumentReference<Education> = await createNewEducation(resumeDocRef);
-        await updateDoc(resumeDocRef, {
-            educations: [...(resume.educations || []), newEducationRef.id],
-            selected: [...(resume.selected || []), newEducationRef.id],
-            updatedAt: serverTimestamp(),
-        });
-    }
-
-    const handleExperienceAdd = async () => {
-        const newExperienceRef: DocumentReference<Experience> = await createNewExperience(resumeDocRef);
-        await updateDoc(resumeDocRef, {
-            experiences: [...(resume.experiences || []), newExperienceRef.id],
-            selected: [...(resume.selected || []), newExperienceRef.id],
-            updatedAt: serverTimestamp(),
-        });
-    }
-
-    const handleToggleSelect = async (selectedSlug: string) => {
-        await updateDoc(resumeDocRef, {
-            selected: resume.selected?.includes(selectedSlug) ? resume.selected?.filter((slug) => slug !== selectedSlug) : [...(resume.selected || []), selectedSlug],
-            updatedAt: serverTimestamp(),
-        });
-    }
-
-    const handleDeleteEducation = async (educationDocRef: DocumentReference<Education>) => {
-        await updateDoc(resumeDocRef, {
-            educations: resume.educations?.filter((slug) => slug !== educationDocRef.id),
-            updatedAt: serverTimestamp(),
-        });
-
-        await deleteDoc(educationDocRef);
-
-        if (resume.educations?.length === 1) {
-            setEditingEducation(false);
+    const handleCreateSection = async (e: any) => {
+        e.preventDefault();
+        
+        const slug = generateSlug();
+        const data = {
+            slug,
+            name: sectionName,
+            bullets: [],
         }
-    }
+        const sectionCollectionRef: CollectionReference<Section> = collection(resumeDocRef, 'sections').withConverter(sectionConverter);
+        const sectionDocRef: DocumentReference<Section> = doc(sectionCollectionRef, slug).withConverter(sectionConverter);
+        await setDoc(sectionDocRef, data);
 
-    const handleDeleteExperience = async (experienceDocRef: DocumentReference<Experience>) => {
         await updateDoc(resumeDocRef, {
-            experiences: resume.experiences?.filter((slug) => slug !== experienceDocRef.id),
+            sections: [...resume.sections, slug],
             updatedAt: serverTimestamp(),
         });
 
-        await deleteDoc(experienceDocRef);
-
-        if (resume.experiences?.length === 1) {
-            setEditingExperience(false);
-        }
+        setSectionName('');
     }
 
-    const onDragEndEducations = async (result: any) => {
+    const onDragEnd = async (result: any) => {
         if (!result.destination) {
             return;
         }
-        const reorderedEducations = reorder(
-            resume.educations || [],
+        const reorderedSections = reorder(
+            resume.sections,
             result.source.index,
             result.destination.index
         );
 
         await updateDoc(resumeDocRef, {
-            educations: reorderedEducations,
-            updatedAt: serverTimestamp(),
-        });
-    }
-
-    const onDragEndExperiences = async (result: any) => {
-        if (!result.destination) {
-            return;
-        }
-        const reorderedExperiences = reorder(
-            resume.experiences || [],
-            result.source.index,
-            result.destination.index
-        );
-
-        await updateDoc(resumeDocRef, {
-            experiences: reorderedExperiences,
+            sections: reorderedSections,
             updatedAt: serverTimestamp(),
         });
     }
@@ -142,114 +93,51 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
                         value={resume.resumeName}
                         onSubmit={(newValue: EditableValue) => updateDoc(resumeDocRef, { resumeName: newValue, updatedAt: serverTimestamp() })}
                     />
+
+                    <form onSubmit={handleCreateSection} style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        gap: '1rem',
+                    }}>
+                        <input
+                            style={{
+                                width: '50%',
+                                minWidth: '400px',
+                            }}
+                            value={sectionName}
+                            onChange={(e: any) => setSectionName(e.target.value)}
+                            placeholder="Section Name"
+                        />
+
+                        <button type='submit' disabled={!isValid} className='btn-green' style={{
+                            margin: '0px',
+                        }}>
+                            Create New Section
+                        </button>
+                    </form>
+
                 </View>
                 <Text>Last Updated {formatTime(resume.updatedAt, 'H:M(am/pm) M D, Y')}</Text>
             </View>
 
-            <ResumePart resumeSlug={resumeSlug} />
+            <Contact resumeSlug={resumeSlug} />
 
-            <Header
-                label='Education'
-                onAdd={handleEducationAdd}
-                onEdit={resume.educations.length > 0 ? () => setEditingEducation(true) : undefined}
-                onCancel={() => setEditingEducation(false)}
-                isEditing={editingEducation}
-            />
-            <DragDropContext onDragEnd={onDragEndEducations}>
-                <Droppable droppableId="educations">
+            <DragDropContext onDragEnd={onDragEnd}>
+                <Droppable droppableId="sections">
                     {(provided) => (
                         <div {...provided.droppableProps} ref={provided.innerRef}>
-                            {resume.educations?.map((educationSlug, index) => (
-                                <Draggable key={educationSlug} draggableId={educationSlug} index={index}>
-                                    {(provided) => (
-                                        <div
-                                            ref={provided.innerRef}
-                                            {...provided.draggableProps}
-                                        >
-                                            <EducationPart
-                                                onDeleteEducation={handleDeleteEducation}
-                                                isEditing={editingEducation}
-                                                dragHandleProps={provided.dragHandleProps}
-                                                selection={resume.selected || []}
-                                                key={educationSlug}
-                                                resumeSlug={resumeSlug}
-                                                educationSlug={educationSlug}
-                                                onToggleSelect={handleToggleSelect}
-                                            />
-                                        </div>
-                                    )}
-                                </Draggable>
+                            {resume.sections.map((sectionName, index) => (
+                                <ResumeItem key={sectionName} index={index} sectionName={sectionName} resumeSlug={resumeSlug} />
                             ))}
                             {provided.placeholder}
                         </div>
                     )}
                 </Droppable>
             </DragDropContext>
-
-            <Header
-                label='Experience'
-                onAdd={handleExperienceAdd}
-                onEdit={resume.experiences.length > 0 ? () => setEditingExperience(true) : undefined}
-                onCancel={() => setEditingExperience(false)}
-                isEditing={editingExperience}
-            />
-            <DragDropContext onDragEnd={onDragEndExperiences}>
-                <Droppable droppableId="experiences">
-                    {(provided) => (
-                        <div {...provided.droppableProps} ref={provided.innerRef}>
-                            {resume.experiences?.map((experienceSlug, index) => (
-                                <Draggable key={experienceSlug} draggableId={experienceSlug} index={index}>
-                                    {(provided) => (
-                                        <div
-                                            ref={provided.innerRef}
-                                            {...provided.draggableProps}
-                                        >
-                                            <ExperiencePart
-                                                onDeleteExperience={handleDeleteExperience}
-                                                isEditing={editingExperience}
-                                                dragHandleProps={provided.dragHandleProps}
-                                                selection={resume.selected || []}
-                                                key={experienceSlug}
-                                                resumeSlug={resumeSlug}
-                                                experienceSlug={experienceSlug}
-                                                onToggleSelect={handleToggleSelect}
-                                            />
-                                        </div>
-                                    )}
-                                </Draggable>
-                            ))}
-                            {provided.placeholder}
-                        </div>
-                    )}
-                </Droppable>
-            </DragDropContext>
-
-            <Header label='Additional' />
-            <AdditionalPart selection={resume.selected || []} resumeSlug={resumeSlug} onToggleSelect={handleToggleSelect} />
         </main >
     )
 }
 
-interface HeaderProps {
-    label: string;
-    onAdd?: () => Promise<void> | void;
-    onEdit?: () => Promise<void> | void;
-    onCancel?: () => Promise<void> | void;
-    isEditing?: boolean;
-}
 
-function Header({ label, onAdd, onEdit, onCancel, isEditing }: HeaderProps) {
-    return (
-        <View style={{
-            display: 'flex',
-            gap: '16px',
-            flexDirection: 'row',
-            alignItems: 'center',
-        }}>
-            <h2>{label}</h2>
-            {onAdd && <AddButton onClick={onAdd} />}
-            {onEdit && !isEditing && <EditButton onClick={onEdit} />}
-            {onEdit && isEditing && <CancelButton onClick={onCancel} />}
-        </View>
-    )
-}
+
+

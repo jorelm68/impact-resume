@@ -1,44 +1,30 @@
 import { createBullet } from "@/lib/firebase";
-import { useResume } from "@/lib/hooks";
-import { Bullet, ResumeHook } from "@/lib/types";
+import { useResume, useSection } from "@/lib/hooks";
+import { Bullet, ResumeHook, SectionHook } from "@/lib/types";
 import { DocumentReference, serverTimestamp, updateDoc } from "firebase/firestore";
 import { AddButton } from "../Buttons";
 import Wrapper from "../Layout/Wrapper";
 import BulletPart from "./BulletPart";
-import { AdditionalPartProps } from "@/lib/props";
+import { SectionItemProps } from "@/lib/props";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 import { reorder } from "@/lib/helper";
+import Loader from "../Loader";
 
-export default function AdditionalPart({ selection, resumeSlug, onToggleSelect }: AdditionalPartProps) {
+export default function SectionItem({ resumeSlug, sectionSlug }: SectionItemProps) {
+    const { section, sectionDocRef }: SectionHook = useSection(resumeSlug, sectionSlug);
     const { resume, resumeDocRef }: ResumeHook = useResume(resumeSlug);
-
-    if (!resume || !resumeDocRef) {
-        return null;
-    }
-
-    const createNewBullet = async () => {
-        const newBulletRef: DocumentReference<Bullet> = await createBullet(resumeDocRef);
-        await updateDoc(resumeDocRef, {
-            bullets: [...(resume.bullets || []), newBulletRef.id],
-        });
-
-        await updateDoc(resumeDocRef, {
-            updatedAt: serverTimestamp(),
-            selected: [...(resume.selected || []), newBulletRef.id],
-        })
-    };
+    if (!section || !sectionDocRef || !resume || !resumeDocRef) return null;
 
     const onDragEnd = async (result: DropResult) => {
-        if (!result.destination) {
-            return;
-        }
+        if (!result.destination) return;
+
         const reorderedBullets = reorder(
-            resume.bullets || [],
+            section.bullets || [],
             result.source.index,
             result.destination.index
         );
 
-        await updateDoc(resumeDocRef, {
+        await updateDoc(sectionDocRef, {
             bullets: reorderedBullets,
             updatedAt: serverTimestamp(),
         });
@@ -47,10 +33,10 @@ export default function AdditionalPart({ selection, resumeSlug, onToggleSelect }
     return (
         <Wrapper>
             <DragDropContext onDragEnd={onDragEnd}>
-                <Droppable droppableId="bullets">
+                <Droppable droppableId={`${sectionSlug}-bullets`}>
                     {(provided) => (
                         <div {...provided.droppableProps} ref={provided.innerRef}>
-                            {resume.bullets?.map((bulletSlug, index) => (
+                            {section.bullets?.map((bulletSlug, index) => (
                                 <Draggable key={bulletSlug} draggableId={bulletSlug} index={index}>
                                     {(provided) => (
                                         <div
@@ -58,12 +44,10 @@ export default function AdditionalPart({ selection, resumeSlug, onToggleSelect }
                                             {...provided.draggableProps}
                                         >
                                             <BulletPart
-                                                selection={selection}
                                                 resumeSlug={resumeSlug}
-                                                doc={resume}
-                                                docRef={resumeDocRef}
                                                 bulletSlug={bulletSlug}
-                                                onToggleSelect={(slug: string) => onToggleSelect(slug)}
+                                                doc={section}
+                                                docRef={sectionDocRef}
                                                 dragHandleProps={provided.dragHandleProps}
                                             />
                                         </div>
@@ -76,7 +60,7 @@ export default function AdditionalPart({ selection, resumeSlug, onToggleSelect }
                 </Droppable>
             </DragDropContext>
 
-            <AddButton onClick={createNewBullet} />
+            <AddButton onClick={() => createBullet(resume, resumeDocRef, section, sectionDocRef)} />
         </Wrapper>
     );
 }

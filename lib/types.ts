@@ -47,7 +47,7 @@ export interface Education {
     degree: string | null;
     startDate: Timestamp | FieldValue | null;
     endDate: Timestamp | FieldValue | null;
-    bullets: string[] | null;
+    bullets: string[];
 }
 
 export interface Experience {
@@ -60,7 +60,18 @@ export interface Experience {
     endDate: Timestamp | FieldValue | null;
     location: string | null;
     workPhone: string | null;
-    bullets: string[] | null;
+    bullets: string[];
+}
+
+export interface Section {
+    slug: string;
+    name: string;
+    bullets: string[];
+}
+
+export interface SectionHook {
+    section: Section | null;
+    sectionDocRef: DocumentReference<Section> | null;
 }
 
 export interface Resume {
@@ -71,14 +82,11 @@ export interface Resume {
     linkedInURL: string | null;
     address: string | null;
     phone: string | null;
-    displayAddress: boolean;
-    displayPhone: boolean;
 
-    educations: string[] | null;
-    experiences: string[] | null;
-    bullets: string[] | null;
-
-    selected: string[] | null;
+    educations: string[];
+    experiences: string[];
+    sections: string[];
+    selected: string[];
 
     createdAt: number | FieldValue | null;
     updatedAt: number | FieldValue | null;
@@ -87,4 +95,15 @@ export interface Resume {
 export interface UserHook {
     user: User | null;
     userDocRef: DocumentReference<User> | null;
+}
+
+export interface ContactInfo {
+    numContacts: number;
+    one: string | null;
+    two: string | null;
+    three: string | null;
+    hasEmail: boolean;
+    hasLinkedInURL: boolean;
+    hasPhone: boolean;
+    hasAddress: boolean;
 }

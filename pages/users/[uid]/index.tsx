@@ -1,19 +1,12 @@
 import AuthCheck from "@/components/AuthCheck";
 import { ManageButton, SignOutButton, UpgradeButton } from "@/components/Buttons";
 import Text from "@/components/Text";
-import { auth, checkPremium, manageSubscription } from "@/lib/firebase";
 import { usePremiumStatus, useUser } from "@/lib/hooks";
-import { getPremiumStatus } from "@/lib/stripePayment";
 import { UserHook } from "@/lib/types";
 import { View } from "@react-pdf/renderer";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-
 
 export default function UserPage() {
-    const router = useRouter();
     const { user, userDocRef }: UserHook = useUser();
     const isPremium = usePremiumStatus();
 

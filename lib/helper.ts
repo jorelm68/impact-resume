@@ -1,9 +1,10 @@
 import { FieldValue, Timestamp } from "firebase/firestore";
-import { TimeFormat } from "./types";
+import { ContactInfo, Resume, TimeFormat } from "./types";
+import toast from "react-hot-toast";
 
 // Format a Timestamp object (firebase) to be displayed as 'Month, Year'
 export function formatTime(timestamp: Timestamp | FieldValue | null | number, type: TimeFormat): string {
-    if (!timestamp) return '';
+    if (!timestamp) return 'Present';
     if (typeof timestamp === 'number') {
         timestamp = Timestamp.fromMillis(timestamp);
     }
@@ -23,7 +24,7 @@ export function formatTime(timestamp: Timestamp | FieldValue | null | number, ty
         return timestamp.toDate().toLocaleDateString('en-US', {
             month: 'long',
             year: 'numeric',
-        });
+        });;
     }
     else if (type === 'YYYY-MM-DD') {
         const date = timestamp.toDate();
@@ -37,7 +38,7 @@ export function formatTime(timestamp: Timestamp | FieldValue | null | number, ty
         return timestamp.toDate().toLocaleDateString('en-US', {
             year: 'numeric',
         });
-    } 
+    }
 
     else return '';
 }
@@ -46,11 +47,16 @@ export function formatTime(timestamp: Timestamp | FieldValue | null | number, ty
 export function parseDateStringToTimestamp(dateString: string): Timestamp {
     const [year, month, day] = dateString.split('-').map(Number);
 
-    // Create a Date object. Note: Months are zero-based in JavaScript, so subtract 1 from the month.
-    const date = new Date(year, month - 1, day);
+    try {
+        // Create a Date object. Note: Months are zero-based in JavaScript, so subtract 1 from the month.
+        const date = new Date(year, month - 1, day);
 
-    // Convert the Date object to a Firebase Timestamp
-    return Timestamp.fromDate(date);
+        // Convert the Date object to a Firebase Timestamp
+        return Timestamp.fromDate(date);
+    } catch (error: any) {
+        toast.error(error.message);
+        return Timestamp.now();
+    }
 }
 
 export const reorder = (list: string[], startIndex: number, endIndex: number): string[] => {
@@ -61,6 +67,29 @@ export const reorder = (list: string[], startIndex: number, endIndex: number): s
 };
 
 
-export const exportToPdf = async (resumeSlug: string): Promise<void> => {
-    
+export const contactInformation = (resume: Resume): ContactInfo => {
+    const email: string | null = resume.email;
+    const linkedInURL: string | null = resume.linkedInURL;
+    const address: string | null = resume.address;
+    const phone: string | null = resume.phone;
+
+    let numContacts = 0;
+    if (email) numContacts++;
+    if (linkedInURL) numContacts++;
+    if (phone) numContacts++;
+
+    const one = email || phone || linkedInURL || null;
+    const two = email ? phone || linkedInURL || null : null;
+    const three = email && phone ? linkedInURL || null : null;
+
+    return {
+        numContacts,
+        one,
+        two,
+        three,
+        hasEmail: !!email,
+        hasLinkedInURL: !!linkedInURL,
+        hasAddress: !!address,
+        hasPhone: !!phone,
+    }
 }

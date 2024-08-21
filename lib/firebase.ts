@@ -2,10 +2,10 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider, signInWithPopup, User as FirebaseUser, UserCredential } from "firebase/auth";
-import { collection, CollectionReference, doc, DocumentData, DocumentReference, DocumentSnapshot, getDoc, getFirestore, serverTimestamp, setDoc } from "firebase/firestore";
+import { collection, CollectionReference, doc, DocumentData, DocumentReference, DocumentSnapshot, getDoc, getDocs, getFirestore, QueryDocumentSnapshot, QuerySnapshot, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import { bulletConverter, educationConverter, experienceConverter, resumeConverter, userConverter } from "./converters";
-import { Bullet, Education, Experience, Resume, User } from "./types";
+import { bulletConverter, educationConverter, experienceConverter, resumeConverter, sectionConverter, userConverter } from "./converters";
+import { Bullet, Education, Experience, Resume, Section, User } from "./types";
 import { getCheckoutUrl, getPortalUrl, getPremiumStatus } from "./stripePayment";
 import constants from "./constants";
 import toast from "react-hot-toast";
@@ -58,21 +58,42 @@ export const signInWithUmich = async (): Promise<void> => {
 }
 
 
-export const getResumeDocRef = (uid: string | undefined, resume: string): DocumentReference<Resume> | null => {
-    if (!uid) {
-        return null;
-    }
-
-    const userCollection: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
-    const userDocRef: DocumentReference<User> = doc(userCollection, uid);
-    const resumeCollection: CollectionReference<Resume> = collection(userDocRef, 'resumes').withConverter(resumeConverter);
-    const resumeDocRef: DocumentReference<Resume> = doc(resumeCollection, resume);
-
-    if (!resumeDocRef) {
-        return null;
-    }
+export const getResumeDocRef = (uid: string, resume: string): DocumentReference<Resume> | null => {
+    const userCollectionRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
+    const userDocRef: DocumentReference<User> = doc(userCollectionRef, uid);
+    const resumeCollectionRef: CollectionReference<Resume> = collection(userDocRef, 'resumes').withConverter(resumeConverter);
+    const resumeDocRef: DocumentReference<Resume> = doc(resumeCollectionRef, resume);
+    if (!resumeDocRef) return null;
 
     return resumeDocRef;
+}
+export const getExperienceDocRef = (resumeDocRef: DocumentReference<Resume>, slug: string): DocumentReference<Experience> | null => {
+    const experienceCollection: CollectionReference<Experience> = collection(resumeDocRef, 'experiences').withConverter(experienceConverter);
+    const experienceDocRef: DocumentReference<Experience> = doc(experienceCollection, slug);
+    if (!experienceDocRef) return null;
+
+    return experienceDocRef;
+}
+export const getEducationDocRef = (resumeDocRef: DocumentReference<Resume>, slug: string): DocumentReference<Education> | null => {
+    const educationCollection: CollectionReference<Education> = collection(resumeDocRef, 'educations').withConverter(educationConverter);
+    const educationDocRef: DocumentReference<Education> = doc(educationCollection, slug);
+    if (!educationDocRef) return null;
+
+    return educationDocRef;
+}
+export const getSectionDocRef = (resumeDocRef: DocumentReference<Resume>, sectionName: string): DocumentReference<Section> | null => {
+    const sectionCollection: CollectionReference<Section> = collection(resumeDocRef, 'sections').withConverter(sectionConverter);
+    const sectionDocRef: DocumentReference<Section> = doc(sectionCollection, sectionName);
+    if (!sectionDocRef) return null;
+
+    return sectionDocRef;
+}
+export const getBulletDocRef = (docRef: DocumentReference<DocumentData>, slug: string): DocumentReference<Bullet> | null => {
+    const bulletCollection: CollectionReference<Bullet> = collection(docRef, 'bullets').withConverter(bulletConverter);
+    const bulletDocRef: DocumentReference<Bullet> = doc(bulletCollection, slug);
+    if (!bulletDocRef) return null;
+
+    return bulletDocRef;
 }
 
 export function generateSlug(): string {
@@ -85,8 +106,9 @@ export function generateSlug(): string {
     return slug;
 }
 
-export async function createBullet(docRef: DocumentReference<DocumentData>): Promise<DocumentReference<Bullet>> {
+export async function createBullet(resume: Resume, resumeDocRef: DocumentReference<Resume>, data: DocumentData, docRef: DocumentReference<DocumentData>): Promise<void> {
     const bulletCollectionRef: CollectionReference<DocumentData> = collection(docRef, 'bullets');
+    
     const slug = generateSlug();
     const newBulletRef: DocumentReference<Bullet> = doc(bulletCollectionRef, slug).withConverter(bulletConverter);
     await setDoc(newBulletRef, {
@@ -94,7 +116,14 @@ export async function createBullet(docRef: DocumentReference<DocumentData>): Pro
         text: '',
     });
 
-    return newBulletRef as DocumentReference<Bullet>;
+    await updateDoc(docRef, {
+        bullets: [...data.bullets, newBulletRef.id],
+    });
+
+    await updateDoc(resumeDocRef, {
+        selected: [...resume.selected, newBulletRef.id],
+        updatedAt: serverTimestamp(),
+    })
 }
 
 export async function createNewEducation(resumeDocRef: DocumentReference<Resume>): Promise<DocumentReference<Education>> {
@@ -133,4 +162,11 @@ export async function createNewExperience(resumeDocRef: DocumentReference<Resume
     });
 
     return newExperienceRef as DocumentReference<Experience>;
+}
+
+export async function toggleSelect(docRef: DocumentReference<Resume>, selection: string[], slug: string) {
+    await updateDoc(docRef, {
+        selected: selection.includes(slug) ? selection.filter((s) => s !== slug) : [...selection, slug],
+        updatedAt: serverTimestamp(),
+    });
 }
