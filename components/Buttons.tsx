@@ -7,7 +7,8 @@ import ResumePDF from "./ResumePDF";
 import { auth, manageSubscription, signInWithUmich, upgradeToPremium } from "@/lib/firebase";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
-import { usePremiumStatus } from "@/lib/hooks";
+import { usePremiumStatus, useResume } from "@/lib/hooks";
+import { ResumeHook } from "@/lib/types";
 
 function Button({ onClick, style, children }: GenericButtonProps) {
     const [loading, setLoading] = useState(false);
@@ -113,6 +114,7 @@ export function EditButton({ onClick }: ButtonProps) {
 }
 
 export function PDFButton({ resumeSlug }: PDFButtonProps) {
+    const { resume }: ResumeHook = useResume(resumeSlug);
     const [loading, setLoading] = useState(true);
     const isPremium = usePremiumStatus();
 
@@ -123,7 +125,7 @@ export function PDFButton({ resumeSlug }: PDFButtonProps) {
     useEffect(() => {
         setTimeout(() => {
             setLoading(false);
-        }, 1500)
+        }, 2000)
     }, [])
 
     if (!isPremium) {
@@ -141,12 +143,12 @@ export function PDFButton({ resumeSlug }: PDFButtonProps) {
         )
     }
 
-    if (loading) {
+    if (loading || !resume) {
         return <Loader />
     }
 
     return (
-        <PDFDownloadLink document={<ResumePDF resumeSlug={resumeSlug} />} fileName="resume.pdf">
+        <PDFDownloadLink document={<ResumePDF resumeSlug={resumeSlug} />} fileName={`${resume.resumeName}.pdf`}>
             <Button style={{
                 backgroundColor: 'crimson',
             }}>
