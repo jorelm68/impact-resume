@@ -24,7 +24,7 @@ export default {
         lightBlue: '#3b49df',
     },
 
-    PRICE_ID: 'price_1PpdWABJpQtnod8A2aRzvoPU',
+    PRICE_ID: 'price_1PqI1iBJpQtnod8Aysl35XPm',
     REGION: 'us-central1',
 
     FIREBASE_CONFIG: {
