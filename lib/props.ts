@@ -45,12 +45,10 @@ export interface TextInputProps extends React.InputHTMLAttributes<HTMLInputEleme
 }
 
 export interface BulletPartProps {
-    selection: string[];
-    doc: Resume | Education | Experience,
-    docRef: DocumentReference<Resume | Education | Experience>, 
-    resumeSlug: string,
-    bulletSlug: string,
-    onToggleSelect: (bulletSlug: string) => void,
+    resumeSlug: string;
+    doc: DocumentData;
+    docRef: DocumentReference<DocumentData>;
+    bulletSlug: string;
     dragHandleProps?: any; // Add this line to accept dragHandleProps
 }
 
@@ -65,17 +63,16 @@ export interface CheckboxProps {
     isChecked: boolean;
     onChange: ChangeEventHandler<HTMLInputElement>;
 }
-export interface SectionProps {
+export interface DraggableItemProps {
     dragHandleProps?: any;
     children: React.ReactNode;
     isSelected: boolean;
     onToggleSelect: ChangeEventHandler<HTMLInputElement>;
 }
 
-export interface AdditionalPartProps {
-    selection: string[];
+export interface SectionItemProps {
     resumeSlug: string;
-    onToggleSelect: (bulletSlug: string) => void;
+    sectionSlug: string;
 }
 
 export interface ResumePartProps {
@@ -84,24 +81,18 @@ export interface ResumePartProps {
     onToggleSelect: (bulletSlug: string) => void;
 }
 
-export interface EducationPartProps {
-    onDeleteEducation: (educationDocRef: DocumentReference<Education>) => Promise<void>;
+export interface EducationItemProps {
     isEditing: boolean;
     dragHandleProps?: any;
-    selection: string[];
     resumeSlug: string;
     educationSlug: string;
-    onToggleSelect: (bulletSlug: string) => void;
 }
 
-export interface ExperiencePartProps {
-    onDeleteExperience: (experienceDocRef: DocumentReference<Experience>) => Promise<void>;
+export interface ExperienceItemProps {
     isEditing: boolean;
-    dragHandleProps?: any;
-    selection: string[];
     resumeSlug: string;
     experienceSlug: string;
-    onToggleSelect: (bulletSlug: string) => void;
+    dragHandleProps?: any;
 }
 
 
@@ -117,4 +108,12 @@ export interface GenericButtonProps {
     onClick?: () => Promise<void> | void;
     style?: object;
     children: React.ReactNode;
+}
+
+export interface HeaderProps {
+    isEditing: boolean;
+    setIsEditing: (isEditing: boolean) => void;
+    resumeSlug: string;
+    sectionName: string;
+    dragHandleProps: any;
 }

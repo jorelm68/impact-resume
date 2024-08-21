@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { Bullet, BulletHook, Education, EducationHook, Experience, ExperienceHook, Resume, User, UserHook } from "./types";
-import { collection, CollectionReference, doc, DocumentReference, DocumentSnapshot, onSnapshot, QuerySnapshot } from "firebase/firestore";
-import { auth, checkPremium, firestore, getResumeDocRef } from "./firebase";
+import { Bullet, BulletHook, Education, EducationHook, Experience, ExperienceHook, Resume, Section, SectionHook, User, UserHook } from "./types";
+import { collection, CollectionReference, doc, DocumentData, DocumentReference, DocumentSnapshot, onSnapshot, QuerySnapshot } from "firebase/firestore";
+import { auth, checkPremium, firestore, getBulletDocRef, getEducationDocRef, getExperienceDocRef, getResumeDocRef } from "./firebase";
 import { User as FirebaseUser } from 'firebase/auth';
-import { bulletConverter, educationConverter, experienceConverter, resumeConverter, userConverter } from "./converters";
+import { sectionConverter, resumeConverter, userConverter } from "./converters";
 import toast from "react-hot-toast";
 
 export function useUser(): UserHook {
@@ -12,7 +12,7 @@ export function useUser(): UserHook {
 
     useEffect(() => {
         const firebaseUser: FirebaseUser | null = auth.currentUser;
-        if (!firebaseUser) return;
+        if (!firebaseUser || !firebaseUser.uid) return;
 
         const userCollectionRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
         const userDocRef: DocumentReference<User> = doc(userCollectionRef, firebaseUser.uid);
@@ -30,8 +30,31 @@ export function useUser(): UserHook {
     return { user, userDocRef };
 }
 
-export function useResumes() {
-    const [resumes, setResumes] = useState<Resume[] | null>(null);
+export function useResume(resumeSlug: string) {
+    const [resume, setResume] = useState<Resume | null>(null);
+    const [resumeDocRef, setResumeDocRef] = useState<DocumentReference<Resume> | null>(null);
+
+    useEffect(() => {
+        const firebaseUser: FirebaseUser | null = auth.currentUser;
+        if (!firebaseUser || !firebaseUser.uid) return;
+
+        const resumeDocRef: DocumentReference<Resume> | null = getResumeDocRef(firebaseUser.uid, resumeSlug);
+        if (!resumeDocRef) return;
+        setResumeDocRef(resumeDocRef);
+
+        const unsubscribe = onSnapshot(resumeDocRef, (snapshot: DocumentSnapshot<Resume>) => {
+            const resume: Resume | undefined = snapshot.data();
+            if (!resume) return;
+            setResume(resume);
+        })
+
+        return () => unsubscribe();
+    }, [resumeSlug, auth.currentUser]);
+
+    return { resume, resumeDocRef };
+}
+export function useResumes(): Resume[] {
+    const [resumes, setResumes] = useState<Resume[]>([]);
 
     useEffect(() => {
         const firebaseUser: FirebaseUser | null = auth.currentUser;
@@ -52,71 +75,19 @@ export function useResumes() {
     return resumes;
 }
 
-export function useResume(slug: string) {
-    const [resume, setResume] = useState<Resume | null>(null);
-    const [resumeDocRef, setResumeDocRef] = useState<DocumentReference<Resume> | null>(null);
-
-    useEffect(() => {
-        const firebaseUser: FirebaseUser | null = auth.currentUser;
-        if (!firebaseUser) return;
-
-        const resumeDocRef: DocumentReference<Resume> | null = getResumeDocRef(firebaseUser.uid, slug);
-        if (!resumeDocRef) return;
-
-        setResumeDocRef(resumeDocRef);
-
-        const unsubscribe = onSnapshot(resumeDocRef, (snapshot: DocumentSnapshot<Resume>) => {
-            const resume: Resume | undefined = snapshot.data();
-            if (!resume) return;
-            setResume(resume);
-        })
-
-        return () => unsubscribe();
-    }, [slug, auth.currentUser]);
-
-    return { resume, resumeDocRef };
-}
-
-export function useExperience(resume: string, slug: string): ExperienceHook {
-    const [experience, setExperience] = useState<Experience | null>(null);
-    const [experienceDocRef, setExperienceDocRef] = useState<DocumentReference<Experience> | null>(null);
-
-    useEffect(() => {
-        const firebaseUser: FirebaseUser | null = auth.currentUser;
-        if (!firebaseUser) return;
-
-        const resumeDocRef: DocumentReference<Resume> | null = getResumeDocRef(firebaseUser.uid, resume);
-        if (!resumeDocRef) return;
-
-        const experienceCollectionRef: CollectionReference<Experience> = collection(resumeDocRef, 'experiences').withConverter(experienceConverter);
-        const experienceDocRef: DocumentReference<Experience> = doc(experienceCollectionRef, slug);
-        setExperienceDocRef(experienceDocRef);
-
-        const unsubscribe = onSnapshot(experienceDocRef, (snapshot: DocumentSnapshot<Experience>) => {
-            const experience: Experience | undefined = snapshot.data();
-            if (!experience) return;
-            setExperience(experience);
-        })
-
-        return () => unsubscribe();
-    }, [slug, auth.currentUser]);
-
-    return { experience, experienceDocRef };
-}
-
-export function useEducation(resume: string, slug: string): EducationHook {
+export function useEducation(resumeSlug: string, educationSlug: string): EducationHook {
     const [education, setEducation] = useState<Education | null>(null);
     const [educationDocRef, setEducationDocRef] = useState<DocumentReference<Education> | null>(null);
 
     useEffect(() => {
         const firebaseUser: FirebaseUser | null = auth.currentUser;
-        if (!firebaseUser) return;
+        if (!firebaseUser || !firebaseUser.uid) return;
 
-        const resumeDocRef: DocumentReference<Resume> | null = getResumeDocRef(firebaseUser.uid, resume);
+        const resumeDocRef: DocumentReference<Resume> | null = getResumeDocRef(firebaseUser.uid, resumeSlug);
         if (!resumeDocRef) return;
 
-        const educationCollectionRef: CollectionReference<Education> = collection(resumeDocRef, 'educations').withConverter(educationConverter);
-        const educationDocRef: DocumentReference<Education> = doc(educationCollectionRef, slug);
+        const educationDocRef: DocumentReference<Education> | null = getEducationDocRef(resumeDocRef, educationSlug);
+        if (!educationDocRef) return;
         setEducationDocRef(educationDocRef);
 
         const unsubscribe = onSnapshot(educationDocRef, (snapshot: DocumentSnapshot<Education>) => {
@@ -126,24 +97,72 @@ export function useEducation(resume: string, slug: string): EducationHook {
         })
 
         return () => unsubscribe();
-    }, [slug, auth.currentUser]);
+    }, [resumeSlug, educationSlug, auth.currentUser]);
 
     return { education, educationDocRef };
 }
 
-export function useBullet(resume: string, docRef: DocumentReference<Experience | Resume | Education>, slug: string): BulletHook {
+export function useExperience(resumeSlug: string, experienceSlug: string): ExperienceHook {
+    const [experience, setExperience] = useState<Experience | null>(null);
+    const [experienceDocRef, setExperienceDocRef] = useState<DocumentReference<Experience> | null>(null);
+
+    useEffect(() => {
+        const firebaseUser: FirebaseUser | null = auth.currentUser;
+        if (!firebaseUser || !firebaseUser.uid) return;
+
+        const resumeDocRef: DocumentReference<Resume> | null = getResumeDocRef(firebaseUser.uid, resumeSlug);
+        if (!resumeDocRef) return;
+
+        const experienceDocRef: DocumentReference<Experience> | null = getExperienceDocRef(resumeDocRef, experienceSlug);
+        if (!experienceDocRef) return;
+        setExperienceDocRef(experienceDocRef);
+
+        const unsubscribe = onSnapshot(experienceDocRef, (snapshot: DocumentSnapshot<Experience>) => {
+            const experience: Experience | undefined = snapshot.data();
+            if (!experience) return;
+            setExperience(experience);
+        })
+
+        return () => unsubscribe();
+    }, [resumeSlug, experienceSlug, auth.currentUser]);
+
+    return { experience, experienceDocRef };
+}
+
+export function useSection(resumeSlug: string, sectionSlug: string): SectionHook {
+    const [section, setSection] = useState<Section | null>(null);
+    const [sectionDocRef, setSectionDocRef] = useState<DocumentReference<Section> | null>(null);
+
+    useEffect(() => {
+        const firebaseUser: FirebaseUser | null = auth.currentUser;
+        if (!firebaseUser || !firebaseUser.uid) return;
+
+        const resumeDocRef: DocumentReference<Resume> | null = getResumeDocRef(firebaseUser.uid, resumeSlug);
+        if (!resumeDocRef) return;
+
+        const sectionCollectionRef: CollectionReference<Section> = collection(resumeDocRef, 'sections').withConverter(sectionConverter);
+        const sectionDocRef: DocumentReference<Section> = doc(sectionCollectionRef, sectionSlug);
+        setSectionDocRef(sectionDocRef);
+
+        const unsubscribe = onSnapshot(sectionDocRef, (snapshot: DocumentSnapshot<Section>) => {
+            const section: Section | undefined = snapshot.data();
+            if (!section) return;
+            setSection(section);
+        })
+
+        return () => unsubscribe();
+    }, [resumeSlug, sectionSlug, auth.currentUser])
+
+    return { section, sectionDocRef };
+}
+
+export function useBullet(docRef: DocumentReference<DocumentData>, bulletSlug: string): BulletHook {
     const [bullet, setBullet] = useState<Bullet | null>(null);
     const [bulletDocRef, setBulletDocRef] = useState<DocumentReference<Bullet> | null>(null);
 
     useEffect(() => {
-        const firebaseUser: FirebaseUser | null = auth.currentUser;
-        if (!firebaseUser) return;
-
-        const resumeDocRef: DocumentReference<Resume> | null = getResumeDocRef(firebaseUser.uid, resume);
-        if (!resumeDocRef) return;
-
-        const bulletCollectionRef: CollectionReference<Bullet> = collection(docRef, 'bullets').withConverter(bulletConverter);
-        const bulletDocRef: DocumentReference<Bullet> = doc(bulletCollectionRef, slug);
+        const bulletDocRef: DocumentReference<Bullet> | null = getBulletDocRef(docRef, bulletSlug);
+        if (!bulletDocRef) return;
         setBulletDocRef(bulletDocRef);
 
         const unsubscribe = onSnapshot(bulletDocRef, (snapshot: DocumentSnapshot<Bullet>) => {
@@ -153,7 +172,7 @@ export function useBullet(resume: string, docRef: DocumentReference<Experience |
         })
 
         return () => unsubscribe();
-    }, [slug, auth.currentUser]);
+    }, [bulletSlug, auth.currentUser]);
 
     return { bullet, bulletDocRef };
 }

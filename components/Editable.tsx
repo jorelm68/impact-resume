@@ -6,6 +6,7 @@ import { formatTime, parseDateStringToTimestamp } from "@/lib/helper";
 import { CancelButton, SaveButton, RemoveButton } from "./Buttons";
 import { TimeFormat } from "@/lib/types";
 import constants from "@/lib/constants";
+import ReactMarkdown from "react-markdown";
 
 type EditableType = "text" | "timestamp";
 
@@ -20,9 +21,11 @@ interface EditableProps {
     separateLabel?: boolean;
     type?: EditableType;
     timeFormat?: TimeFormat;
+    section?: boolean;
 }
 
 export default function Editable({
+    section = false,
     disabled = false,
     header = false,
     value,
@@ -157,17 +160,23 @@ export default function Editable({
                     {onDelete && <RemoveButton onClick={onDelete} />}
                 </View>
             ) : (
-                <Text
-                    onClick={() => setIsEditing(true)}
-                    style={{
-                        cursor: "pointer",
-                        fontSize: header ? '2rem' : '1rem',
-                        fontWeight: bold || header ? "bold" : "normal",
-                        color: disabled || [constants.NOT_SHOWN, constants.DEFAULT_BULLET].includes(displayText) ? "grey" : "inherit",
-                    }}
-                >
-                    {displayText}
-                </Text>
+                <>
+                    {section ? (
+                        <h2 onClick={() => setIsEditing(true)}>{displayText}</h2>
+                    ) : (
+                        <Text
+                            onClick={() => setIsEditing(true)}
+                            style={{
+                                cursor: "pointer",
+                                fontSize: header ? '2rem' : '1rem',
+                                fontWeight: bold || header ? "bold" : "normal",
+                                color: disabled || [constants.NOT_SHOWN, constants.DEFAULT_BULLET].includes(displayText) ? "grey" : "inherit",
+                            }}
+                        >
+                            <ReactMarkdown>{displayText}</ReactMarkdown>
+                        </Text>
+                    )}
+                </>
             )}
         </View>
     );

@@ -1,26 +1,25 @@
-import { createBullet } from "@/lib/firebase";
+import { createBullet, toggleSelect } from "@/lib/firebase";
 import { useEducation, useResume } from "@/lib/hooks";
-import { EducationHook, SubmitEducationFields, EditableValue, Bullet, ResumeHook } from "@/lib/types";
-import { updateDoc, DocumentReference, deleteDoc, serverTimestamp } from "firebase/firestore";
+import { EducationHook, SubmitEducationFields, EditableValue, ResumeHook } from "@/lib/types";
+import { updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
 import { AddButton, RemoveButton } from "../Buttons";
 import Editable from "../Editable";
 import Indent from "../Layout/Indent";
-import Section from "../Layout/Section";
 import Wrapper from "../Layout/Wrapper";
 import View from "../View";
 import BulletPart from "./BulletPart";
 import Text from "../Text";
-import { EducationPartProps } from "@/lib/props";
+import { EducationItemProps } from "@/lib/props";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { reorder } from "@/lib/helper";
+import Loader from "../Loader";
+import DraggableItem from "../Layout/DraggableItem";
 
-export default function EducationPart({ isEditing, selection, resumeSlug, educationSlug, onToggleSelect, onDeleteEducation, dragHandleProps }: EducationPartProps) {
+export default function EducationItem({ isEditing, educationSlug, resumeSlug, dragHandleProps }: EducationItemProps) {
     const { education, educationDocRef }: EducationHook = useEducation(resumeSlug, educationSlug);
     const { resume, resumeDocRef }: ResumeHook = useResume(resumeSlug);
-
-    if (!education || !educationDocRef || !resume || !resumeDocRef) {
-        return null;
-    }
+    if (!education || !educationDocRef || !resume || !resumeDocRef) return null;
+    const isSelected = resume.selected.includes(educationSlug) || false;
 
     const handleSubmit = async (field: SubmitEducationFields, newValue: EditableValue) => {
         await updateDoc(educationDocRef, {
@@ -32,26 +31,22 @@ export default function EducationPart({ isEditing, selection, resumeSlug, educat
         });
     };
 
-    const createNewBullet = async () => {
-        const newBulletRef: DocumentReference<Bullet> = await createBullet(educationDocRef);
-        await updateDoc(educationDocRef, {
-            bullets: [...(education.bullets || []), newBulletRef.id],
-        });
-
+    const handleDelete = async () => {
         await updateDoc(resumeDocRef, {
+            educations: resume.educations.filter((slug: string) => slug !== educationSlug),
+            selected: resume.selected.filter((slug: string) => slug !== educationSlug),
             updatedAt: serverTimestamp(),
-            selected: [...(resume.selected || []), newBulletRef.id],
         });
-    };
 
-    const isSelected = selection.includes(educationSlug) || false;
+        await deleteDoc(educationDocRef);
+    }
 
     const onDragEnd = async (result: any) => {
         if (!result.destination) {
             return;
         }
         const reorderedBullets = reorder(
-            education.bullets || [],
+            education.bullets,
             result.source.index,
             result.destination.index
         );
@@ -59,6 +54,7 @@ export default function EducationPart({ isEditing, selection, resumeSlug, educat
         await updateDoc(educationDocRef, {
             bullets: reorderedBullets,
         });
+
 
         await updateDoc(resumeDocRef, {
             updatedAt: serverTimestamp(),
@@ -72,9 +68,9 @@ export default function EducationPart({ isEditing, selection, resumeSlug, educat
             gap: '8px',
             alignItems: 'center',
         }}>
-            {isEditing && <RemoveButton onClick={() => onDeleteEducation(educationDocRef)} />}
+            {isEditing && <RemoveButton onClick={handleDelete} />}
             <Wrapper>
-                <Section dragHandleProps={dragHandleProps} isSelected={isSelected} onToggleSelect={() => onToggleSelect(educationSlug)}>
+                <DraggableItem dragHandleProps={dragHandleProps} isSelected={isSelected} onToggleSelect={() => toggleSelect(resumeDocRef, resume.selected, educationSlug)}>
                     <View style={{
                         display: 'flex',
                         justifyContent: 'space-between',
@@ -95,11 +91,11 @@ export default function EducationPart({ isEditing, selection, resumeSlug, educat
                         }}>,</Text>
                         <Editable disabled={!isSelected} type='timestamp' timeFormat='M, Y' label='Graduation Date' value={education.endDate} onSubmit={(newValue: EditableValue) => handleSubmit('endDate', newValue)} />
                     </View>
-                </Section>
+                </DraggableItem>
 
                 <Indent>
                     <DragDropContext onDragEnd={onDragEnd}>
-                        <Droppable droppableId="educationBullets">
+                        <Droppable droppableId={`${educationSlug}-bullets`}>
                             {(provided) => (
                                 <div {...provided.droppableProps} ref={provided.innerRef}>
                                     {isSelected && education.bullets && education.bullets.length > 0 && education.bullets.map((bulletSlug, index) => (
@@ -110,13 +106,11 @@ export default function EducationPart({ isEditing, selection, resumeSlug, educat
                                                     {...provided.draggableProps}
                                                 >
                                                     <BulletPart
-                                                        dragHandleProps={provided.dragHandleProps}
-                                                        selection={selection}
                                                         resumeSlug={resumeSlug}
+                                                        bulletSlug={bulletSlug}
                                                         doc={education}
                                                         docRef={educationDocRef}
-                                                        bulletSlug={bulletSlug}
-                                                        onToggleSelect={(slug: string) => onToggleSelect(slug)}
+                                                        dragHandleProps={provided.dragHandleProps}
                                                     />
                                                 </div>
                                             )}
@@ -129,7 +123,7 @@ export default function EducationPart({ isEditing, selection, resumeSlug, educat
                     </DragDropContext>
 
                     {isSelected && (
-                        <AddButton onClick={createNewBullet} />
+                        <AddButton onClick={() => createBullet(resume, resumeDocRef, education, educationDocRef)} />
                     )}
                 </Indent>
             </Wrapper>

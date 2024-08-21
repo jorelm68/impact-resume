@@ -47,6 +47,7 @@ input {
   font-size: 1.5rem;
   width: 100%;
   padding: 5px 10px;
+  border-radius: 8px;
 }
 
 fieldset {
@@ -109,7 +110,7 @@ code {
   text-decoration: none;
   font-family: 'Noto Sans', sans-serif;
   font-weight: bold;
-  border-radius: 0.25rem;
+  border-radius: 8px;
   cursor: pointer;
   margin: 0.5rem 1rem 0.5rem 0;
 }
@@ -259,3 +260,8 @@ input[type="file"] {
 }
 
 .hidden { display:  none; }
+
+p {
+  margin: 0;
+  padding: 0;
+}

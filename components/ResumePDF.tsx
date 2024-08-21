@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Document, Page, Text, View, StyleSheet, Font, Link } from '@react-pdf/renderer';
 import { ResumePDFProps } from '@/lib/props';
-import { BulletHook, Education, EducationHook, Experience, ExperienceHook, Resume, ResumeHook } from '@/lib/types';
-import { useBullet, useEducation, useExperience, useResume } from '@/lib/hooks';
-import Loader from './Loader';
-import { formatTime } from '@/lib/helper';
-import { DocumentReference } from 'firebase/firestore';
+import { BulletHook, ContactInfo, EducationHook, ExperienceHook, ResumeHook, SectionHook } from '@/lib/types';
+import { useBullet, useEducation, useExperience, useResume, useSection } from '@/lib/hooks';
+import { contactInformation, formatTime } from '@/lib/helper';
+import { DocumentData, DocumentReference } from 'firebase/firestore';
 
 // Register custom fonts
 Font.register({
@@ -15,6 +14,78 @@ Font.register({
         { src: '/fonts/calibri-bold.ttf', fontWeight: 'bold' },
     ],
 });
+
+function processBold(text: string): React.ReactNode[] {
+    const boldRegex = /\*\*(.+?)\*\*/;
+    const elements: React.ReactNode[] = [];
+    let remainingText = text;
+
+    while (remainingText) {
+        const boldMatch = remainingText.match(boldRegex);
+
+        if (boldMatch) {
+            const matchIndex = boldMatch.index!;
+            const matchLength = boldMatch[0].length;
+
+            // Add the text before the match (if any)
+            if (matchIndex > 0) {
+                elements.push(remainingText.slice(0, matchIndex));
+            }
+
+            // Handle the matched bold text
+            elements.push(
+                <Text key={elements.length} style={{ fontWeight: 'bold' }}>
+                    {boldMatch[1]}
+                </Text>
+            );
+
+            // Update the remaining text to process
+            remainingText = remainingText.slice(matchIndex + matchLength);
+        } else {
+            // No more matches, push the remaining text
+            elements.push(remainingText);
+            remainingText = '';
+        }
+    }
+
+    return elements;
+}
+function processLinks(text: string): React.ReactNode[] {
+    const linkRegex = /\[(.*?)\]\((.*?)\)/;
+    const elements: React.ReactNode[] = [];
+    let remainingText = text;
+
+    while (remainingText) {
+        const linkMatch = remainingText.match(linkRegex);
+
+        if (linkMatch) {
+            const matchIndex = linkMatch.index!;
+            const matchLength = linkMatch[0].length;
+
+            // Add the text before the match (if any)
+            if (matchIndex > 0) {
+                elements.push(remainingText.slice(0, matchIndex));
+            }
+
+            // Handle the matched link
+            elements.push(
+                <Link key={elements.length} src={linkMatch[2]}>
+                    {linkMatch[1]}
+                </Link>
+            );
+
+            // Update the remaining text to process
+            remainingText = remainingText.slice(matchIndex + matchLength);
+        } else {
+            // No more matches, push the remaining text
+            elements.push(remainingText);
+            remainingText = '';
+        }
+    }
+
+    return elements;
+}
+
 
 // Create styles
 const styles = StyleSheet.create({
@@ -127,73 +198,71 @@ const styles = StyleSheet.create({
     },
 });
 
-function BulletPoint(): JSX.Element {
+function BulletPoint({ noSpace = false }: { noSpace?: boolean }): JSX.Element {
     return (
-        <Text style={styles.bulletPoint}>•</Text>
+        <Text style={styles.bulletPoint}>{noSpace ? '' : ' '}•{noSpace ? '' : ' '}</Text>
     )
 }
 
 export default function ResumePDF({ resumeSlug }: ResumePDFProps) {
     const { resume, resumeDocRef }: ResumeHook = useResume(resumeSlug);
+    if (!resume || !resumeDocRef) return null;
 
-    if (!resume || !resumeDocRef) {
-        return <Loader />
-    }
-
-    let selection: string[] = [];
-    if (resume.selected) {
-        selection = resume.selected;
-    }
-
-    let educations: string[] = [];
-    if (resume.educations) {
-        educations = resume.educations.filter(slug => selection.includes(slug));
-    }
-    let experiences: string[] = [];
-    if (resume.experiences) {
-        experiences = resume.experiences.filter(slug => selection.includes(slug));
-    }
+    const contactInfo: ContactInfo = contactInformation(resume);
 
     return (
         <Document>
             <Page size='LETTER' style={styles.page}>
-                {/* Header */}
                 <View style={styles.header}>
                     <Text style={styles.fullName}>{resume.fullName}</Text>
-                    <Text style={styles.contactInfo}>{resume.email} {<BulletPoint />} {resume.phone || ''} {<BulletPoint />} {<Link href={resume.linkedInURL || ''}>{resume.linkedInURL?.split('www.')[1]}</Link>}</Text>
+                    {contactInfo.hasAddress ? <Text style={styles.contactInfo}>{resume.address}</Text> : null}
+                    <Text style={styles.contactInfo}>
+                        {contactInfo.numContacts >= 1 ? contactInfo.one?.includes('http') ? <Link href={resume.linkedInURL || ''}>{resume.linkedInURL?.split('www.')[1]}</Link> : contactInfo.one : ''}
+                        {contactInfo.numContacts >= 2 ? <BulletPoint /> : ''}
+                        {contactInfo.numContacts >= 2 ? contactInfo.two?.includes('http') ? <Link href={resume.linkedInURL || ''}>{resume.linkedInURL?.split('www.')[1]}</Link> : contactInfo.two : ''}
+                        {contactInfo.numContacts === 3 ? <BulletPoint /> : ''}
+                        {contactInfo.numContacts === 3 ? contactInfo.three?.includes('http') ? <Link href={resume.linkedInURL || ''}>{resume.linkedInURL?.split('www.')[1]}</Link> : contactInfo.three : ''}
+                    </Text>
                 </View>
 
                 <View style={styles.headerDivider} />
 
-                {/* Education Section */}
-                {educations.map((educationSlug, index) => {
-                    return <EducationSection key={index} index={index} selection={selection} resumeSlug={resumeSlug} educationSlug={educationSlug} />
+                {resume.sections.map((sectionName, index) => {
+                    return <Section key={index} resumeSlug={resumeSlug} sectionName={sectionName} />
                 })}
-
-                {/* Experience Section */}
-                {experiences.map((experienceSlug, index) => {
-                    return <ExperienceSection key={index} index={index} selection={selection} resumeSlug={resumeSlug} experienceSlug={experienceSlug} />
-                })}
-
-                {/* Additional Section */}
-                <AdditionalSection resumeSlug={resumeSlug} resumeDocRef={resumeDocRef} bullets={resume.bullets || []} />
             </Page>
         </Document>
     )
 }
 
+function Section({ resumeSlug, sectionName }: { resumeSlug: string, sectionName: string }) {
+    const { resume, resumeDocRef }: ResumeHook = useResume(resumeSlug);
+    if (!resume || !resumeDocRef) return null;
 
-function EducationSection({ selection, index, resumeSlug, educationSlug }: { selection: string[], index: number, resumeSlug: string, educationSlug: string }) {
+    let list = sectionName === 'Education'
+        ? resume.educations.filter(slug => resume.selected.includes(slug))
+        : resume.experiences.filter(slug => resume.selected.includes(slug));
+
+    if (sectionName === 'Education') {
+        return list.map((educationSlug, index) => {
+            return <EducationSection key={index} index={index} resumeSlug={resumeSlug} educationSlug={educationSlug} />
+        })
+    } else if (sectionName === 'Experience') {
+        return list.map((experienceSlug, index) => {
+            return <ExperienceSection key={index} index={index} resumeSlug={resumeSlug} experienceSlug={experienceSlug} />
+        })
+    } else {
+        return <OtherSection resumeSlug={resumeSlug} sectionName={sectionName} />
+    }
+}
+
+
+function EducationSection({ index, resumeSlug, educationSlug }: { index: number, resumeSlug: string, educationSlug: string }) {
+    const { resume, resumeDocRef }: ResumeHook = useResume(resumeSlug);
     const { education, educationDocRef }: EducationHook = useEducation(resumeSlug, educationSlug);
+    if (!resume || !resumeDocRef || !education || !educationDocRef) return null;
 
-    if (!education || !educationDocRef) {
-        return <Loader />
-    }
-
-    let bullets: string[] = [];
-    if (education.bullets) {
-        bullets = education.bullets.filter(slug => selection.includes(slug));
-    }
+    const list = education.bullets.filter(slug => resume.selected.includes(slug));
 
     return (
         <View style={styles.section}>
@@ -209,10 +278,10 @@ function EducationSection({ selection, index, resumeSlug, educationSlug }: { sel
 
                 <View style={styles.truncate}>
                     <Text style={styles.mediumBold}>{education.college}</Text>
-                    <Text style={styles.medium}>{education.degree}, {formatTime(education.endDate, 'M, Y')}</Text>
+                    <Text style={styles.medium}>{education.degree}{education.degree && formatTime(education.endDate, 'M, Y') ? ', ' : ''}{formatTime(education.endDate, 'M, Y')}</Text>
 
-                    {bullets.map((bulletSlug, index) => {
-                        return <BulletSection key={index} resumeSlug={resumeSlug} docRef={educationDocRef} bulletSlug={bulletSlug} />
+                    {list.map((bulletSlug, index) => {
+                        return <BulletSection key={index} docRef={educationDocRef} bulletSlug={bulletSlug} />
                     })}
                 </View>
             </View>
@@ -220,17 +289,12 @@ function EducationSection({ selection, index, resumeSlug, educationSlug }: { sel
     )
 }
 
-function ExperienceSection({ selection, index, resumeSlug, experienceSlug }: { selection: string[], index: number, resumeSlug: string, experienceSlug: string }) {
+function ExperienceSection({ index, resumeSlug, experienceSlug }: { index: number, resumeSlug: string, experienceSlug: string }) {
+    const { resume, resumeDocRef }: ResumeHook = useResume(resumeSlug);
     const { experience, experienceDocRef }: ExperienceHook = useExperience(resumeSlug, experienceSlug);
+    if (!resume || !resumeDocRef || !experience || !experienceDocRef) return null;
 
-    if (!experience || !experienceDocRef) {
-        return <Loader />
-    }
-
-    let bullets: string[] = [];
-    if (experience.bullets) {
-        bullets = experience.bullets.filter(slug => selection.includes(slug));
-    }
+    const list = experience.bullets.filter(slug => resume.selected.includes(slug));
 
     return (
         <View style={styles.section}>
@@ -248,8 +312,8 @@ function ExperienceSection({ selection, index, resumeSlug, experienceSlug }: { s
                 <View style={styles.truncate}>
                     <Text style={styles.mediumBold}>{experience.title}</Text>
 
-                    {bullets.map((bulletSlug, index) => {
-                        return <BulletSection key={index} resumeSlug={resumeSlug} docRef={experienceDocRef} bulletSlug={bulletSlug} />
+                    {list.map((bulletSlug, index) => {
+                        return <BulletSection key={index} docRef={experienceDocRef} bulletSlug={bulletSlug} />
                     })}
                 </View>
 
@@ -258,34 +322,119 @@ function ExperienceSection({ selection, index, resumeSlug, experienceSlug }: { s
     )
 }
 
-function BulletSection({ resumeSlug, docRef, bulletSlug }: { resumeSlug: string, docRef: DocumentReference<Education | Experience | Resume>, bulletSlug: string }) {
-    const { bullet }: BulletHook = useBullet(resumeSlug, docRef, bulletSlug);
-
-    if (!bullet) {
-        return <Loader />
-    }
+function OtherSection({ resumeSlug, sectionName }: { resumeSlug: string, sectionName: string }) {
+    const { resume }: ResumeHook = useResume(resumeSlug);
+    const { section, sectionDocRef }: SectionHook = useSection(resumeSlug, sectionName);
+    if (!resume || !section || !sectionDocRef) return null;
 
     return (
-        <View style={styles.row}>
-            <BulletPoint />
-            <Text style={styles.medium}>{' '}</Text>
-            <Text style={styles.medium}>{bullet.text}</Text>
+        <View style={styles.section}>
+            <View style={styles.leftColumn}>
+                <Text style={styles.bigCapBold}>{section.name}</Text>
+            </View>
+
+            <View style={styles.middleColumn}>
+                <View style={styles.truncate}>
+                    {section.bullets.map((bulletSlug, index) => {
+                        return <BulletSection key={index} docRef={sectionDocRef} bulletSlug={bulletSlug} />
+                    })}
+                </View>
+            </View>
         </View>
     )
 }
 
-function AdditionalSection({ resumeSlug, resumeDocRef, bullets }: { resumeSlug: string, resumeDocRef: DocumentReference<Resume>, bullets: string[] }) {
-    return (
-        <View style={styles.section}>
-            <View style={styles.leftColumn}>
-                <Text style={styles.bigCapBold}>ADDITIONAL</Text>
-            </View>
+function BulletSection({ docRef, bulletSlug }: { docRef: DocumentReference<DocumentData>, bulletSlug: string }) {
+    const { bullet }: BulletHook = useBullet(docRef, bulletSlug);
+    if (!bullet) return null;
 
-            <View style={styles.middleColumn}>
-                {bullets.map((bulletSlug, index) => {
-                    return <BulletSection key={index} resumeSlug={resumeSlug} docRef={resumeDocRef} bulletSlug={bulletSlug} />
-                })}
-            </View>
+    return (
+        <View style={styles.row}>
+            <BulletPoint noSpace />
+            <Text style={styles.medium}>{' '}</Text>
+            {parseMarkdown(bullet.text)}
         </View>
     )
+}
+
+export function parseMarkdown(text: string) {
+    const elements: React.ReactNode[] = [];
+    let remainingText = text;
+
+    // Regular expressions for bold text, links, and combined bold links
+    const boldRegex = /\*\*(.+?)\*\*/;
+    const linkRegex = /\[(.+?)\]\((.+?)\)/;
+    const combinedBoldLinkRegex = /\*\*\[(.+?)\]\((.+?)\)\*\*/;
+
+    while (remainingText) {
+        const boldMatch = remainingText.match(boldRegex);
+        const linkMatch = remainingText.match(linkRegex);
+        const combinedBoldLinkMatch = remainingText.match(combinedBoldLinkRegex);
+
+        // Find the first match (if any)
+        const firstMatch = [combinedBoldLinkMatch, boldMatch, linkMatch].filter(Boolean).sort(
+            (a, b) => (a!.index! - b!.index!)
+        )[0];
+
+        if (firstMatch) {
+            const matchIndex = firstMatch.index!;
+            const matchLength = firstMatch[0].length;
+
+            // Add the text before the match (if any)
+            if (matchIndex > 0) {
+                elements.push(
+                    <Text key={elements.length} style={styles.medium}>{remainingText.slice(0, matchIndex)}</Text>
+                );
+            }
+
+            // Handle the matched combined bold link text
+            if (firstMatch === combinedBoldLinkMatch) {
+                elements.push(
+                    <Link key={elements.length} src={combinedBoldLinkMatch[2]} style={{ ...styles.medium, fontWeight: 'bold' }}>
+                        {combinedBoldLinkMatch[1]}
+                    </Link>
+                );
+                elements.push(
+                    <Text key={elements.length} style={styles.medium}>
+                        {' '}
+                    </Text>
+                );
+            }
+            // Handle the matched bold text
+            else if (firstMatch === boldMatch) {
+                elements.push(
+                    <Text key={elements.length} style={{ ...styles.medium, fontWeight: 'bold' }}>
+                        {boldMatch[1]}
+                    </Text>
+                );
+                elements.push(
+                    <Text key={elements.length} style={styles.medium}>
+                        {' '}
+                    </Text>
+                );
+            }
+            // Handle the matched link
+            else if (firstMatch === linkMatch) {
+                elements.push(
+                    <Link key={elements.length} src={linkMatch[2]} style={styles.medium}>
+                        {linkMatch[1]}
+                    </Link>
+                );
+                elements.push(
+                    <Text key={elements.length} style={styles.medium}>
+                        {' '}
+                    </Text>
+                );
+            }
+
+            // Update the remaining text to process
+            remainingText = remainingText.slice(matchIndex + matchLength);
+        } else {
+            // No more matches, push the remaining text
+            elements.push(<Text key={elements.length} style={styles.medium}>{remainingText}</Text>);
+            remainingText = '';
+        }
+    }
+
+    return elements;
 }

@@ -1,9 +1,9 @@
-import { SectionProps } from "@/lib/props";
+import { DraggableItemProps } from "@/lib/props";
 import Checkbox from "../Checkbox";
 import Dots from "../Dots";
 import View from "../View";
 
-export default function Section({ children, isSelected, onToggleSelect, dragHandleProps }: SectionProps) {
+export default function DraggableItem({ children, isSelected, onToggleSelect, dragHandleProps }: DraggableItemProps) {
     return (
         <View style={{
             display: 'flex',

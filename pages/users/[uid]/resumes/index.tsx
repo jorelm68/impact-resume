@@ -1,17 +1,15 @@
 import { userConverter, resumeConverter } from "@/lib/converters";
-import { auth, firestore, generateSlug, getResumeDocRef } from "@/lib/firebase";
-import { useResumes } from "@/lib/hooks";
+import { auth, firestore, generateSlug } from "@/lib/firebase";
 import { Resume, User } from "@/lib/types";
-import { User as FirebaseUser } from "firebase/auth";
 import { collection, CollectionReference, doc, DocumentReference, DocumentSnapshot, getDoc, serverTimestamp, setDoc, Timestamp } from "firebase/firestore";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import styles from "@/styles/Admin.module.css";
 import View from "@/components/View";
 import Text from "@/components/Text";
 import { formatTime } from "@/lib/helper";
+import { useResumes } from "@/lib/hooks";
 
 export default function ResumesPage() {
     return (
@@ -32,9 +30,7 @@ export default function ResumesPage() {
 }
 
 function ResumeList() {
-    const resumes: Resume[] | null = useResumes();
-
-    if (!resumes) return <p>Loading...</p>;
+    const resumes: Resume[] = useResumes();
 
     // Sort them by updatedAt
     resumes.sort((a, b) => {
@@ -45,7 +41,7 @@ function ResumeList() {
 
     return (
         <section>
-            {resumes.map((resume, index) => <ResumeItem key={index} resume={resume} />)}
+            {resumes.map((resumeSlug, index) => <ResumeItem key={index} resume={resumeSlug} />)}
         </section>
     )
 }
@@ -81,10 +77,7 @@ function CreateResume() {
     const createResume = async (e: any) => {
         e.preventDefault();
         const uid = auth.currentUser?.uid;
-
-        if (!uid) {
-            return;
-        }
+        if (!uid) return;
 
         const userCollectionRef: CollectionReference<User> = collection(firestore, 'users').withConverter(userConverter);
         const userDocRef: DocumentReference<User> = doc(userCollectionRef, uid);
@@ -106,10 +99,12 @@ function CreateResume() {
             phone: null,
             displayAddress: false,
             displayPhone: false,
+
             educations: [],
             experiences: [],
-            bullets: [],
+            sections: ['Education', 'Experience'],
             selected: [],
+
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp(),
         }
