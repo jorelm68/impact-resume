@@ -108,7 +108,7 @@ export default function Editable({
                 <Text
                     style={{
                         fontWeight: "bold",
-                        minWidth: "200px",
+                        minWidth: "150px",
                         color: disabled ? "grey" : "inherit",
                     }}
                 >

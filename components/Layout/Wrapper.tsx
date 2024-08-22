@@ -7,7 +7,7 @@ export default function Wrapper({ children }: { children: React.ReactNode }) {
             borderRadius: '0.5rem',
             backgroundColor: '#fff',
             padding: '16px',
-            minWidth: `${400 + 32}px`,
+            minWidth: `${400}px`,
             flexGrow: 1,
         }}>
             {children}

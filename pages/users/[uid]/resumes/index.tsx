@@ -119,12 +119,13 @@ function CreateResume() {
         <form onSubmit={createResume} style={{
             display: 'flex',
             flexDirection: 'row',
-            gap: '1rem',
+            gap: '16px',
+            flexWrap: 'wrap',
         }}>
             <input
                 style={{
                     width: '50%',
-                    minWidth: '400px',
+                    minWidth: '300px',
                 }}
                 value={resumeName}
                 onChange={(e: any) => setResumeName(e.target.value)}

@@ -35,7 +35,7 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
 
     const handleCreateSection = async (e: any) => {
         e.preventDefault();
-        
+
         const slug = generateSlug();
         const data = {
             slug,
@@ -93,29 +93,6 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
                         value={resume.resumeName}
                         onSubmit={(newValue: EditableValue) => updateDoc(resumeDocRef, { resumeName: newValue, updatedAt: serverTimestamp() })}
                     />
-
-                    <form onSubmit={handleCreateSection} style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        gap: '1rem',
-                    }}>
-                        <input
-                            style={{
-                                width: '50%',
-                                minWidth: '400px',
-                            }}
-                            value={sectionName}
-                            onChange={(e: any) => setSectionName(e.target.value)}
-                            placeholder="Section Name"
-                        />
-
-                        <button type='submit' disabled={!isValid} className='btn-green' style={{
-                            margin: '0px',
-                        }}>
-                            Create New Section
-                        </button>
-                    </form>
-
                 </View>
                 <Text>Last Updated {formatTime(resume.updatedAt, 'H:M(am/pm) M D, Y')}</Text>
             </View>
@@ -134,6 +111,31 @@ export default function ResumePage({ resumeSlug }: ResumePageProps) {
                     )}
                 </Droppable>
             </DragDropContext>
+
+            <form onSubmit={handleCreateSection} style={{
+                display: 'flex',
+                flexDirection: 'row',
+                gap: '16px',
+                paddingTop: '16px',
+                paddingBottom: '16px',
+                flexWrap: 'wrap',
+            }}>
+                <input
+                    style={{
+                        width: '50%',
+                        minWidth: '300px',
+                    }}
+                    value={sectionName}
+                    onChange={(e: any) => setSectionName(e.target.value)}
+                    placeholder="Section Name"
+                />
+
+                <button type='submit' disabled={!isValid} className='btn-green' style={{
+                    margin: '0px',
+                }}>
+                    Create New Section
+                </button>
+            </form>
         </main >
     )
 }
