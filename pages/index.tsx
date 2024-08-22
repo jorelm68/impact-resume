@@ -54,7 +54,7 @@ export default function Home() {
         <View style={{
           border: '4px solid orange',
         }}>
-          <img src={constants.photos.resume2} alt="resume" />
+          <img src={constants.photos.resume3} alt="resume" />
         </View>
       </View>
     </main>
