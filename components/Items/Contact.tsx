@@ -26,7 +26,7 @@ export default function Contact({ resumeSlug }: { resumeSlug: string }) {
                 flexDirection: 'column',
                 gap: '8px',
                 whiteSpace: 'nowrap',
-                minWidth: '400px',
+                minWidth: '300px',
                 flexGrow: 1,
             }}>
                 <Editable label='Full Name' separateLabel value={resume.fullName || ''} onSubmit={(newValue: EditableValue) => handleSubmit('fullName', newValue)} />
