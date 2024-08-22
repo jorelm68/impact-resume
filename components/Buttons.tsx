@@ -224,21 +224,62 @@ export function SignOutButton() {
 
 export function SignInButton() {
     const router = useRouter();
-  
+
     const signInWithGoogle = async () => {
-      try {
-        await signInWithUmich();
-        toast.success('Signed in successfully.');
-        router.push(`/users/${auth.currentUser?.uid}`);
-      } catch (error: any) {
-        await auth.signOut();
-        toast.error(error.message);
-      }
+        try {
+            await signInWithUmich();
+            toast.success('Signed in successfully.');
+            router.push(`/users/${auth.currentUser?.uid}`);
+        } catch (error: any) {
+            await auth.signOut();
+            toast.error(error.message);
+        }
     }
-  
+
     return (
-      <button className='btn-google' onClick={signInWithGoogle}>
-        <img alt="" src={constants.photos.google} /> Sign in with Google
-      </button>
+        <button className='btn-google' onClick={signInWithGoogle}>
+            <img alt="" src={constants.photos.google} /> Sign in with Google
+        </button>
     )
-  }
+}
+
+
+export function PrivacyPolicyButton() {
+    const router = useRouter();
+
+    const handleClick = () => {
+        router.push('/privacy');
+    }
+
+    return (
+        <Button onClick={handleClick} style={{
+            backgroundColor: 'black',
+        }}>
+            <span style={{
+                color: 'white',
+                fontSize: '12px',
+                fontWeight: 'bold',
+            }}>Privacy Policy</span>
+        </Button>
+    )
+}
+
+export function TermsAndConditionsButton() {
+    const router = useRouter();
+
+    const handleClick = () => {
+        router.push('/terms');
+    }
+
+    return (
+        <Button onClick={handleClick} style={{
+            backgroundColor: 'black',
+        }}>
+            <span style={{
+                color: 'white',
+                fontSize: '12px',
+                fontWeight: 'bold',
+            }}>Terms And Conditions</span>
+        </Button>
+    )
+}

@@ -1,5 +1,6 @@
 import AuthCheck from "@/components/AuthCheck";
-import { ManageButton, SignOutButton, UpgradeButton } from "@/components/Buttons";
+import { ManageButton, PrivacyPolicyButton, SignOutButton, TermsAndConditionsButton, UpgradeButton } from "@/components/Buttons";
+import TermsAndConditions from "@/components/legal/TermsAndConditions";
 import Text from "@/components/Text";
 import { usePremiumStatus, useUser } from "@/lib/hooks";
 import { UserHook } from "@/lib/types";
@@ -72,6 +73,9 @@ export default function UserPage() {
                     )}
 
                     <SignOutButton />
+
+                    <TermsAndConditionsButton />
+                    <PrivacyPolicyButton />
                 </View>
             </AuthCheck>
         </main>
