@@ -177,8 +177,7 @@ export async function createNewProject(resumeDocRef: DocumentReference<Resume>):
     const newProjectRef: DocumentReference<Project> = doc(projectDocRef, slug);
     await setDoc(newProjectRef, {
         slug,
-        title: null,
-        organization: null,
+        name: null,
         industry: null,
         function: null,
         startDate: null,
