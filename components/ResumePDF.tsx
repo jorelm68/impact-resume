@@ -1,8 +1,8 @@
 import React, { Fragment } from 'react';
 import { Document, Page, Text, View, StyleSheet, Font, Link } from '@react-pdf/renderer';
 import { ResumePDFProps } from '@/lib/props';
-import { BulletHook, ContactInfo, EducationHook, ExperienceHook, ResumeHook, SectionHook } from '@/lib/types';
-import { useBullet, useEducation, useExperience, useResume, useSection } from '@/lib/hooks';
+import { BulletHook, ContactInfo, EducationHook, ExperienceHook, ProjectHook, ResumeHook, SectionHook } from '@/lib/types';
+import { useBullet, useEducation, useExperience, useProject, useResume, useSection } from '@/lib/hooks';
 import { contactInformation, formatTime } from '@/lib/helper';
 import { DocumentData, DocumentReference } from 'firebase/firestore';
 
@@ -241,7 +241,9 @@ function Section({ resumeSlug, sectionName }: { resumeSlug: string, sectionName:
 
     let list = sectionName === 'Education'
         ? resume.educations.filter(slug => resume.selected.includes(slug))
-        : resume.experiences.filter(slug => resume.selected.includes(slug));
+        : sectionName === 'Projects'
+            ? resume.projects.filter(slug => resume.selected.includes(slug))
+            : resume.experiences.filter(slug => resume.selected.includes(slug));
 
     if (sectionName === 'Education') {
         return list.map((educationSlug, index) => {
@@ -250,6 +252,10 @@ function Section({ resumeSlug, sectionName }: { resumeSlug: string, sectionName:
     } else if (sectionName === 'Experience') {
         return list.map((experienceSlug, index) => {
             return <ExperienceSection key={index} index={index} resumeSlug={resumeSlug} experienceSlug={experienceSlug} />
+        })
+    } else if (sectionName === 'Projects') {
+        return list.map((projectSlug, index) => {
+            return <ProjectSection key={index} index={index} resumeSlug={resumeSlug} projectSlug={projectSlug} />
         })
     } else {
         return <OtherSection resumeSlug={resumeSlug} sectionName={sectionName} />
@@ -314,6 +320,41 @@ function ExperienceSection({ index, resumeSlug, experienceSlug }: { index: numbe
 
                     {list.map((bulletSlug, index) => {
                         return <BulletSection key={index} docRef={experienceDocRef} bulletSlug={bulletSlug} />
+                    })}
+                </View>
+
+            </View>
+        </View>
+    )
+}
+
+function ProjectSection({ index, resumeSlug, projectSlug}: { index: number, resumeSlug: string, projectSlug: string}) {
+    const { resume, resumeDocRef }: ResumeHook = useResume(resumeSlug);
+    const { project, projectDocRef }: ProjectHook = useProject(resumeSlug, projectSlug);
+    if (!resume || !resumeDocRef || !project || !projectDocRef) return null;
+
+    const list = project.bullets.filter(slug => resume.selected.includes(slug));
+
+    console.log(list);
+
+    return (
+        <View style={styles.section}>
+            <View style={styles.leftColumn}>
+                <Text style={styles.bigCapBold}>{index === 0 ? 'PROJECTS' : ''}</Text>
+                <Text style={styles.bigCapBold}>{formatTime(project.startDate, 'YYYY') === formatTime(project.endDate, 'YYYY') ? formatTime(project.startDate, 'YYYY') : `${formatTime(project.startDate, 'YYYY')}-${formatTime(project.endDate, 'YYYY')}`}</Text>
+            </View>
+
+            <View style={styles.middleColumn}>
+                <View style={styles.separatedRow}>
+                    <Text style={styles.bigCapBold}>{project.name}</Text>
+                    <Text style={styles.mediumBold}>{project.location}</Text>
+                </View>
+
+                <View style={styles.truncate}>
+                    <Text style={styles.mediumBold}>{project.function}</Text>
+
+                    {list.map((bulletSlug, index) => {
+                        return <BulletSection key={index} docRef={projectDocRef} bulletSlug={bulletSlug} />
                     })}
                 </View>
 
