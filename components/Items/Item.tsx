@@ -7,31 +7,38 @@ import { reorder } from "@/lib/helper";
 import { updateDoc, serverTimestamp } from "firebase/firestore";
 import { useResume } from "@/lib/hooks";
 import Loader from "../Loader";
+import ProjectItem from "./ProjectItem";
 
 export default function Item({ isEditing, resumeSlug, sectionName }: { isEditing: boolean, resumeSlug: string, sectionName: string }) {
     const { resume, resumeDocRef } = useResume(resumeSlug);
     if (!resume || !resumeDocRef) return null;
-    const list = sectionName === 'Education' ? resume.educations : resume.experiences;
+    const list = sectionName === 'Education' ? resume.educations : sectionName === 'Projects' ? resume.projects : resume.experiences;
     
     const onDragEnd = async (result: any) => {
         if (!result.destination) {
             return;
         }
-        const reorderedEducations = reorder(
-            sectionName === 'Education' ? resume.educations : resume.experiences,
+        const reordered = reorder(
+            sectionName === 'Education' ? resume.educations : sectionName === 'projects' ? resume.projects : resume.experiences,
             result.source.index,
             result.destination.index
         );
 
         if (sectionName === 'Education') {
             await updateDoc(resumeDocRef, {
-                educations: reorderedEducations,
+                educations: reordered,
                 updatedAt: serverTimestamp(),
             });
         }
+        else if (sectionName === 'Projects') {
+            await updateDoc(resumeDocRef, {
+                projects: reordered,
+                updatedAt: serverTimestamp(),
+            })
+        }
         else {
             await updateDoc(resumeDocRef, {
-                experiences: reorderedEducations,
+                experiences: reordered,
                 updatedAt: serverTimestamp(),
             });
         }
@@ -39,7 +46,7 @@ export default function Item({ isEditing, resumeSlug, sectionName }: { isEditing
 
     return (
         <>
-            {['Education', 'Experience'].includes(sectionName) ? (
+            {['Education', 'Experience', 'Projects'].includes(sectionName) ? (
                 <DragDropContext onDragEnd={onDragEnd}>
                     <Droppable droppableId={sectionName}>
                         {(provided) => (
@@ -59,12 +66,20 @@ export default function Item({ isEditing, resumeSlug, sectionName }: { isEditing
                                                         educationSlug={slug}
                                                         dragHandleProps={provided.dragHandleProps}
                                                     />
-                                                ) : (
+                                                ) : sectionName === 'Experience' ? (
                                                     <ExperienceItem
                                                         isEditing={isEditing}
                                                         key={slug}
                                                         resumeSlug={resumeSlug}
                                                         experienceSlug={slug}
+                                                        dragHandleProps={provided.dragHandleProps}
+                                                    />
+                                                ) : (
+                                                    <ProjectItem
+                                                        isEditing={isEditing}
+                                                        key={slug}
+                                                        resumeSlug={resumeSlug}
+                                                        projectSlug={slug}
                                                         dragHandleProps={provided.dragHandleProps}
                                                     />
                                                 )}

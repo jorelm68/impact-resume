@@ -14,6 +14,7 @@ export interface Bullet {
 export type SubmitResumeFields = "fullName" | "email" | "linkedInURL" | "address" | "phone";
 export type SubmitEducationFields = "school" | "location" | "college" | "degree" | "startDate" | "endDate";
 export type SubmitExperienceFields = "title" | "organization" | "industry" | "function" | "startDate" | "endDate" | "location" | "workPhone";
+export type SubmitProjectFields = "name" | "industry" | "function" | "startDate" | "endDate" | "location" | "workPhone";
 
 export type EditableType = "text" | "timestamp";
 export type EditableValue = string | Timestamp | null;
@@ -27,6 +28,11 @@ export interface EducationHook {
 export interface ExperienceHook {
     experience: Experience | null;
     experienceDocRef: DocumentReference<Experience> | null;
+}
+
+export interface ProjectHook {
+    project: Project | null;
+    projectDocRef: DocumentReference<Project> | null;
 }
 
 export interface BulletHook {
@@ -63,6 +69,18 @@ export interface Experience {
     bullets: string[];
 }
 
+export interface Project {
+    slug: string;
+    name: string | null;
+    industry: string | null;
+    function: string | null;
+    startDate: Timestamp | FieldValue | null;
+    endDate: Timestamp | FieldValue | null;
+    location: string | null;
+    workPhone: string | null;
+    bullets: string[];
+}
+
 export interface Section {
     slug: string;
     name: string;
@@ -85,6 +103,7 @@ export interface Resume {
 
     educations: string[];
     experiences: string[];
+    projects: string[];
     sections: string[];
     selected: string[];
 

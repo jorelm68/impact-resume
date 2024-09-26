@@ -94,6 +94,12 @@ export interface ExperienceItemProps {
     experienceSlug: string;
     dragHandleProps?: any;
 }
+export interface ProjectItemProps {
+    isEditing: boolean;
+    resumeSlug: string;
+    projectSlug: string;
+    dragHandleProps?: any;
+}
 
 
 export interface PDFButtonProps {

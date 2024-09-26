@@ -4,8 +4,8 @@ import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider, signInWithPopup, User as FirebaseUser, UserCredential } from "firebase/auth";
 import { collection, CollectionReference, doc, DocumentData, DocumentReference, DocumentSnapshot, getDoc, getDocs, getFirestore, QueryDocumentSnapshot, QuerySnapshot, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import { bulletConverter, educationConverter, experienceConverter, resumeConverter, sectionConverter, userConverter } from "./converters";
-import { Bullet, Education, Experience, Resume, Section, User } from "./types";
+import { bulletConverter, educationConverter, experienceConverter, projectConverter, resumeConverter, sectionConverter, userConverter } from "./converters";
+import { Bullet, Education, Experience, Project, Resume, Section, User } from "./types";
 import { getCheckoutUrl, getPortalUrl, getPremiumStatus } from "./stripePayment";
 import constants from "./constants";
 import toast from "react-hot-toast";
@@ -73,6 +73,13 @@ export const getExperienceDocRef = (resumeDocRef: DocumentReference<Resume>, slu
     if (!experienceDocRef) return null;
 
     return experienceDocRef;
+}
+export const getProjectDocRef = (resumeDocRef: DocumentReference<Resume>, slug: string): DocumentReference<Project> | null => {
+    const projectCollection: CollectionReference<Project> = collection(resumeDocRef, 'projects').withConverter(projectConverter);
+    const projectDocRef: DocumentReference<Project> = doc(projectCollection, slug);
+    if (!projectDocRef) return null;
+
+    return projectDocRef;
 }
 export const getEducationDocRef = (resumeDocRef: DocumentReference<Resume>, slug: string): DocumentReference<Education> | null => {
     const educationCollection: CollectionReference<Education> = collection(resumeDocRef, 'educations').withConverter(educationConverter);
@@ -162,6 +169,26 @@ export async function createNewExperience(resumeDocRef: DocumentReference<Resume
     });
 
     return newExperienceRef as DocumentReference<Experience>;
+}
+
+export async function createNewProject(resumeDocRef: DocumentReference<Resume>): Promise<DocumentReference<Project>> {
+    const projectDocRef: CollectionReference<Project> = collection(resumeDocRef, 'projects').withConverter(projectConverter);
+    const slug = generateSlug();
+    const newProjectRef: DocumentReference<Project> = doc(projectDocRef, slug);
+    await setDoc(newProjectRef, {
+        slug,
+        title: null,
+        organization: null,
+        industry: null,
+        function: null,
+        startDate: null,
+        endDate: null,
+        location: null,
+        workPhone: null,
+        bullets: [],
+    });
+
+    return newProjectRef as DocumentReference<Project>;
 }
 
 export async function toggleSelect(docRef: DocumentReference<Resume>, selection: string[], slug: string) {

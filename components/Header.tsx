@@ -4,8 +4,8 @@ import { AddButton, EditButton, CancelButton, RemoveButton } from "./Buttons";
 import { useState } from "react";
 import { useResume, useSection } from "@/lib/hooks";
 import Loader from "./Loader";
-import { createNewEducation, createNewExperience } from "@/lib/firebase";
-import { Education, Experience, SectionHook } from "@/lib/types";
+import { createNewEducation, createNewExperience, createNewProject } from "@/lib/firebase";
+import { Education, Experience, Project, SectionHook } from "@/lib/types";
 import { DocumentReference, updateDoc, serverTimestamp, deleteDoc } from "firebase/firestore";
 import Dots from "./Dots";
 import Editable from "./Editable";
@@ -32,6 +32,15 @@ export default function Header({ isEditing, setIsEditing, sectionName, resumeSlu
         });
     }
 
+    const handleProjectAdd = async () => {
+        const newProjectRef: DocumentReference<Project> = await createNewProject(resumeDocRef);
+        await updateDoc(resumeDocRef, {
+            projects: [...resume.projects, newProjectRef.id],
+            selected: [...resume.selected, newProjectRef.id],
+            updatedAt: serverTimestamp(),
+        });
+    }
+
     return (
         <View style={{
             display: 'flex',
@@ -40,7 +49,7 @@ export default function Header({ isEditing, setIsEditing, sectionName, resumeSlu
             alignItems: 'center',
         }}>
             <Dots dragHandleProps={dragHandleProps} />
-            {['Education', 'Experience'].includes(sectionName) ? (
+            {['Education', 'Experience', 'Projects'].includes(sectionName) ? (
                 <h2>{sectionName}</h2>
             ) : (
                 <SectionHeader resumeSlug={resumeSlug} sectionSlug={sectionName} />
@@ -56,6 +65,12 @@ export default function Header({ isEditing, setIsEditing, sectionName, resumeSlu
                     <AddButton onClick={handleExperienceAdd} />
                     {resume.experiences.length > 0 && !isEditing && <EditButton onClick={() => setIsEditing(true)} />}
                     {resume.experiences.length > 0 && isEditing && <CancelButton onClick={() => setIsEditing(false)} />}
+                </>
+            ) : sectionName === 'Projects' ? (
+                <>
+                    <AddButton onClick={handleProjectAdd} />
+                    {resume.projects.length > 0 && !isEditing && <EditButton onClick={() => setIsEditing(true)} />}
+                    {resume.projects.length > 0 && isEditing && <CancelButton onClick={() => setIsEditing(false)} />}
                 </>
             ) : null}
         </View>
