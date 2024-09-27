@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { Bullet, BulletHook, Education, EducationHook, Experience, ExperienceHook, Resume, Section, SectionHook, User, UserHook } from "./types";
+import { Bullet, BulletHook, Education, EducationHook, Experience, ExperienceHook, Project, ProjectHook, Resume, Section, SectionHook, User, UserHook } from "./types";
 import { collection, CollectionReference, doc, DocumentData, DocumentReference, DocumentSnapshot, onSnapshot, QuerySnapshot } from "firebase/firestore";
 import { auth, checkPremium, firestore, getBulletDocRef, getEducationDocRef, getExperienceDocRef, getResumeDocRef } from "./firebase";
 import { User as FirebaseUser } from 'firebase/auth';
-import { sectionConverter, resumeConverter, userConverter } from "./converters";
+import { sectionConverter, resumeConverter, userConverter, projectConverter } from "./converters";
 import toast from "react-hot-toast";
 
 export function useUser(): UserHook {
@@ -127,6 +127,33 @@ export function useExperience(resumeSlug: string, experienceSlug: string): Exper
     }, [resumeSlug, experienceSlug, auth.currentUser]);
 
     return { experience, experienceDocRef };
+}
+
+export function useProject(resumeSlug: string, projectSlug: string): ProjectHook {
+    const [project, setProject] = useState<Project | null>(null);
+    const [projectDocRef, setProjectDocRef] = useState<DocumentReference<Project> | null>(null);
+
+    useEffect(() => {
+        const firebaseUser: FirebaseUser | null = auth.currentUser;
+        if (!firebaseUser || !firebaseUser.uid) return;
+
+        const resumeDocRef: DocumentReference<Resume> | null = getResumeDocRef(firebaseUser.uid, resumeSlug);
+        if (!resumeDocRef) return;
+
+        const projectCollectionRef: CollectionReference<Project> = collection(resumeDocRef, 'projects').withConverter(projectConverter);
+        const projectDocRef: DocumentReference<Project> = doc(projectCollectionRef, projectSlug);
+        setProjectDocRef(projectDocRef);
+
+        const unsubscribe = onSnapshot(projectDocRef, (snapshot: DocumentSnapshot<Project>) => {
+            const project: Project | undefined = snapshot.data();
+            if (!project) return;
+            setProject(project);
+        })
+
+        return () => unsubscribe();
+    }, [resumeSlug, projectSlug, auth.currentUser])
+
+    return { project, projectDocRef };
 }
 
 export function useSection(resumeSlug: string, sectionSlug: string): SectionHook {

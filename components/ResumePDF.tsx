@@ -1,8 +1,8 @@
 import React, { Fragment } from 'react';
 import { Document, Page, Text, View, StyleSheet, Font, Link } from '@react-pdf/renderer';
 import { ResumePDFProps } from '@/lib/props';
-import { BulletHook, ContactInfo, EducationHook, ExperienceHook, ResumeHook, SectionHook } from '@/lib/types';
-import { useBullet, useEducation, useExperience, useResume, useSection } from '@/lib/hooks';
+import { BulletHook, ContactInfo, EducationHook, ExperienceHook, ProjectHook, ResumeHook, SectionHook } from '@/lib/types';
+import { useBullet, useEducation, useExperience, useProject, useResume, useSection } from '@/lib/hooks';
 import { contactInformation, formatTime } from '@/lib/helper';
 import { DocumentData, DocumentReference } from 'firebase/firestore';
 
@@ -12,6 +12,7 @@ Font.register({
     fonts: [
         { src: '/fonts/calibri-regular.ttf', fontWeight: 'normal' },
         { src: '/fonts/calibri-bold.ttf', fontWeight: 'bold' },
+        { src: '/fonts/calibri-italic.ttf', fontStyle: 'italic' },
     ],
 });
 
@@ -177,7 +178,6 @@ const styles = StyleSheet.create({
     section: {
         display: 'flex',
         flexDirection: 'row',
-        marginBottom: 8,
     },
 
     truncate: {
@@ -228,7 +228,16 @@ export default function ResumePDF({ resumeSlug }: ResumePDFProps) {
                 <View style={styles.headerDivider} />
 
                 {resume.sections.map((sectionName, index) => {
-                    return <Section key={index} resumeSlug={resumeSlug} sectionName={sectionName} />
+                    return (
+                        <View style={{
+                            display: 'flex',
+                            paddingTop: index === 0 ? '0px' : '4px',
+                            paddingBottom: index === resume.sections.length - 1 ? '0px' : '4px',
+                            borderBottom: index >= resume.sections.length - 1 ? undefined : '1px solid black',
+                        }}>
+                            <Section key={index} resumeSlug={resumeSlug} sectionName={sectionName} />
+                        </View>
+                    )
                 })}
             </Page>
         </Document>
@@ -241,7 +250,9 @@ function Section({ resumeSlug, sectionName }: { resumeSlug: string, sectionName:
 
     let list = sectionName === 'Education'
         ? resume.educations.filter(slug => resume.selected.includes(slug))
-        : resume.experiences.filter(slug => resume.selected.includes(slug));
+        : sectionName === 'Projects'
+            ? resume.projects.filter(slug => resume.selected.includes(slug))
+            : resume.experiences.filter(slug => resume.selected.includes(slug));
 
     if (sectionName === 'Education') {
         return list.map((educationSlug, index) => {
@@ -250,6 +261,10 @@ function Section({ resumeSlug, sectionName }: { resumeSlug: string, sectionName:
     } else if (sectionName === 'Experience') {
         return list.map((experienceSlug, index) => {
             return <ExperienceSection key={index} index={index} resumeSlug={resumeSlug} experienceSlug={experienceSlug} />
+        })
+    } else if (sectionName === 'Projects') {
+        return list.map((projectSlug, index) => {
+            return <ProjectSection key={index} index={index} resumeSlug={resumeSlug} projectSlug={projectSlug} />
         })
     } else {
         return <OtherSection resumeSlug={resumeSlug} sectionName={sectionName} />
@@ -265,7 +280,10 @@ function EducationSection({ index, resumeSlug, educationSlug }: { index: number,
     const list = education.bullets.filter(slug => resume.selected.includes(slug));
 
     return (
-        <View style={styles.section}>
+        <View style={{
+            ...styles.section,
+            paddingTop: index === 0 ? '0px' : '4px',
+        }}>
             <View style={styles.leftColumn}>
                 <Text style={styles.bigCapBold}>{index === 0 ? 'EDUCATION' : ''}</Text>
             </View>
@@ -297,7 +315,10 @@ function ExperienceSection({ index, resumeSlug, experienceSlug }: { index: numbe
     const list = experience.bullets.filter(slug => resume.selected.includes(slug));
 
     return (
-        <View style={styles.section}>
+        <View style={{
+            ...styles.section,
+            paddingTop: index === 0 ? '0px' : '4px',
+        }}>
             <View style={styles.leftColumn}>
                 <Text style={styles.bigCapBold}>{index === 0 ? 'EXPERIENCE' : ''}</Text>
                 <Text style={styles.bigCapBold}>{formatTime(experience.startDate, 'YYYY') === formatTime(experience.endDate, 'YYYY') ? formatTime(experience.startDate, 'YYYY') : `${formatTime(experience.startDate, 'YYYY')}-${formatTime(experience.endDate, 'YYYY')}`}</Text>
@@ -314,6 +335,83 @@ function ExperienceSection({ index, resumeSlug, experienceSlug }: { index: numbe
 
                     {list.map((bulletSlug, index) => {
                         return <BulletSection key={index} docRef={experienceDocRef} bulletSlug={bulletSlug} />
+                    })}
+                </View>
+
+            </View>
+        </View>
+    )
+}
+
+function ProjectSection({ index, resumeSlug, projectSlug }: { index: number, resumeSlug: string, projectSlug: string }) {
+    const { resume, resumeDocRef }: ResumeHook = useResume(resumeSlug);
+    const { project, projectDocRef }: ProjectHook = useProject(resumeSlug, projectSlug);
+    if (!resume || !resumeDocRef || !project || !projectDocRef) return null;
+
+    const list = project.bullets.filter(slug => resume.selected.includes(slug));
+
+    return (
+        <View style={{
+            ...styles.section,
+            paddingTop: index === 0 ? '0px' : '4px',
+        }}>
+            <View style={styles.leftColumn}>
+                <Text style={styles.bigCapBold}>{index === 0 ? 'PROJECTS' : ''}</Text>
+            </View>
+
+            <View style={styles.middleColumn}>
+                <View style={styles.separatedRow}>
+                    <View style={styles.row}>
+                        {project.link && (
+                            <Link src={project.link} style={{
+                                ...styles.bigCapBold,
+                                textDecoration: 'none',
+                            }}>{project.name} </Link>
+                        )}
+                        {!project.link && (
+                            <Text style={styles.bigCapBold}>{project.name} </Text>
+                        )}
+                        {project.languages && (
+                            <Text style={styles.medium}>{'|'}</Text>
+                        )}
+                        {project.languages && (
+                            <Text style={{
+                                ...styles.medium,
+                                fontStyle: 'italic',
+                            }}> {project.languages}</Text>
+                        )}
+                    </View>
+
+                    {project.github && (
+                        <View style={styles.row}>
+                            <Text style={styles.mediumBold}>GitHub: </Text>
+                            <Link src={project.github} style={styles.medium}>
+                                Front-End
+                            </Link>
+                            {project.github2 && (
+                                <Text style={styles.medium}>{', '}</Text>
+                            )}
+                            {project.github2 && (
+                                <Link src={project.github2} style={styles.medium}>
+                                    Back-End
+                                </Link>
+                            )}
+                        </View>
+                    )}
+                </View>
+
+                <View style={styles.truncate}>
+                    {project.techStack && (
+                        <Text style={{
+                            ...styles.medium,
+                            fontStyle: 'italic',
+                        }}>
+                            {project.techStack}
+                        </Text>
+                    )}
+
+                    {list.map((bulletSlug, index) => {
+                        return <BulletSection key={index} docRef={projectDocRef} bulletSlug={bulletSlug} />
                     })}
                 </View>
 

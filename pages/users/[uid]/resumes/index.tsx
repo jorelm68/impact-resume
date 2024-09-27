@@ -100,7 +100,8 @@ function CreateResume() {
 
             educations: [],
             experiences: [],
-            sections: ['Education', 'Experience'],
+            projects: [],
+            sections: ['Education', 'Experience', 'Projects'],
             selected: [],
 
             createdAt: serverTimestamp(),
