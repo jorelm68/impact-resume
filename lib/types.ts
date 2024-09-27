@@ -14,7 +14,7 @@ export interface Bullet {
 export type SubmitResumeFields = "fullName" | "email" | "linkedInURL" | "address" | "phone";
 export type SubmitEducationFields = "school" | "location" | "college" | "degree" | "startDate" | "endDate";
 export type SubmitExperienceFields = "title" | "organization" | "industry" | "function" | "startDate" | "endDate" | "location" | "workPhone";
-export type SubmitProjectFields = "name" | "industry" | "function" | "startDate" | "endDate" | "location" | "workPhone";
+export type SubmitProjectFields = "name" | "link" | "github" | "github2" | "techStack" | "languages" | "industry" | "function" | "location" | "workPhone";
 
 export type EditableType = "text" | "timestamp";
 export type EditableValue = string | Timestamp | null;
@@ -74,8 +74,11 @@ export interface Project {
     name: string | null;
     industry: string | null;
     function: string | null;
-    startDate: Timestamp | FieldValue | null;
-    endDate: Timestamp | FieldValue | null;
+    link: string | null;
+    github: string | null;
+    github2: string | null;
+    techStack: string | null;
+    languages: string | null;
     location: string | null;
     workPhone: string | null;
     bullets: string[];

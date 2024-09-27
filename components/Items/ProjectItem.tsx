@@ -72,23 +72,17 @@ export default function ProjectItem({ isEditing, resumeSlug, projectSlug, dragHa
 
             <Wrapper>
                 <DraggableItem dragHandleProps={dragHandleProps} isSelected={isSelected} onToggleSelect={() => toggleSelect(resumeDocRef, resume.selected, projectSlug)}>
-                    <View style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        flexDirection: 'row',
-                    }}>
-                        <Editable disabled={!isSelected} bold label='Name' value={project.name || ''} onSubmit={(newValue: EditableValue) => handleSubmit('name', newValue)} />
-                        <Editable disabled={!isSelected} bold label='Location' value={project.location || ''} onSubmit={(newValue: EditableValue) => handleSubmit('location', newValue)} />
-                    </View>
+                    <Editable disabled={!isSelected} bold label='Name' value={project.name || ''} onSubmit={(newValue: EditableValue) => handleSubmit('name', newValue)} />
 
                     <View style={{
                         display: 'flex',
-                        flexDirection: 'row',
-                        gap: '4px',
+                        flexDirection: 'column',
                     }}>
-                        <Editable disabled={!isSelected} type='timestamp' timeFormat='M, Y' label='Start Date' value={project.startDate} onSubmit={(newValue: EditableValue) => handleSubmit('startDate', newValue)} />
-                        <Text>-</Text>
-                        <Editable disabled={!isSelected} type='timestamp' timeFormat='M, Y' label='Present' value={project.endDate} onSubmit={(newValue: EditableValue) => handleSubmit('endDate', newValue)} />
+                        <Editable disabled={!isSelected} label='Link' value={project.link || ''} onSubmit={(newValue: EditableValue) => handleSubmit('link', newValue)} />
+                        <Editable disabled={!isSelected} label='Front-End' value={project.github} onSubmit={(newValue: EditableValue) => handleSubmit('github', newValue)} />
+                        <Editable disabled={!isSelected} label='Back-End' value={project.github2} onSubmit={(newValue: EditableValue) => handleSubmit('github2', newValue)} />
+                        <Editable disabled={!isSelected} label='Languages' value={project.languages} onSubmit={(newValue: EditableValue) => handleSubmit('languages', newValue)} />
+                        <Editable disabled={!isSelected} label='Tech Stack' value={project.techStack} onSubmit={(newValue: EditableValue) => handleSubmit('techStack', newValue)} />
                     </View>
                 </DraggableItem>
 

@@ -19,7 +19,7 @@ export default function Item({ isEditing, resumeSlug, sectionName }: { isEditing
             return;
         }
         const reordered = reorder(
-            sectionName === 'Education' ? resume.educations : sectionName === 'projects' ? resume.projects : resume.experiences,
+            sectionName === 'Education' ? resume.educations : sectionName === 'Projects' ? resume.projects : resume.experiences,
             result.source.index,
             result.destination.index
         );
